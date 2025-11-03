@@ -158,11 +158,16 @@
     async function loadEtablissements() {
         try {
             const response = await fetch('/api/etablissements?actif_only=false');
+            if (!response.ok) {
+                throw new Error(`Erreur chargement établissements: ${response.status}`);
+            }
             etablissements = await response.json();
             renderEtablissements();
             document.getElementById('totalEtablissements').textContent = etablissements.filter(e => e.actif).length;
         } catch (error) {
             console.error('Erreur chargement établissements:', error);
+            const container = document.getElementById('etablissements-container');
+            container.innerHTML = '<p style="text-align: center; color: #dc2626; padding: 2rem;">❌ Erreur lors du chargement des établissements. Veuillez actualiser la page.</p>';
         }
     }
     
@@ -508,19 +513,27 @@
     async function loadStats() {
         try {
             const userResponse = await fetch('/api/current-user');
+            if (!userResponse.ok) {
+                throw new Error(`Erreur chargement utilisateur: ${userResponse.status}`);
+            }
             const user = await userResponse.json();
-            document.getElementById('username').value = user.username;
-            document.getElementById('role').value = user.role;
+            document.getElementById('username').value = user.username || 'Non défini';
+            document.getElementById('role').value = user.role || 'utilisateur';
             
             const resResponse = await fetch('/api/reservations');
-            const reservations = await resResponse.json();
-            document.getElementById('totalReservations').textContent = reservations.length;
+            if (resResponse.ok) {
+                const reservations = await resResponse.json();
+                document.getElementById('totalReservations').textContent = reservations.length;
+            }
             
             const clientsResponse = await fetch('/api/personnes');
-            const clients = await clientsResponse.json();
-            document.getElementById('totalClients').textContent = clients.length;
+            if (clientsResponse.ok) {
+                const clients = await clientsResponse.json();
+                document.getElementById('totalClients').textContent = clients.length;
+            }
         } catch (error) {
             console.error('Erreur chargement stats:', error);
+            showAlert('Erreur lors du chargement des statistiques', 'error');
         }
     }
     
