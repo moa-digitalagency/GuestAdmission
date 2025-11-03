@@ -50,6 +50,43 @@
     </div>
 </div>
 
+<div class="dotted-section section-orange" style="background: rgba(249, 115, 22, 0.05); border: 3px dotted #f97316; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.1);">
+    <h2>🛠️ Gestion des données</h2>
+    <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez les données de votre système : chargement de données de démonstration ou réinitialisation.</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+        <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
+            <h3 style="margin: 0 0 0.75rem 0; color: #059669;">📦 Données de démonstration</h3>
+            <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                Charger des établissements, chambres, réservations et clients de démonstration pour tester l'application.
+            </p>
+            <button type="button" onclick="loadDemoData()" class="btn btn-success" style="width: 100%;">
+                🎯 Charger les données de démo
+            </button>
+        </div>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
+            <h3 style="margin: 0 0 0.75rem 0; color: #dc2626;">🗑️ Réinitialisation sélective</h3>
+            <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                Supprimer sélectivement certaines données du système.
+            </p>
+            <button type="button" onclick="showResetOptions()" class="btn btn-danger" style="width: 100%;">
+                ⚙️ Options de réinitialisation
+            </button>
+        </div>
+        
+        <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
+            <h3 style="margin: 0 0 0.75rem 0; color: #dc2626;">⚠️ Réinitialisation complète</h3>
+            <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                Supprimer TOUTES les données et remettre à zéro (conserve l'utilisateur admin).
+            </p>
+            <button type="button" onclick="resetAllData()" class="btn btn-danger" style="width: 100%;">
+                🔄 Tout réinitialiser
+            </button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -484,6 +521,151 @@
             document.getElementById('totalClients').textContent = clients.length;
         } catch (error) {
             console.error('Erreur chargement stats:', error);
+        }
+    }
+    
+    async function loadDemoData() {
+        if (!confirm('⚠️ Charger les données de démonstration? Cela ajoutera des établissements, chambres, réservations et clients de test.')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/load-demo-data', {
+                method: 'POST'
+            });
+            
+            if (response.ok) {
+                showAlert('✅ Données de démonstration chargées avec succès!', 'success');
+                loadEtablissements();
+                loadStats();
+            } else {
+                const data = await response.json();
+                showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('❌ Erreur lors du chargement des données', 'error');
+        }
+    }
+    
+    function showResetOptions() {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 2rem;';
+        modal.id = 'resetOptionsModal';
+        
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 12px; max-width: 600px; width: 100%; padding: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="margin: 0;">🗑️ Réinitialisation sélective</h2>
+                    <button type="button" onclick="closeResetModal()" class="btn btn-secondary btn-small">✖ Fermer</button>
+                </div>
+                
+                <p style="color: #6b7280; margin-bottom: 1.5rem;">Sélectionnez les données à supprimer:</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <label style="display: flex; align-items: center; padding: 1rem; background: #f9fafb; border-radius: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="reset_reservations" style="margin-right: 0.75rem; width: 18px; height: 18px;">
+                        <span><strong>Réservations et clients</strong> - Supprime toutes les réservations et leurs clients associés</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; padding: 1rem; background: #f9fafb; border-radius: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="reset_chambres" style="margin-right: 0.75rem; width: 18px; height: 18px;">
+                        <span><strong>Chambres</strong> - Supprime toutes les chambres</span>
+                    </label>
+                    
+                    <label style="display: flex; align-items: center; padding: 1rem; background: #f9fafb; border-radius: 0.5rem; cursor: pointer;">
+                        <input type="checkbox" id="reset_etablissements" style="margin-right: 0.75rem; width: 18px; height: 18px;">
+                        <span><strong>Établissements</strong> - Supprime tous les établissements (sauf le principal)</span>
+                    </label>
+                </div>
+                
+                <div class="button-group" style="margin-top: 1.5rem;">
+                    <button type="button" onclick="executeResetSelection()" class="btn btn-danger">Supprimer la sélection</button>
+                    <button type="button" onclick="closeResetModal()" class="btn btn-secondary">Annuler</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    }
+    
+    function closeResetModal() {
+        const modal = document.getElementById('resetOptionsModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+    
+    async function executeResetSelection() {
+        const resetReservations = document.getElementById('reset_reservations').checked;
+        const resetChambres = document.getElementById('reset_chambres').checked;
+        const resetEtablissements = document.getElementById('reset_etablissements').checked;
+        
+        if (!resetReservations && !resetChambres && !resetEtablissements) {
+            showAlert('⚠️ Veuillez sélectionner au moins une catégorie', 'error');
+            return;
+        }
+        
+        const items = [];
+        if (resetReservations) items.push('réservations et clients');
+        if (resetChambres) items.push('chambres');
+        if (resetEtablissements) items.push('établissements');
+        
+        if (!confirm(`⚠️ Confirmer la suppression de: ${items.join(', ')}? Cette action est irréversible!`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/reset-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    reset_reservations: resetReservations,
+                    reset_chambres: resetChambres,
+                    reset_etablissements: resetEtablissements
+                })
+            });
+            
+            if (response.ok) {
+                showAlert('✅ Données supprimées avec succès!', 'success');
+                closeResetModal();
+                loadEtablissements();
+                loadStats();
+            } else {
+                const data = await response.json();
+                showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('❌ Erreur lors de la suppression', 'error');
+        }
+    }
+    
+    async function resetAllData() {
+        if (!confirm('⚠️ ATTENTION! Cela supprimera TOUTES les données (établissements, chambres, réservations, clients). L\'utilisateur admin sera conservé. Continuer?')) {
+            return;
+        }
+        
+        if (!confirm('⚠️ Dernière confirmation: êtes-vous ABSOLUMENT SÛR? Cette action est IRRÉVERSIBLE!')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/reset-all-data', {
+                method: 'POST'
+            });
+            
+            if (response.ok) {
+                showAlert('✅ Toutes les données ont été réinitialisées!', 'success');
+                loadEtablissements();
+                loadStats();
+            } else {
+                const data = await response.json();
+                showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('❌ Erreur lors de la réinitialisation', 'error');
         }
     }
     
