@@ -4,47 +4,235 @@
 {% block page_title %}Séjours{% endblock %}
 
 {% block content %}
-<div style="margin-bottom: 1.5rem;">
-    <a href="/nouveau-sejour" class="btn btn-primary">+ Nouveau séjour</a>
-</div>
-
-<div id="alert-container"></div>
-
-<div class="dotted-section section-blue">
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Contact principal</th>
-                    <th>Arrivée</th>
-                    <th>Départ</th>
-                    <th>Jours</th>
-                    <th>Facture</th>
-                    <th>Statut</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="sejoursBody">
-                <tr>
-                    <td colspan="8" style="text-align: center; padding: 2rem;">Chargement...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div id="detailModal" class="modal">
-    <div class="modal-content" style="max-width: 900px;">
-        <div class="modal-header">
-            <h2 style="margin: 0;">Détails du séjour</h2>
-            <button class="modal-close" onclick="closeModal()">&times;</button>
+<div class="dashboard-container">
+    <!-- Section: Filtres et actions -->
+    <section class="dashboard-section">
+        <div class="section-header">
+            <h2>🔍 Filtres</h2>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn-secondary" onclick="resetFilters()">Réinitialiser</button>
+                <button class="btn-primary" onclick="printSejoursList()">🖨️ Imprimer</button>
+                <a href="/nouveau-sejour" class="btn-primary">➕ Nouveau séjour</a>
+            </div>
         </div>
-        <div id="modalBody"></div>
-    </div>
-</div>
-{% endblock %}
+        <div class="section-content">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="filterEtablissement">Établissement</label>
+                    <select id="filterEtablissement" onchange="applyFilters()">
+                        <option value="">Tous les établissements</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterStatut">Statut</label>
+                    <select id="filterStatut" onchange="applyFilters()">
+                        <option value="">Tous les statuts</option>
+                        <option value="active">Actif</option>
+                        <option value="terminee">Terminé</option>
+                        <option value="annulee">Annulé</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterNumero">N° Séjour / Contact</label>
+                    <input type="text" id="filterNumero" placeholder="Rechercher..." oninput="applyFilters()">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterDateDebut">Date d'arrivée (à partir de)</label>
+                    <input type="date" id="filterDateDebut" onchange="applyFilters()">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterDateFin">Date de départ (jusqu'à)</label>
+                    <input type="date" id="filterDateFin" onchange="applyFilters()">
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- Section: Liste des séjours -->
+    <section class="dashboard-section">
+        <div class="section-header">
+            <h2>📅 Liste des Séjours</h2>
+        </div>
+        <div class="section-content">
+            <div id="alert-container"></div>
+            <div id="sejoursContainer">
+                <p style="text-align: center; padding: 2rem; color: #666;">Chargement des séjours...</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.sejour-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    transition: box-shadow 0.2s;
+}
+
+.sejour-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sejour-actif {
+    border-left: 4px solid #10b981;
+}
+
+.sejour-termine {
+    border-left: 4px solid #9ca3af;
+    background-color: #f9fafb;
+}
+
+.sejour-annule {
+    border-left: 4px solid #ef4444;
+}
+
+.sejour-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.sejour-header h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.25rem;
+}
+
+.sejour-body {
+    margin-bottom: 1rem;
+}
+
+.sejour-body p {
+    margin: 0.5rem 0;
+    color: #374151;
+}
+
+.sejour-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.badge-actif {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-termine {
+    background-color: #e5e7eb;
+    color: #6b7280;
+}
+
+.badge-annule {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background-color: #4b5563;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+</style>
+
+{% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/sejours.js') }}"></script>
