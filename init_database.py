@@ -121,7 +121,8 @@ def init_database():
         # Vérifier et créer l'utilisateur admin par défaut
         print("  👤 Vérification de l'utilisateur admin...")
         cur.execute("SELECT COUNT(*) as count FROM users")
-        user_count = cur.fetchone()['count']
+        result = cur.fetchone()
+        user_count = result['count'] if result else 0
         
         if user_count == 0:
             print("  ➕ Création de l'utilisateur admin par défaut...")
@@ -137,7 +138,8 @@ def init_database():
         # Vérifier et créer les paramètres système par défaut
         print("  ⚙️  Vérification des paramètres système...")
         cur.execute("SELECT COUNT(*) as count FROM parametres_systeme")
-        param_count = cur.fetchone()['count']
+        result = cur.fetchone()
+        param_count = result['count'] if result else 0
         
         if param_count == 0:
             print("  ➕ Création des paramètres système par défaut...")
@@ -169,11 +171,14 @@ def init_database():
         
         # Afficher un résumé
         cur.execute("SELECT COUNT(*) as count FROM users")
-        users = cur.fetchone()['count']
+        result = cur.fetchone()
+        users = result['count'] if result else 0
         cur.execute("SELECT COUNT(*) as count FROM reservations")
-        reservations = cur.fetchone()['count']
+        result = cur.fetchone()
+        reservations = result['count'] if result else 0
         cur.execute("SELECT COUNT(*) as count FROM personnes")
-        personnes = cur.fetchone()['count']
+        result = cur.fetchone()
+        personnes = result['count'] if result else 0
         
         print(f"\n📊 Résumé:")
         print(f"   - Utilisateurs: {users}")
