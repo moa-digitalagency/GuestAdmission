@@ -18,18 +18,19 @@ class Reservation:
         
         cur.execute('''
             INSERT INTO reservations (
-                date_arrivee, date_depart, nombre_jours, sejour_numero,
+                etablissement_id, numero_reservation, date_arrivee, date_depart, nombre_jours,
                 facture_hebergement, charge_plateforme, taxe_sejour,
                 revenu_mensuel_hebergement, charges_plateforme_mensuelle,
-                taxe_sejour_mensuelle, statut, notes
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                taxe_sejour_mensuelle, statut, observations
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
-            date_arrivee, date_depart, nombre_jours, data.get('sejour_numero'),
+            data.get('etablissement_id'), data.get('numero_reservation'),
+            date_arrivee, date_depart, nombre_jours,
             data.get('facture_hebergement'), data.get('charge_plateforme'),
             data.get('taxe_sejour'), data.get('revenu_mensuel_hebergement'),
             data.get('charges_plateforme_mensuelle'), data.get('taxe_sejour_mensuelle'),
-            data.get('statut', 'active'), data.get('notes')
+            data.get('statut', 'active'), data.get('observations')
         ))
         
         result = cur.fetchone()
@@ -38,7 +39,7 @@ class Reservation:
         conn.close()
         
         if result:
-            return result['id']  # type: ignore
+            return result['id']
         return None
     
     @staticmethod
@@ -48,11 +49,13 @@ class Reservation:
         
         cur.execute('''
             SELECT r.*, 
+                   e.nom_etablissement,
                    p.nom as contact_nom, 
                    p.prenom as contact_prenom,
                    p.email as contact_email,
                    p.telephone as contact_telephone
             FROM reservations r
+            LEFT JOIN etablissements e ON r.etablissement_id = e.id
             LEFT JOIN personnes p ON r.id = p.reservation_id AND p.est_contact_principal = TRUE
             ORDER BY r.created_at DESC
         ''')
@@ -92,19 +95,20 @@ class Reservation:
         
         cur.execute('''
             UPDATE reservations SET
+                etablissement_id = %s, numero_reservation = %s,
                 date_arrivee = %s, date_depart = %s, nombre_jours = %s,
-                sejour_numero = %s, facture_hebergement = %s,
-                charge_plateforme = %s, taxe_sejour = %s,
+                facture_hebergement = %s, charge_plateforme = %s, taxe_sejour = %s,
                 revenu_mensuel_hebergement = %s, charges_plateforme_mensuelle = %s,
-                taxe_sejour_mensuelle = %s, statut = %s, notes = %s,
+                taxe_sejour_mensuelle = %s, statut = %s, observations = %s,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = %s
         ''', (
-            date_arrivee, date_depart, nombre_jours, data.get('sejour_numero'),
+            data.get('etablissement_id'), data.get('numero_reservation'),
+            date_arrivee, date_depart, nombre_jours,
             data.get('facture_hebergement'), data.get('charge_plateforme'),
             data.get('taxe_sejour'), data.get('revenu_mensuel_hebergement'),
             data.get('charges_plateforme_mensuelle'), data.get('taxe_sejour_mensuelle'),
-            data.get('statut'), data.get('notes'), reservation_id
+            data.get('statut'), data.get('observations'), reservation_id
         ))
         
         conn.commit()

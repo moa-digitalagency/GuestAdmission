@@ -112,13 +112,59 @@ def update_parametres():
         data.get('format_numero_reservation')
     ))
     
-    cur.execute('DELETE FROM chambres')
+    # Obtenir ou créer un établissement
+    cur.execute('SELECT id FROM etablissements WHERE actif = TRUE LIMIT 1')
+    result = cur.fetchone()
+    if result:
+        etablissement_id = result['id']
+        # Mettre à jour l'établissement
+        cur.execute('''
+            UPDATE etablissements SET
+                nom_etablissement = %s, numero_identification = %s,
+                pays = %s, ville = %s, adresse = %s,
+                telephone = %s, whatsapp = %s, email = %s,
+                devise = %s, taux_taxe_sejour = %s, taux_tva = %s,
+                taux_charge_plateforme = %s, logo_url = %s,
+                format_numero_reservation = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = %s
+        ''', (
+            data.get('nom_etablissement'), data.get('numero_identification'),
+            data.get('pays'), data.get('ville'), data.get('adresse'),
+            data.get('telephone'), data.get('whatsapp'), data.get('email'),
+            data.get('devise'), data.get('taux_taxe_sejour'), data.get('taux_tva'),
+            data.get('taux_charge_plateforme'), data.get('logo_url'),
+            data.get('format_numero_reservation'), etablissement_id
+        ))
+    else:
+        # Créer un nouvel établissement
+        cur.execute('''
+            INSERT INTO etablissements (
+                nom_etablissement, numero_identification, pays, ville, adresse,
+                telephone, whatsapp, email, devise, taux_taxe_sejour,
+                taux_tva, taux_charge_plateforme, logo_url, format_numero_reservation
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        ''', (
+            data.get('nom_etablissement'), data.get('numero_identification'),
+            data.get('pays'), data.get('ville'), data.get('adresse'),
+            data.get('telephone'), data.get('whatsapp'), data.get('email'),
+            data.get('devise'), data.get('taux_taxe_sejour'), data.get('taux_tva'),
+            data.get('taux_charge_plateforme'), data.get('logo_url'),
+            data.get('format_numero_reservation')
+        ))
+        result = cur.fetchone()
+        etablissement_id = result['id'] if result else None
+    
+    # Supprimer les chambres existantes pour cet établissement
+    cur.execute('DELETE FROM chambres WHERE etablissement_id = %s', (etablissement_id,))
     
     for chambre in chambres_config:
         cur.execute('''
-            INSERT INTO chambres (nom, capacite, prix_par_nuit, statut)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO chambres (etablissement_id, nom, capacite, prix_par_nuit, statut)
+            VALUES (%s, %s, %s, %s, %s)
         ''', (
+            etablissement_id,
             chambre.get('nom'),
             chambre.get('capacite', 2),
             chambre.get('prix', 0),

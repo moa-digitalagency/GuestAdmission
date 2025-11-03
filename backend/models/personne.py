@@ -8,17 +8,18 @@ class Personne:
         
         cur.execute('''
             INSERT INTO personnes (
-                reservation_id, est_contact_principal, nom, prenom, email,
-                telephone, pays, type_piece_identite, numero_piece_identite,
-                date_naissance, chambre_assignee
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                reservation_id, chambre_id, est_contact_principal, nom, prenom, email,
+                telephone, pays, ville, type_piece_identite, numero_piece_identite,
+                date_naissance
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
-            data.get('reservation_id'), data.get('est_contact_principal', False),
+            data.get('reservation_id'), data.get('chambre_id'),
+            data.get('est_contact_principal', False),
             data.get('nom'), data.get('prenom'), data.get('email'),
-            data.get('telephone'), data.get('pays'), data.get('type_piece_identite'),
-            data.get('numero_piece_identite'), data.get('date_naissance'),
-            data.get('chambre_assignee')
+            data.get('telephone'), data.get('pays'), data.get('ville'),
+            data.get('type_piece_identite'), data.get('numero_piece_identite'),
+            data.get('date_naissance')
         ))
         
         result = cur.fetchone()
@@ -27,7 +28,7 @@ class Personne:
         conn.close()
         
         if result:
-            return result['id']  # type: ignore
+            return result['id']
         return None
     
     @staticmethod
@@ -36,9 +37,11 @@ class Personne:
         cur = conn.cursor()
         
         cur.execute('''
-            SELECT * FROM personnes 
-            WHERE reservation_id = %s 
-            ORDER BY est_contact_principal DESC, id ASC
+            SELECT p.*, c.nom as chambre_nom
+            FROM personnes p
+            LEFT JOIN chambres c ON p.chambre_id = c.id
+            WHERE p.reservation_id = %s 
+            ORDER BY p.est_contact_principal DESC, p.id ASC
         ''', (reservation_id,))
         personnes = cur.fetchall()
         
@@ -67,16 +70,15 @@ class Personne:
         
         cur.execute('''
             UPDATE personnes SET
-                nom = %s, prenom = %s, email = %s, telephone = %s,
-                pays = %s, type_piece_identite = %s, numero_piece_identite = %s,
-                date_naissance = %s, chambre_assignee = %s
+                chambre_id = %s, nom = %s, prenom = %s, email = %s, telephone = %s,
+                pays = %s, ville = %s, type_piece_identite = %s, numero_piece_identite = %s,
+                date_naissance = %s
             WHERE id = %s
         ''', (
-            data.get('nom'), data.get('prenom'), data.get('email'),
-            data.get('telephone'), data.get('pays'), data.get('type_piece_identite'),
-            data.get('numero_piece_identite'), data.get('date_naissance'),
-            data.get('chambre_assignee'),
-            personne_id
+            data.get('chambre_id'), data.get('nom'), data.get('prenom'), data.get('email'),
+            data.get('telephone'), data.get('pays'), data.get('ville'),
+            data.get('type_piece_identite'), data.get('numero_piece_identite'),
+            data.get('date_naissance'), personne_id
         ))
         
         conn.commit()

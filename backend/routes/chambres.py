@@ -12,13 +12,24 @@ def get_db_connection():
 @chambres_bp.route('/api/chambres', methods=['GET'])
 def get_chambres():
     try:
+        etablissement_id = request.args.get('etablissement_id')
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('''
-            SELECT id, nom, description, capacite, prix_par_nuit, statut, created_at
-            FROM chambres
-            ORDER BY nom
-        ''')
+        
+        if etablissement_id:
+            cur.execute('''
+                SELECT id, etablissement_id, nom, description, capacite, prix_par_nuit, statut, created_at
+                FROM chambres
+                WHERE etablissement_id = %s
+                ORDER BY nom
+            ''', (etablissement_id,))
+        else:
+            cur.execute('''
+                SELECT id, etablissement_id, nom, description, capacite, prix_par_nuit, statut, created_at
+                FROM chambres
+                ORDER BY nom
+            ''')
+        
         chambres = cur.fetchall()
         cur.close()
         conn.close()
@@ -34,10 +45,11 @@ def create_chambre():
         cur = conn.cursor()
         
         cur.execute('''
-            INSERT INTO chambres (nom, description, capacite, prix_par_nuit, statut)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id, nom, description, capacite, prix_par_nuit, statut
+            INSERT INTO chambres (etablissement_id, nom, description, capacite, prix_par_nuit, statut)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id, etablissement_id, nom, description, capacite, prix_par_nuit, statut
         ''', (
+            data.get('etablissement_id'),
             data.get('nom'),
             data.get('description', ''),
             data.get('capacite', 2),

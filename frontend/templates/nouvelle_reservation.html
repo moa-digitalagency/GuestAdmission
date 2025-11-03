@@ -7,9 +7,31 @@
 <div id="alert-container"></div>
 
 <form id="reservationForm">
+    <div class="dotted-section section-orange">
+        <h2>🏢 Sélection de l'établissement</h2>
+        <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="etablissement">Établissement *</label>
+                <select id="etablissement" name="etablissement" required>
+                    <option value="">Sélectionner un établissement...</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
     <div class="dotted-section section-green">
         <h2>📅 Informations de séjour</h2>
         <div class="form-grid">
+            <div class="form-group">
+                <label for="numero_reservation">Numéro de réservation</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="numero_reservation" name="numero_reservation" readonly style="flex: 1; background: #f3f4f6;">
+                    <button type="button" onclick="genererNumeroReservation()" class="btn btn-primary btn-small">🔄 Générer</button>
+                </div>
+                <small style="color: #6b7280; margin-top: 0.25rem; display: block;">
+                    Le numéro est généré automatiquement selon le format défini pour l'établissement
+                </small>
+            </div>
             <div class="form-group">
                 <label for="date_arrivee">Date d'arrivée *</label>
                 <input type="date" id="date_arrivee" name="date_arrivee" required>
@@ -22,9 +44,9 @@
                 <label for="nombre_jours">Nombre de jours</label>
                 <input type="number" id="nombre_jours" name="nombre_jours" readonly style="background: #f3f4f6;">
             </div>
-            <div class="form-group">
-                <label for="sejour_numero">Numéro de séjour</label>
-                <input type="text" id="sejour_numero" name="sejour_numero">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="observations">Observations / Informations supplémentaires</label>
+                <textarea id="observations" name="observations" rows="3" style="resize: vertical;" placeholder="Notes, demandes spéciales, informations importantes..."></textarea>
             </div>
         </div>
     </div>
@@ -61,15 +83,88 @@
     let countriesData = [];
     let chambresDisponibles = [];
     let selectedChambres = [];
+    let etablissements = [];
+    let selectedEtablissement = null;
+    
+    async function loadEtablissements() {
+        try {
+            const response = await fetch('/api/etablissements?actif_only=true');
+            etablissements = await response.json();
+            
+            const select = document.getElementById('etablissement');
+            select.innerHTML = '<option value="">Sélectionner un établissement...</option>';
+            
+            etablissements.forEach(etab => {
+                const option = document.createElement('option');
+                option.value = etab.id;
+                option.textContent = etab.nom_etablissement;
+                select.appendChild(option);
+            });
+            
+            if (etablissements.length === 1) {
+                select.value = etablissements[0].id;
+                selectedEtablissement = etablissements[0].id;
+                loadChambres();
+                genererNumeroReservation();
+            }
+        } catch (error) {
+            console.error('Erreur chargement établissements:', error);
+        }
+    }
+    
+    document.getElementById('etablissement').addEventListener('change', function() {
+        selectedEtablissement = this.value;
+        if (selectedEtablissement) {
+            loadChambres();
+            genererNumeroReservation();
+        }
+    });
+    
+    async function genererNumeroReservation() {
+        if (!selectedEtablissement) {
+            alert('Veuillez d\'abord sélectionner un établissement');
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/etablissements/${selectedEtablissement}/generer-numero`);
+            const data = await response.json();
+            if (data.numero) {
+                document.getElementById('numero_reservation').value = data.numero;
+            }
+        } catch (error) {
+            console.error('Erreur génération numéro:', error);
+        }
+    }
     
     async function loadChambres() {
+        if (!selectedEtablissement) return;
+        
         try {
-            const response = await fetch('/api/chambres');
+            const response = await fetch(`/api/chambres?etablissement_id=${selectedEtablissement}`);
             chambresDisponibles = await response.json();
             renderChambresSelection();
+            updateChambreDropdowns();
         } catch (error) {
             console.error('Erreur chargement chambres:', error);
         }
+    }
+    
+    function updateChambreDropdowns() {
+        const selects = document.querySelectorAll('.chambre-personne-select');
+        selects.forEach(select => {
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">Sélectionner une chambre...</option>';
+            chambresDisponibles.forEach(chambre => {
+                const option = document.createElement('option');
+                option.value = chambre.id;
+                option.textContent = `${chambre.nom} (Capacité: ${chambre.capacite})`;
+                select.appendChild(option);
+            });
+            if (currentValue) {
+                select.value = currentValue;
+            }
+        });
     }
     
     function renderChambresSelection() {
@@ -189,6 +284,16 @@
                         <label>Date de naissance</label>
                         <input type="date" name="personne_date_naissance_${personneCount}">
                     </div>
+                    <div class="form-group">
+                        <label>Ville</label>
+                        <input type="text" name="personne_ville_${personneCount}">
+                    </div>
+                    <div class="form-group">
+                        <label>Chambre assignée</label>
+                        <select name="personne_chambre_${personneCount}" class="chambre-personne-select">
+                            <option value="">Sélectionner une chambre...</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         `;
@@ -200,6 +305,8 @@
         if (paysSelect && countriesData.length > 0) {
             populateCountrySelect(paysSelect);
         }
+        
+        updateChambreDropdowns();
     }
     
     function removePersonne(id) {
@@ -220,8 +327,17 @@
     document.getElementById('reservationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        if (!selectedEtablissement) {
+            showAlert('Veuillez sélectionner un établissement', 'error');
+            return;
+        }
+        
         const formData = new FormData(e.target);
-        const reservation = {};
+        const reservation = {
+            etablissement_id: selectedEtablissement,
+            numero_reservation: document.getElementById('numero_reservation').value,
+            observations: document.getElementById('observations').value
+        };
         const personnes = [];
         
         for (let [key, value] of formData.entries()) {
@@ -234,9 +350,14 @@
                     if (!personnes[personneIndex]) {
                         personnes[personneIndex] = {};
                     }
-                    personnes[personneIndex][field] = value || null;
+                    
+                    if (field === 'chambre') {
+                        personnes[personneIndex]['chambre_id'] = value ? parseInt(value) : null;
+                    } else {
+                        personnes[personneIndex][field] = value || null;
+                    }
                 }
-            } else {
+            } else if (!['etablissement', 'numero_reservation', 'observations'].includes(key)) {
                 reservation[key] = value || null;
             }
         }
@@ -261,15 +382,17 @@
                 showAlert('Réservation créée avec succès !', 'success');
                 setTimeout(() => window.location.href = '/reservations', 1500);
             } else {
-                showAlert('Erreur lors de la création de la réservation', 'error');
+                const errorData = await response.json();
+                showAlert(`Erreur: ${errorData.error || 'Erreur lors de la création de la réservation'}`, 'error');
             }
         } catch (error) {
+            console.error('Erreur:', error);
             showAlert('Erreur de connexion au serveur', 'error');
         }
     });
     
     loadCountries();
-    loadChambres();
+    loadEtablissements();
     addPersonne();
 </script>
 {% endblock %}

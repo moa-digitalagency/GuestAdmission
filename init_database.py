@@ -48,15 +48,58 @@ def init_database():
             )
         ''')
         
+        # Créer la table etablissements
+        print("  📋 Création de la table 'etablissements'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS etablissements (
+                id SERIAL PRIMARY KEY,
+                nom_etablissement VARCHAR(200) NOT NULL,
+                numero_identification VARCHAR(100),
+                pays VARCHAR(100),
+                ville VARCHAR(100),
+                adresse TEXT,
+                telephone VARCHAR(50),
+                whatsapp VARCHAR(50),
+                email VARCHAR(150),
+                devise VARCHAR(10) DEFAULT 'MAD',
+                taux_taxe_sejour DECIMAL(5, 2),
+                taux_tva DECIMAL(5, 2),
+                taux_charge_plateforme DECIMAL(5, 2),
+                logo_url VARCHAR(500),
+                format_numero_reservation VARCHAR(100) DEFAULT 'RES-{YYYY}{MM}{DD}-{NUM}',
+                prochain_numero_sequence INTEGER DEFAULT 1,
+                actif BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table chambres (doit être créée avant reservations pour la FK)
+        print("  📋 Création de la table 'chambres'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS chambres (
+                id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                nom VARCHAR(100) NOT NULL,
+                description TEXT,
+                capacite INTEGER DEFAULT 2,
+                prix_par_nuit DECIMAL(10, 2),
+                statut VARCHAR(50) DEFAULT 'disponible',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
         # Créer la table reservations
         print("  📋 Création de la table 'reservations'...")
         cur.execute('''
             CREATE TABLE IF NOT EXISTS reservations (
                 id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                numero_reservation VARCHAR(100) UNIQUE,
                 date_arrivee DATE NOT NULL,
                 date_depart DATE NOT NULL,
                 nombre_jours INTEGER,
-                sejour_numero VARCHAR(50),
                 facture_hebergement DECIMAL(10, 2),
                 charge_plateforme DECIMAL(10, 2),
                 taxe_sejour DECIMAL(10, 2),
@@ -64,7 +107,7 @@ def init_database():
                 charges_plateforme_mensuelle DECIMAL(10, 2),
                 taxe_sejour_mensuelle DECIMAL(10, 2),
                 statut VARCHAR(50) DEFAULT 'active',
-                notes TEXT,
+                observations TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -76,32 +119,18 @@ def init_database():
             CREATE TABLE IF NOT EXISTS personnes (
                 id SERIAL PRIMARY KEY,
                 reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
+                chambre_id INTEGER REFERENCES chambres(id) ON DELETE SET NULL,
                 est_contact_principal BOOLEAN DEFAULT FALSE,
                 nom VARCHAR(100) NOT NULL,
                 prenom VARCHAR(100) NOT NULL,
                 email VARCHAR(150),
                 telephone VARCHAR(50),
                 pays VARCHAR(100),
+                ville VARCHAR(100),
                 type_piece_identite VARCHAR(50),
                 numero_piece_identite VARCHAR(100),
                 date_naissance DATE,
-                chambre_assignee VARCHAR(100),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-        
-        # Créer la table chambres
-        print("  📋 Création de la table 'chambres'...")
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS chambres (
-                id SERIAL PRIMARY KEY,
-                nom VARCHAR(100) NOT NULL,
-                description TEXT,
-                capacite INTEGER DEFAULT 2,
-                prix_par_nuit DECIMAL(10, 2),
-                statut VARCHAR(50) DEFAULT 'disponible',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
@@ -117,7 +146,7 @@ def init_database():
             )
         ''')
         
-        # Créer la table parametres_systeme
+        # Créer la table parametres_systeme (pour compatibilité, mais déprécié)
         print("  📋 Création de la table 'parametres_systeme'...")
         cur.execute('''
             CREATE TABLE IF NOT EXISTS parametres_systeme (
@@ -166,7 +195,37 @@ def init_database():
         else:
             print(f"  ✅ {user_count} utilisateur(s) déjà présent(s)")
         
-        # Vérifier et créer les paramètres système par défaut
+        # Vérifier et créer l'établissement par défaut
+        print("  🏢 Vérification des établissements...")
+        cur.execute("SELECT COUNT(*) as count FROM etablissements")
+        result = cur.fetchone()
+        etablissement_count = result['count'] if result else 0
+        
+        if etablissement_count == 0:
+            print("  ➕ Création de l'établissement par défaut...")
+            cur.execute('''
+                INSERT INTO etablissements (
+                    nom_etablissement, pays, devise, taux_taxe_sejour, 
+                    taux_tva, taux_charge_plateforme, actif
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+            ''', (
+                'Maison d\'Hôte', 
+                'Maroc', 
+                'MAD', 
+                2.5, 
+                20.0, 
+                15.0,
+                True
+            ))
+            result = cur.fetchone()
+            etablissement_id = result['id'] if result else None
+            print(f"  ✅ Établissement créé (ID: {etablissement_id})")
+        else:
+            print(f"  ✅ {etablissement_count} établissement(s) déjà présent(s)")
+        
+        # Vérifier et créer les paramètres système par défaut (pour compatibilité)
         print("  ⚙️  Vérification des paramètres système...")
         cur.execute("SELECT COUNT(*) as count FROM parametres_systeme")
         result = cur.fetchone()
