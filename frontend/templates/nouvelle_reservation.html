@@ -51,12 +51,6 @@
         </div>
     </div>
 
-    <div class="dotted-section section-purple">
-        <h2>🏠 Sélection des chambres</h2>
-        <p style="color: #6b7280; margin-bottom: 1rem;">Sélectionnez une ou plusieurs chambres pour cette réservation.</p>
-        <div id="chambresSelectionContainer"></div>
-    </div>
-
     <div class="dotted-section section-blue">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h2 style="margin: 0;">👥 Personnes (Voyageurs)</h2>
@@ -143,7 +137,6 @@
         try {
             const response = await fetch(`/api/chambres?etablissement_id=${selectedEtablissement}`);
             chambresDisponibles = await response.json();
-            renderChambresSelection();
             updateChambreDropdowns();
         } catch (error) {
             console.error('Erreur chargement chambres:', error);
@@ -167,39 +160,6 @@
         });
     }
     
-    function renderChambresSelection() {
-        const container = document.getElementById('chambresSelectionContainer');
-        container.innerHTML = '';
-        
-        if (chambresDisponibles.length === 0) {
-            container.innerHTML = '<p style="color: #ef4444;">Aucune chambre configurée. Veuillez d\'abord configurer les chambres dans les paramètres.</p>';
-            return;
-        }
-        
-        const gridHtml = chambresDisponibles.map(chambre => `
-            <label style="display: flex; align-items: center; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; margin-bottom: 0.5rem;" class="chambre-option">
-                <input type="checkbox" value="${chambre.id}" style="margin-right: 1rem;" onchange="toggleChambre(${chambre.id})">
-                <div style="flex: 1;">
-                    <strong style="font-size: 1.1em; color: #1f2937;">${chambre.nom}</strong>
-                    <div style="color: #6b7280; margin-top: 0.25rem;">
-                        💰 ${chambre.prix_par_nuit} / nuit &nbsp;|&nbsp; 
-                        👥 Capacité: ${chambre.capacite} personne(s)
-                    </div>
-                </div>
-            </label>
-        `).join('');
-        
-        container.innerHTML = gridHtml;
-    }
-    
-    function toggleChambre(chambreId) {
-        const index = selectedChambres.indexOf(chambreId);
-        if (index > -1) {
-            selectedChambres.splice(index, 1);
-        } else {
-            selectedChambres.push(chambreId);
-        }
-    }
     
     async function loadCountries() {
         try {
@@ -256,39 +216,41 @@
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" name="personne_email_${personneCount}">
+                        <input type="email" name="personne_email_${personneCount}" placeholder="email@exemple.com">
                     </div>
                     <div class="form-group">
                         <label>Téléphone</label>
-                        <input type="tel" name="personne_telephone_${personneCount}">
+                        <input type="tel" name="personne_telephone_${personneCount}" placeholder="+212 XXX XXX XXX">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Pays</label>
                         <select name="personne_pays_${personneCount}" class="pays-select">
                             <option value="">Sélectionner un pays...</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Ville</label>
+                        <input type="text" name="personne_ville_${personneCount}" placeholder="Ville de résidence">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Type pièce d'identité</label>
                         <select name="personne_type_piece_${personneCount}">
                             <option value="">Sélectionner...</option>
                             <option value="passeport">Passeport</option>
                             <option value="cin">CIN</option>
+                            <option value="cni">CNI</option>
+                            <option value="permis_conduire">Permis de conduire</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Numéro pièce d'identité</label>
-                        <input type="text" name="personne_numero_piece_${personneCount}">
+                        <input type="text" name="personne_numero_piece_${personneCount}" placeholder="Numéro du document">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Date de naissance</label>
                         <input type="date" name="personne_date_naissance_${personneCount}">
                     </div>
-                    <div class="form-group">
-                        <label>Ville</label>
-                        <input type="text" name="personne_ville_${personneCount}">
-                    </div>
-                    <div class="form-group">
+                    <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Chambre assignée</label>
                         <select name="personne_chambre_${personneCount}" class="chambre-personne-select">
                             <option value="">Sélectionner une chambre...</option>
@@ -362,10 +324,13 @@
             }
         }
         
-        if (selectedChambres.length === 0) {
-            showAlert('Veuillez sélectionner au moins une chambre', 'error');
+        if (personnes.length === 0) {
+            showAlert('Veuillez ajouter au moins une personne', 'error');
             return;
         }
+        
+        const chambreIds = personnes.map(p => p.chambre_id).filter(id => id);
+        const uniqueChambres = [...new Set(chambreIds)];
         
         try {
             const response = await fetch('/api/reservations', {
@@ -374,7 +339,7 @@
                 body: JSON.stringify({ 
                     reservation, 
                     personnes: personnes.filter(p => p),
-                    chambres: selectedChambres
+                    chambres: uniqueChambres
                 })
             });
             
