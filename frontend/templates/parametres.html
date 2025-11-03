@@ -42,20 +42,6 @@
     <div id="personnels-container"></div>
 </div>
 
-<div class="dotted-section section-cyan">
-    <h2>👤 Compte utilisateur</h2>
-    <div class="form-grid">
-        <div class="form-group">
-            <label for="username">Nom d'utilisateur</label>
-            <input type="text" id="username" readonly style="background: #f9fafb;">
-        </div>
-        <div class="form-group">
-            <label for="role">Rôle</label>
-            <input type="text" id="role" readonly style="background: #f9fafb;">
-        </div>
-    </div>
-</div>
-
 <div class="dotted-section section-orange" style="background: rgba(249, 115, 22, 0.05); border: 3px dotted #f97316; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.1);">
     <h2>🛠️ Gestion des données</h2>
     <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez les données de votre système : chargement de données de démonstration ou réinitialisation.</p>
@@ -169,7 +155,6 @@
             }
             etablissements = await response.json();
             renderEtablissements();
-            document.getElementById('totalEtablissements').textContent = etablissements.filter(e => e.actif).length;
         } catch (error) {
             console.error('Erreur chargement établissements:', error);
             const container = document.getElementById('etablissements-container');
@@ -518,21 +503,6 @@
     
     let chambres = [];
     let personnels = [];
-    
-    async function loadUserInfo() {
-        try {
-            const userResponse = await fetch('/api/current-user');
-            if (!userResponse.ok) {
-                throw new Error(`Erreur chargement utilisateur: ${userResponse.status}`);
-            }
-            const user = await userResponse.json();
-            document.getElementById('username').value = user.username || 'Non défini';
-            document.getElementById('role').value = user.role || 'utilisateur';
-        } catch (error) {
-            console.error('Erreur chargement utilisateur:', error);
-            showAlert('Erreur lors du chargement des informations utilisateur', 'error');
-        }
-    }
     
     async function loadChambres() {
         try {
@@ -1015,7 +985,6 @@
                 showAlert('✅ Données de démonstration chargées avec succès!', 'success');
                 loadEtablissements();
                 loadChambres();
-                loadUserInfo();
             } else {
                 const data = await response.json();
                 showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
@@ -1109,7 +1078,6 @@
                 closeResetModal();
                 loadEtablissements();
                 loadChambres();
-                loadUserInfo();
             } else{
                 const data = await response.json();
                 showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
@@ -1138,7 +1106,6 @@
                 showAlert('✅ Toutes les données ont été réinitialisées!', 'success');
                 loadEtablissements();
                 loadChambres();
-                loadUserInfo();
             } else {
                 const data = await response.json();
                 showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
@@ -1164,10 +1131,6 @@
             console.log('🏠 Chargement des chambres...');
             await loadChambres();
             console.log('✅ Chambres chargées:', chambres.length);
-            
-            console.log('👤 Chargement des informations utilisateur...');
-            await loadUserInfo();
-            console.log('✅ Informations utilisateur chargées');
             
             console.log('👥 Chargement des personnels...');
             await loadPersonnels();
