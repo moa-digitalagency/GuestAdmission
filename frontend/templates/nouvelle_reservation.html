@@ -1,7 +1,7 @@
 {% extends "base_dashboard.html" %}
 
-{% block title %}Nouvelle Réservation{% endblock %}
-{% block page_title %}Nouvelle Réservation{% endblock %}
+{% block title %}Nouveau Séjour{% endblock %}
+{% block page_title %}Nouveau Séjour{% endblock %}
 
 {% block content %}
 <div id="alert-container"></div>
@@ -20,10 +20,10 @@
     </div>
 
     <div class="dotted-section section-green">
-        <h2>📅 Informations de séjour</h2>
+        <h2>📅 Informations du séjour</h2>
         <div class="form-grid">
             <div class="form-group">
-                <label for="numero_reservation">Numéro de réservation</label>
+                <label for="numero_reservation">Numéro de séjour</label>
                 <div style="display: flex; gap: 0.5rem;">
                     <input type="text" id="numero_reservation" name="numero_reservation" readonly style="flex: 1; background: #f3f4f6;">
                     <button type="button" onclick="genererNumeroReservation()" class="btn btn-primary btn-small">🔄 Générer</button>
@@ -63,7 +63,7 @@
     </div>
 
     <div class="button-group">
-        <button type="submit" class="btn btn-success">Enregistrer la réservation</button>
+        <button type="submit" class="btn btn-success">Enregistrer le séjour</button>
         <button type="reset" class="btn btn-secondary">Réinitialiser</button>
         <a href="/dashboard" class="btn btn-secondary">Annuler</a>
     </div>
@@ -344,11 +344,11 @@
             });
             
             if (response.ok) {
-                showAlert('Réservation créée avec succès !', 'success');
+                showAlert('Séjour créé avec succès !', 'success');
                 setTimeout(() => window.location.href = '/reservations', 1500);
             } else {
                 const errorData = await response.json();
-                showAlert(`Erreur: ${errorData.error || 'Erreur lors de la création de la réservation'}`, 'error');
+                showAlert(`Erreur: ${errorData.error || 'Erreur lors de la création du séjour'}`, 'error');
             }
         } catch (error) {
             console.error('Erreur:', error);

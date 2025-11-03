@@ -1,11 +1,11 @@
 {% extends "base_dashboard.html" %}
 
-{% block title %}Réservations{% endblock %}
-{% block page_title %}Réservations{% endblock %}
+{% block title %}Séjours{% endblock %}
+{% block page_title %}Séjours{% endblock %}
 
 {% block content %}
 <div style="margin-bottom: 1.5rem;">
-    <a href="/nouvelle-reservation" class="btn btn-primary">+ Nouvelle réservation</a>
+    <a href="/nouvelle-reservation" class="btn btn-primary">+ Nouveau séjour</a>
 </div>
 
 <div id="alert-container"></div>
@@ -37,7 +37,7 @@
 <div id="detailModal" class="modal">
     <div class="modal-content" style="max-width: 900px;">
         <div class="modal-header">
-            <h2 style="margin: 0;">Détails de la réservation</h2>
+            <h2 style="margin: 0;">Détails du séjour</h2>
             <button class="modal-close" onclick="closeModal()">&times;</button>
         </div>
         <div id="modalBody"></div>
@@ -66,7 +66,7 @@
             reservations = await response.json();
             renderReservations();
         } catch (error) {
-            showAlert('Erreur lors du chargement des réservations', 'error');
+            showAlert('Erreur lors du chargement des séjours', 'error');
         }
     }
     
@@ -74,7 +74,7 @@
         const tbody = document.getElementById('reservationsBody');
         
         if (reservations.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Aucune réservation</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Aucun séjour</td></tr>';
             return;
         }
         

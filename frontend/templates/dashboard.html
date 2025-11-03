@@ -6,7 +6,7 @@
 {% block content %}
 <div class="stats-grid">
     <div class="stat-card blue">
-        <div class="stat-label">Réservations actives</div>
+        <div class="stat-label">Séjours actifs</div>
         <div class="stat-value" id="statsActiveReservations">0</div>
     </div>
     
@@ -27,7 +27,7 @@
 </div>
 
 <div class="dotted-section section-blue">
-    <h2>Réservations récentes</h2>
+    <h2>Séjours récents</h2>
     <div class="table-container">
         <table>
             <thead>
@@ -83,7 +83,7 @@
         const tbody = document.getElementById('recentReservationsBody');
         
         if (reservations.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Aucune réservation</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Aucun séjour</td></tr>';
             return;
         }
         
