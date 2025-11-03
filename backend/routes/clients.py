@@ -1,18 +1,19 @@
 from flask import Blueprint, request, jsonify
 from ..models.client import Client
+from ..utils import serialize_rows, serialize_row
 
 clients_bp = Blueprint('clients', __name__)
 
 @clients_bp.route('/api/clients', methods=['GET'])
 def get_clients():
     clients = Client.get_all()
-    return jsonify(clients)
+    return jsonify(serialize_rows(clients))
 
 @clients_bp.route('/api/clients/<int:client_id>', methods=['GET'])
 def get_client(client_id):
     client = Client.get_by_id(client_id)
     if client:
-        return jsonify(client)
+        return jsonify(serialize_row(client))
     return jsonify({'error': 'Client non trouvé'}), 404
 
 @clients_bp.route('/api/clients', methods=['POST'])

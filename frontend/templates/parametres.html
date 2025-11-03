@@ -1,0 +1,85 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Paramètres{% endblock %}
+{% block page_title %}Paramètres Système{% endblock %}
+
+{% block content %}
+<div class="dotted-section section-purple">
+    <h2>⚙️ Configuration de l'établissement</h2>
+    <p style="color: #6b7280; margin-bottom: 1.5rem;">Configurez les informations de votre établissement et les paramètres du système.</p>
+    
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Nom de l'établissement</label>
+            <input type="text" value="Maison d'Hôte" readonly style="background: #f9fafb;">
+        </div>
+        <div class="form-group">
+            <label>Devise</label>
+            <input type="text" value="MAD" readonly style="background: #f9fafb;">
+        </div>
+        <div class="form-group">
+            <label>Taux taxe séjour (%)</label>
+            <input type="number" value="2.5" readonly style="background: #f9fafb;">
+        </div>
+        <div class="form-group">
+            <label>Taux charge plate-forme (%)</label>
+            <input type="number" value="15.0" readonly style="background: #f9fafb;">
+        </div>
+    </div>
+</div>
+
+<div class="dotted-section section-blue">
+    <h2>👤 Compte utilisateur</h2>
+    <p style="color: #6b7280; margin-bottom: 1.5rem;">Informations de votre compte administrateur.</p>
+    
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Nom d'utilisateur</label>
+            <input type="text" id="username" readonly style="background: #f9fafb;">
+        </div>
+        <div class="form-group">
+            <label>Rôle</label>
+            <input type="text" id="role" readonly style="background: #f9fafb;">
+        </div>
+    </div>
+</div>
+
+<div class="dotted-section section-green">
+    <h2>📊 Statistiques système</h2>
+    <div class="stats-grid">
+        <div class="stat-card blue">
+            <div class="stat-label">Total réservations</div>
+            <div class="stat-value" id="totalReservations">0</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-label">Total clients</div>
+            <div class="stat-value" id="totalClients">0</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadParams() {
+        try {
+            const userResponse = await fetch('/api/current-user');
+            const user = await userResponse.json();
+            document.getElementById('username').value = user.username;
+            document.getElementById('role').value = user.role;
+            
+            const resResponse = await fetch('/api/reservations');
+            const reservations = await resResponse.json();
+            document.getElementById('totalReservations').textContent = reservations.length;
+            
+            const clientsResponse = await fetch('/api/personnes');
+            const clients = await clientsResponse.json();
+            document.getElementById('totalClients').textContent = clients.length;
+        } catch (error) {
+            console.error('Erreur chargement paramètres:', error);
+        }
+    }
+    
+    loadParams();
+</script>
+{% endblock %}

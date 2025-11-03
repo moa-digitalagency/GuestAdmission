@@ -1,0 +1,202 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Nouvelle Réservation{% endblock %}
+{% block page_title %}Nouvelle Réservation{% endblock %}
+
+{% block content %}
+<div id="alert-container"></div>
+
+<form id="reservationForm">
+    <div class="dotted-section section-green">
+        <h2>📅 Informations de séjour</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="date_arrivee">Date d'arrivée *</label>
+                <input type="date" id="date_arrivee" name="date_arrivee" required>
+            </div>
+            <div class="form-group">
+                <label for="date_depart">Date de départ *</label>
+                <input type="date" id="date_depart" name="date_depart" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre_jours">Nombre de jours</label>
+                <input type="number" id="nombre_jours" name="nombre_jours" readonly style="background: #f3f4f6;">
+            </div>
+            <div class="form-group">
+                <label for="sejour_numero">Numéro de séjour</label>
+                <input type="text" id="sejour_numero" name="sejour_numero">
+            </div>
+        </div>
+    </div>
+
+    <div class="dotted-section section-purple">
+        <h2>💰 Informations financières</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="facture_hebergement">Facture hébergement</label>
+                <input type="number" step="0.01" id="facture_hebergement" name="facture_hebergement">
+            </div>
+            <div class="form-group">
+                <label for="charge_plateforme">Charge plate-forme</label>
+                <input type="number" step="0.01" id="charge_plateforme" name="charge_plateforme">
+            </div>
+            <div class="form-group">
+                <label for="taxe_sejour">Taxe séjour</label>
+                <input type="number" step="0.01" id="taxe_sejour" name="taxe_sejour">
+            </div>
+        </div>
+    </div>
+
+    <div class="dotted-section section-blue">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 style="margin: 0;">👥 Personnes (Voyageurs)</h2>
+            <button type="button" onclick="addPersonne()" class="btn btn-primary btn-small">
+                + Ajouter une personne
+            </button>
+        </div>
+        
+        <div id="personnesContainer"></div>
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="btn btn-success">Enregistrer la réservation</button>
+        <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+        <a href="/dashboard" class="btn btn-secondary">Annuler</a>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let personneCount = 0;
+    
+    function calculateDays() {
+        const arrivee = document.getElementById('date_arrivee').value;
+        const depart = document.getElementById('date_depart').value;
+        
+        if (arrivee && depart) {
+            const start = new Date(arrivee);
+            const end = new Date(depart);
+            const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            document.getElementById('nombre_jours').value = days > 0 ? days : 0;
+        }
+    }
+    
+    document.getElementById('date_arrivee').addEventListener('change', calculateDays);
+    document.getElementById('date_depart').addEventListener('change', calculateDays);
+    
+    function addPersonne() {
+        personneCount++;
+        const isPrincipal = personneCount === 1;
+        
+        const personneHtml = `
+            <div class="person-card ${isPrincipal ? 'principal' : ''}" id="personne_${personneCount}">
+                <div class="person-header">
+                    <span class="person-badge">${isPrincipal ? 'Contact Principal' : `Personne ${personneCount}`}</span>
+                    ${!isPrincipal ? `<button type="button" class="person-remove" onclick="removePersonne(${personneCount})">Supprimer</button>` : ''}
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" name="personne_nom_${personneCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" name="personne_prenom_${personneCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="personne_email_${personneCount}">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" name="personne_telephone_${personneCount}">
+                    </div>
+                    <div class="form-group">
+                        <label>Pays</label>
+                        <input type="text" name="personne_pays_${personneCount}">
+                    </div>
+                    <div class="form-group">
+                        <label>Type pièce d'identité</label>
+                        <select name="personne_type_piece_${personneCount}">
+                            <option value="">Sélectionner...</option>
+                            <option value="passeport">Passeport</option>
+                            <option value="cin">CIN</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Numéro pièce d'identité</label>
+                        <input type="text" name="personne_numero_piece_${personneCount}">
+                    </div>
+                    <div class="form-group">
+                        <label>Date de naissance</label>
+                        <input type="date" name="personne_date_naissance_${personneCount}">
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('personnesContainer').insertAdjacentHTML('beforeend', personneHtml);
+    }
+    
+    function removePersonne(id) {
+        document.getElementById(`personne_${id}`).remove();
+    }
+    
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('alert-container');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.textContent = message;
+        alertContainer.innerHTML = '';
+        alertContainer.appendChild(alert);
+        
+        setTimeout(() => alert.remove(), 5000);
+    }
+    
+    document.getElementById('reservationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const reservation = {};
+        const personnes = [];
+        
+        for (let [key, value] of formData.entries()) {
+            if (key.startsWith('personne_')) {
+                const match = key.match(/personne_(\w+)_(\d+)/);
+                if (match) {
+                    const [, field, id] = match;
+                    const personneIndex = parseInt(id) - 1;
+                    
+                    if (!personnes[personneIndex]) {
+                        personnes[personneIndex] = {};
+                    }
+                    personnes[personneIndex][field] = value || null;
+                }
+            } else {
+                reservation[key] = value || null;
+            }
+        }
+        
+        try {
+            const response = await fetch('/api/reservations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reservation, personnes: personnes.filter(p => p) })
+            });
+            
+            if (response.ok) {
+                showAlert('Réservation créée avec succès !', 'success');
+                setTimeout(() => window.location.href = '/reservations', 1500);
+            } else {
+                showAlert('Erreur lors de la création de la réservation', 'error');
+            }
+        } catch (error) {
+            showAlert('Erreur de connexion au serveur', 'error');
+        }
+    });
+    
+    addPersonne();
+</script>
+{% endblock %}

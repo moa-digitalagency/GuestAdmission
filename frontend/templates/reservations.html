@@ -1,0 +1,179 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Réservations{% endblock %}
+{% block page_title %}Réservations{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1.5rem;">
+    <a href="/nouvelle-reservation" class="btn btn-primary">+ Nouvelle réservation</a>
+</div>
+
+<div id="alert-container"></div>
+
+<div class="dotted-section section-blue">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Contact principal</th>
+                    <th>Arrivée</th>
+                    <th>Départ</th>
+                    <th>Jours</th>
+                    <th>Facture</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="reservationsBody">
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 2rem;">Chargement...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="detailModal" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h2 style="margin: 0;">Détails de la réservation</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let reservations = [];
+    
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('alert-container');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.textContent = message;
+        alertContainer.innerHTML = '';
+        alertContainer.appendChild(alert);
+        
+        setTimeout(() => alert.remove(), 5000);
+    }
+    
+    async function loadReservations() {
+        try {
+            const response = await fetch('/api/reservations');
+            reservations = await response.json();
+            renderReservations();
+        } catch (error) {
+            showAlert('Erreur lors du chargement des réservations', 'error');
+        }
+    }
+    
+    function renderReservations() {
+        const tbody = document.getElementById('reservationsBody');
+        
+        if (reservations.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Aucune réservation</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = reservations.map(res => `
+            <tr>
+                <td>#${res.id}</td>
+                <td>${res.contact_nom || ''} ${res.contact_prenom || ''}</td>
+                <td>${res.date_arrivee || '-'}</td>
+                <td>${res.date_depart || '-'}</td>
+                <td>${res.nombre_jours || '-'}</td>
+                <td>${parseFloat(res.facture_hebergement || 0).toFixed(2)} MAD</td>
+                <td><span class="badge badge-green">${res.statut || 'active'}</span></td>
+                <td>
+                    <div class="actions">
+                        <button class="btn btn-small btn-primary" onclick="viewReservation(${res.id})">Détails</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteReservation(${res.id})">Supprimer</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    async function viewReservation(id) {
+        try {
+            const response = await fetch(`/api/reservations/${id}`);
+            const data = await response.json();
+            
+            const modal = document.getElementById('detailModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalBody.innerHTML = `
+                <div class="dotted-section section-green" style="margin-bottom: 1rem;">
+                    <h3>Informations de séjour</h3>
+                    <p><strong>Arrivée:</strong> ${data.reservation.date_arrivee || '-'}</p>
+                    <p><strong>Départ:</strong> ${data.reservation.date_depart || '-'}</p>
+                    <p><strong>Nombre de jours:</strong> ${data.reservation.nombre_jours || '-'}</p>
+                    <p><strong>Numéro séjour:</strong> ${data.reservation.sejour_numero || '-'}</p>
+                </div>
+                
+                <div class="dotted-section section-purple" style="margin-bottom: 1rem;">
+                    <h3>Informations financières</h3>
+                    <p><strong>Facture hébergement:</strong> ${parseFloat(data.reservation.facture_hebergement || 0).toFixed(2)} MAD</p>
+                    <p><strong>Charge plate-forme:</strong> ${parseFloat(data.reservation.charge_plateforme || 0).toFixed(2)} MAD</p>
+                    <p><strong>Taxe séjour:</strong> ${parseFloat(data.reservation.taxe_sejour || 0).toFixed(2)} MAD</p>
+                </div>
+                
+                <div class="dotted-section section-blue">
+                    <h3>Personnes (${data.personnes.length})</h3>
+                    ${data.personnes.map(p => `
+                        <div class="person-card ${p.est_contact_principal ? 'principal' : ''}" style="margin-bottom: 0.75rem;">
+                            ${p.est_contact_principal ? '<span class="person-badge">Contact Principal</span>' : ''}
+                            <p><strong>Nom:</strong> ${p.nom} ${p.prenom}</p>
+                            <p><strong>Email:</strong> ${p.email || '-'}</p>
+                            <p><strong>Téléphone:</strong> ${p.telephone || '-'}</p>
+                            <p><strong>Pays:</strong> ${p.pays || '-'}</p>
+                            <p><strong>Pièce d'identité:</strong> ${p.type_piece_identite || '-'} ${p.numero_piece_identite || ''}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        } catch (error) {
+            showAlert('Erreur lors du chargement des détails', 'error');
+        }
+    }
+    
+    function closeModal() {
+        document.getElementById('detailModal').classList.remove('active');
+    }
+    
+    async function deleteReservation(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/reservations/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showAlert('Réservation supprimée avec succès', 'success');
+                loadReservations();
+            } else {
+                showAlert('Erreur lors de la suppression', 'error');
+            }
+        } catch (error) {
+            showAlert('Erreur de connexion au serveur', 'error');
+        }
+    }
+    
+    window.onclick = function(event) {
+        const modal = document.getElementById('detailModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+    
+    loadReservations();
+</script>
+{% endblock %}

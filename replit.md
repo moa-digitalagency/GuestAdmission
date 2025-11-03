@@ -1,12 +1,13 @@
-# Application de Gestion d'Accueil - Maison d'Hôte
+# Système de Gestion de Réservations - Maison d'Hôte
 
 ## Vue d'ensemble
 
-Application web responsive pour la gestion et l'accueil des clients d'un établissement type maison d'hôte, riad, ou hébergement touristique. L'application permet d'enregistrer les informations complètes des clients et de les gérer via une interface web moderne.
+Système complet de gestion de réservations pour établissements touristiques (maisons d'hôte, riads, etc.). L'application offre un système d'authentification, la gestion multi-personnes par réservation, le calcul automatique de la durée de séjour, et une interface moderne avec navigation latérale.
 
 **Créé le:** 3 novembre 2025  
-**Version:** 1.0.0  
-**Design System:** MOA Design System
+**Version:** 2.0.0  
+**Design System:** MOA Design System  
+**Authentification:** Flask-Login
 
 ## Architecture du Projet
 
@@ -55,19 +56,26 @@ Application web responsive pour la gestion et l'accueil des clients d'un établi
 
 ## Fonctionnalités
 
-### 1. Enregistrement Client (Page d'Accueil)
-Formulaire complet organisé en 4 sections :
+### 1. Système d'Authentification
+- **Page de login sécurisée** avec design moderne (fond dégradé violet)
+- Compte admin par défaut : `admin` / `admin123`
+- Protection de toutes les pages avec Flask-Login
+- Déconnexion sécurisée
+- Gestion de sessions utilisateur
 
-**Section Bleue - Informations Personnelles**
-- Nom (requis)
-- Prénom (requis)
-- Email
-- Pays
-- Téléphone
+### 2. Tableau de Bord
+- **Statistiques en temps réel** :
+  - Réservations actives
+  - Total clients
+  - Arrivées du jour
+  - Revenus du mois
+- Liste des réservations récentes
+- Navigation rapide vers les fonctions principales
 
+### 3. Nouvelle Réservation (Multi-personnes)
 **Section Verte - Informations de Séjour**
-- Date d'arrivée
-- Date de départ
+- Date d'arrivée et date de départ
+- **Calcul automatique du nombre de jours** de séjour
 - Numéro de séjour
 
 **Section Violette - Informations Financières**
@@ -75,26 +83,71 @@ Formulaire complet organisé en 4 sections :
 - Charge plate-forme
 - Taxe séjour
 
-**Section Orange - Informations Mensuelles**
-- Revenu mensuel hébergement
-- Charges plate-forme mensuelle
-- Taxe séjour mensuelle
+**Section Bleue - Gestion Multi-Personnes**
+- Ajout illimité de personnes (voyageurs)
+- Première personne = **contact principal** de la réservation
+- Pour chaque personne :
+  - Nom et prénom (requis)
+  - Email, téléphone, pays
+  - **Type de pièce d'identité** : Passeport ou CIN
+  - Numéro de pièce d'identité
+  - Date de naissance
+- Interface intuitive avec cartes distinctives
+- Suppression possible (sauf contact principal)
 
-### 2. Gestion des Clients (Page Clients)
-- Liste complète des clients enregistrés
-- Tableau responsive avec toutes les informations essentielles
-- Actions disponibles :
-  - **Détails** : Voir toutes les informations d'un client
-  - **Supprimer** : Suppression avec confirmation
-- Modal pour affichage détaillé des informations client
+### 4. Gestion des Réservations
+- Liste complète des réservations avec contact principal
+- Affichage : dates, durée, facture, statut
+- Modal de détails complet avec :
+  - Informations de séjour
+  - Informations financières
+  - Liste de toutes les personnes liées
+- Suppression avec confirmation
 
-### 3. API REST
-Endpoints disponibles :
-- `GET /api/clients` - Liste tous les clients
-- `GET /api/clients/<id>` - Détails d'un client
-- `POST /api/clients` - Créer un nouveau client
-- `PUT /api/clients/<id>` - Modifier un client
-- `DELETE /api/clients/<id>` - Supprimer un client
+### 5. Base de Données Clients
+- Vue complète de toutes les personnes enregistrées
+- Informations affichées :
+  - Identité complète
+  - Coordonnées
+  - Pièce d'identité (type et numéro)
+  - Statut (contact principal ou non)
+
+### 6. Paramètres Système
+- Configuration de l'établissement
+- Informations du compte utilisateur
+- Statistiques globales (réservations, clients)
+
+### 7. Navigation Latérale (Sidebar)
+- **Design professionnel** avec bordure pointillée bleue (MOA)
+- Menu fixe avec icônes :
+  - 📊 Tableau de bord
+  - ➕ Nouvelle réservation
+  - 📅 Réservations
+  - 👥 Base clients
+  - ⚙️ Paramètres
+  - 🚪 Déconnexion
+- Indicateur visuel de la page active
+- Responsive (adapté mobile/tablette/PC)
+
+### 8. API REST Complète
+**Authentification**
+- `GET /login` - Page de connexion
+- `POST /login` - Authentifier un utilisateur
+- `GET /logout` - Déconnexion
+- `GET /api/current-user` - Info utilisateur connecté
+
+**Réservations**
+- `GET /api/reservations` - Liste toutes les réservations
+- `GET /api/reservations/<id>` - Détails d'une réservation
+- `POST /api/reservations` - Créer réservation + personnes
+- `PUT /api/reservations/<id>` - Modifier une réservation
+- `DELETE /api/reservations/<id>` - Supprimer une réservation
+
+**Personnes**
+- `GET /api/personnes` - Liste tous les clients
+- `POST /api/personnes` - Ajouter une personne
+- `PUT /api/personnes/<id>` - Modifier une personne
+- `DELETE /api/personnes/<id>` - Supprimer une personne
 
 ## Design System MOA
 
@@ -114,28 +167,73 @@ L'application utilise le **MOA Design System** avec :
 - Modals avec animations
 - Alertes de confirmation
 
-## Base de Données
+## Base de Données (Nouvelle Architecture)
 
-### Table `clients`
-
+### Table `users` - Utilisateurs administrateurs
 | Colonne | Type | Description |
 |---------|------|-------------|
-| id | SERIAL | Clé primaire auto-incrémentée |
-| nom | VARCHAR(100) | Nom du client (requis) |
-| prenom | VARCHAR(100) | Prénom du client (requis) |
-| mail | VARCHAR(150) | Email du client |
-| pays | VARCHAR(100) | Pays d'origine |
-| tel | VARCHAR(50) | Numéro de téléphone |
-| arrivee | DATE | Date d'arrivée |
-| depart | DATE | Date de départ |
+| id | SERIAL | Clé primaire |
+| username | VARCHAR(100) | Nom d'utilisateur (unique) |
+| password_hash | VARCHAR(255) | Mot de passe hashé (sécurisé) |
+| nom | VARCHAR(100) | Nom de l'utilisateur |
+| prenom | VARCHAR(100) | Prénom de l'utilisateur |
+| email | VARCHAR(150) | Email |
+| role | VARCHAR(50) | Rôle (admin par défaut) |
+| created_at | TIMESTAMP | Date de création |
+
+**Compte par défaut** : username=`admin`, password=`admin123`
+
+### Table `reservations` - Réservations
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | SERIAL | Clé primaire |
+| date_arrivee | DATE | Date d'arrivée (requis) |
+| date_depart | DATE | Date de départ (requis) |
+| nombre_jours | INTEGER | Nombre de jours (calculé auto) |
 | sejour_numero | VARCHAR(50) | Numéro de séjour |
-| facture_hebergement | DECIMAL(10,2) | Montant facture |
-| charge_plateforme | DECIMAL(10,2) | Frais plate-forme |
+| facture_hebergement | DECIMAL(10,2) | Facture hébergement |
+| charge_plateforme | DECIMAL(10,2) | Charge plate-forme |
 | taxe_sejour | DECIMAL(10,2) | Taxe de séjour |
 | revenu_mensuel_hebergement | DECIMAL(10,2) | Revenu mensuel |
 | charges_plateforme_mensuelle | DECIMAL(10,2) | Charges mensuelles |
 | taxe_sejour_mensuelle | DECIMAL(10,2) | Taxe mensuelle |
-| created_at | TIMESTAMP | Date de création (auto) |
+| statut | VARCHAR(50) | Statut (active, terminée, etc.) |
+| notes | TEXT | Notes libres |
+| created_at | TIMESTAMP | Date de création |
+| updated_at | TIMESTAMP | Date de modification |
+
+### Table `personnes` - Personnes liées aux réservations
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | SERIAL | Clé primaire |
+| reservation_id | INTEGER | FK vers reservations (CASCADE) |
+| est_contact_principal | BOOLEAN | Contact principal de la réservation |
+| nom | VARCHAR(100) | Nom (requis) |
+| prenom | VARCHAR(100) | Prénom (requis) |
+| email | VARCHAR(150) | Email |
+| telephone | VARCHAR(50) | Téléphone |
+| pays | VARCHAR(100) | Pays |
+| **type_piece_identite** | VARCHAR(50) | Type : **passeport** ou **cin** |
+| **numero_piece_identite** | VARCHAR(100) | Numéro de la pièce |
+| date_naissance | DATE | Date de naissance |
+| created_at | TIMESTAMP | Date de création |
+
+**Relation** : Une réservation peut avoir plusieurs personnes, la première est le contact principal.
+
+### Table `parametres_systeme` - Configuration système
+| Colonne | Type | Description |
+|---------|------|-------------|
+| id | SERIAL | Clé primaire |
+| nom_etablissement | VARCHAR(200) | Nom de l'établissement |
+| adresse | TEXT | Adresse |
+| telephone | VARCHAR(50) | Téléphone |
+| email | VARCHAR(150) | Email |
+| devise | VARCHAR(10) | Devise (MAD par défaut) |
+| taux_taxe_sejour | DECIMAL(5,2) | Taux taxe séjour (%) |
+| taux_charge_plateforme | DECIMAL(5,2) | Taux charge plate-forme (%) |
+| logo_url | VARCHAR(500) | URL du logo |
+| created_at | TIMESTAMP | Date de création |
+| updated_at | TIMESTAMP | Date de modification |
 
 ## Configuration et Déploiement
 
@@ -164,16 +262,27 @@ L'application sera accessible sur http://localhost:5000
 - ✅ Confirmations avant suppressions
 - ✅ Gestion d'erreurs avec messages utilisateur
 
+## Améliorations Réalisées (Version 2.0)
+- ✅ **Authentification admin sécurisée** avec Flask-Login
+- ✅ **Gestion multi-personnes** par réservation
+- ✅ **Pièces d'identité** (Passeport/CIN) pour chaque personne
+- ✅ **Calcul automatique** du nombre de jours de séjour
+- ✅ **Navigation latérale** professionnelle et responsive
+- ✅ **Nouvelle architecture de base de données** (users, reservations, personnes, parametres)
+- ✅ **Tableau de bord** avec statistiques en temps réel
+- ✅ **Contact principal** distinct pour chaque réservation
+
 ## Améliorations Futures
 
 ### Fonctionnalités
-- [ ] Authentification utilisateur
 - [ ] Export des données en Excel
-- [ ] Recherche et filtres avancés
-- [ ] Statistiques et rapports
-- [ ] Gestion des chambres/réservations
-- [ ] Envoi d'emails automatiques
+- [ ] Recherche et filtres avancés dans les réservations
+- [ ] Statistiques et rapports détaillés
+- [ ] Gestion des chambres et disponibilité
+- [ ] Envoi d'emails automatiques (confirmations, rappels)
 - [ ] Historique des modifications
+- [ ] Import de données Excel existantes
+- [ ] Gestion multi-utilisateurs avec rôles
 
 ### Technique
 - [ ] Tests unitaires et d'intégration
