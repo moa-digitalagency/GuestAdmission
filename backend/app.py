@@ -11,6 +11,7 @@ from .routes.chambres import chambres_bp
 from .routes.etablissements import etablissements_bp
 from .routes.data_management import data_bp
 from .routes.personnels import personnels_bp
+from .routes.extras import extras_bp
 from .models.user import User
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,6 +41,7 @@ app.register_blueprint(chambres_bp)
 app.register_blueprint(etablissements_bp)
 app.register_blueprint(data_bp)
 app.register_blueprint(personnels_bp)
+app.register_blueprint(extras_bp)
 
 @app.route('/')
 @login_required
@@ -75,6 +77,16 @@ def parametres():
 @login_required
 def statistiques():
     return render_template('statistiques.html')
+
+@app.route('/extras')
+@login_required
+def extras_page():
+    return render_template('extras.html')
+
+@app.route('/sejour/<int:sejour_id>')
+@login_required
+def sejour_detail(sejour_id):
+    return render_template('sejour_detail.html', sejour_id=sejour_id)
 
 @app.route('/favicon.ico')
 def favicon():
