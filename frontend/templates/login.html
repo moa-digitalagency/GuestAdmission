@@ -25,14 +25,14 @@
         .login-box {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 3rem;
-            border-radius: 1.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(139, 92, 246, 0.2);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            border: 3px dotted #8b5cf6;
+            box-shadow: 0 4px 6px rgba(139, 92, 246, 0.15);
             max-width: 420px;
             width: 100%;
             position: relative;
             z-index: 1;
-            border: 3px solid rgba(255, 255, 255, 0.3);
             animation: fadeIn 0.6s ease-out;
         }
         
@@ -49,18 +49,14 @@
         
         .login-header {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
         
         .login-header h1 {
-            color: #1d4ed8;
+            color: #1f2937;
             margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.6rem;
+            font-weight: 600;
         }
         
         .login-header p {
@@ -70,7 +66,7 @@
         }
         
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
         
         .form-group label {
@@ -78,61 +74,70 @@
             margin-bottom: 0.5rem;
             color: #374151;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.875rem;
         }
         
         .form-group input {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             box-sizing: border-box;
+            background: #ffffff;
+            color: #1f2937;
         }
         
         .form-group input:focus {
             outline: none;
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px #2563eb;
         }
         
-        .btn-primary {
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .btn-login {
             width: 100%;
-            padding: 0.875rem 1.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 0.75rem;
-            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 2px solid #3b82f6;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.15);
         }
         
-        .btn-primary:hover {
+        .btn-login:hover {
+            background: #dbeafe;
+            border-color: #2563eb;
+            box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
         }
         
-        .btn-primary:active {
+        .btn-login:active {
             transform: translateY(0);
         }
         
         .default-credentials {
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             text-align: center;
             padding: 1rem;
-            background: rgba(139, 92, 246, 0.05);
-            border-radius: 0.75rem;
-            border: 2px dotted #8b5cf6;
+            background: rgba(139, 92, 246, 0.08);
+            border-radius: 1rem;
+            border: 3px dotted #8b5cf6;
         }
         
         .default-credentials strong {
-            color: #1d4ed8;
+            color: #1f2937;
             display: block;
             margin-bottom: 0.5rem;
+            font-size: 0.875rem;
         }
         
         .default-credentials code {
@@ -142,12 +147,13 @@
             color: #8b5cf6;
             font-weight: 600;
             border: 1px solid #e5e7eb;
+            font-size: 0.875rem;
         }
         
         .alert {
             padding: 1rem;
             border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             font-size: 0.9rem;
             animation: slideDown 0.3s ease;
         }
@@ -164,7 +170,7 @@
         }
         
         .alert-error {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.05);
             color: #991b1b;
             border: 2px solid #ef4444;
         }
@@ -191,7 +197,7 @@
                     <input type="password" id="password" name="password" required autocomplete="current-password">
                 </div>
 
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="btn-login">
                     Se connecter
                 </button>
 
