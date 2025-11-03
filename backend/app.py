@@ -1,11 +1,14 @@
+import os
 from flask import Flask, render_template
 from flask_cors import CORS
-from backend.config.database import init_db
-from backend.routes.clients import clients_bp
+from .config.database import init_db
+from .routes.clients import clients_bp
+
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 app = Flask(__name__, 
-            template_folder='../frontend/templates',
-            static_folder='../frontend/static')
+            template_folder=os.path.join(base_dir, 'frontend', 'templates'),
+            static_folder=os.path.join(base_dir, 'frontend', 'static'))
 CORS(app)
 
 app.register_blueprint(clients_bp)

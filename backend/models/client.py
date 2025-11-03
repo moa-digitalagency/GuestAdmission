@@ -1,4 +1,4 @@
-from backend.config.database import get_db_connection
+from ..config.database import get_db_connection
 
 class Client:
     @staticmethod
@@ -23,12 +23,14 @@ class Client:
             data.get('charges_plateforme_mensuelle'), data.get('taxe_sejour_mensuelle')
         ))
         
-        client_id = cur.fetchone()['id']
+        result = cur.fetchone()
         conn.commit()
         cur.close()
         conn.close()
         
-        return client_id
+        if result:
+            return result['id']  # type: ignore
+        return None
     
     @staticmethod
     def get_all():
