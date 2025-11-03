@@ -424,6 +424,8 @@ tr:hover {
     flex: 1;
     padding: 1.5rem 0;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-link {
