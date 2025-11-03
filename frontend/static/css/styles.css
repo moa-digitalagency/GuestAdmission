@@ -31,9 +31,10 @@ nav {
 
 .nav-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
+    gap: 2rem;
 }
 
 .nav-brand {
@@ -45,6 +46,7 @@ nav {
 .nav-links {
     display: flex;
     gap: 0.5rem;
+    flex: 1;
 }
 
 .nav-link {
@@ -57,11 +59,7 @@ nav {
     transition: all 0.2s ease;
 }
 
-.nav-link:hover {
-    color: #2563eb;
-    background: #eff6ff;
-}
-
+.nav-link:hover,
 .nav-link.active {
     color: #2563eb;
     background: #eff6ff;
@@ -445,12 +443,7 @@ tr:hover {
     font-size: 1.2rem;
 }
 
-.sidebar-link:hover {
-    background: #eff6ff;
-    color: #2563eb;
-    border-left-color: #2563eb;
-}
-
+.sidebar-link:hover,
 .sidebar-link.active {
     background: #eff6ff;
     color: #2563eb;

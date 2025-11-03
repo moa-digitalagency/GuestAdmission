@@ -5,47 +5,104 @@
 
 {% block content %}
 <form id="parametresForm">
-    <div class="dotted-section section-purple">
-        <h2>⚙️ Configuration de l'établissement</h2>
-        <p style="color: #6b7280; margin-bottom: 1.5rem;">Configurez les informations de votre établissement et les paramètres du système.</p>
+    <div class="dotted-section section-blue">
+        <h2>🏢 Informations de l'établissement</h2>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">Configurez les informations générales de votre établissement.</p>
         
         <div class="form-grid">
             <div class="form-group">
-                <label for="nom_etablissement">Nom de l'établissement</label>
-                <input type="text" id="nom_etablissement" name="nom_etablissement">
+                <label for="nom_etablissement">Nom de l'établissement *</label>
+                <input type="text" id="nom_etablissement" name="nom_etablissement" required>
             </div>
             
             <div class="form-group">
-                <label for="pays">Pays de l'établissement</label>
-                <select id="pays" name="pays">
+                <label for="pays">Pays *</label>
+                <select id="pays" name="pays" required>
                     <option value="">Sélectionner un pays...</option>
                 </select>
             </div>
             
             <div class="form-group">
-                <label for="devise">Devise</label>
-                <input type="text" id="devise" name="devise" readonly style="background: #f9fafb;">
+                <label for="ville">Ville</label>
+                <select id="ville" name="ville">
+                    <option value="">Sélectionner une ville...</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="adresse">Adresse complète</label>
+                <textarea id="adresse" name="adresse" rows="2" style="resize: vertical;"></textarea>
             </div>
             
             <div class="form-group">
-                <label for="taux_taxe_sejour">Taxe de séjour (%)</label>
-                <input type="number" id="taux_taxe_sejour" name="taux_taxe_sejour" step="0.01">
+                <label for="telephone">Téléphone</label>
+                <input type="tel" id="telephone" name="telephone" placeholder="+212 XXX XXX XXX">
             </div>
             
             <div class="form-group">
-                <label for="taux_tva">TVA (%)</label>
-                <input type="number" id="taux_tva" name="taux_tva" step="0.01">
+                <label for="whatsapp">WhatsApp</label>
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="+212 XXX XXX XXX">
             </div>
             
             <div class="form-group">
-                <label for="nombre_chambres">Nombre de chambres</label>
-                <input type="number" id="nombre_chambres" name="nombre_chambres" min="1">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="contact@etablissement.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="devise">Devise *</label>
+                <input type="text" id="devise" name="devise" required placeholder="MAD, EUR, USD...">
             </div>
         </div>
     </div>
 
-    <div class="dotted-section section-blue">
-        <h2>💰 Prix des chambres</h2>
+    <div class="dotted-section section-green">
+        <h2>👤 Responsable de l'établissement</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="responsable_prenom">Prénom du responsable</label>
+                <input type="text" id="responsable_prenom" name="responsable_prenom">
+            </div>
+            
+            <div class="form-group">
+                <label for="responsable_nom">Nom du responsable</label>
+                <input type="text" id="responsable_nom" name="responsable_nom">
+            </div>
+            
+            <div class="form-group">
+                <label for="responsable_email">Email du responsable</label>
+                <input type="email" id="responsable_email" name="responsable_email">
+            </div>
+            
+            <div class="form-group">
+                <label for="responsable_telephone">Téléphone du responsable</label>
+                <input type="tel" id="responsable_telephone" name="responsable_telephone">
+            </div>
+        </div>
+    </div>
+
+    <div class="dotted-section section-purple">
+        <h2>💰 Tarification et taxes</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="taux_taxe_sejour">Taxe de séjour (%)</label>
+                <input type="number" id="taux_taxe_sejour" name="taux_taxe_sejour" step="0.01" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="taux_tva">TVA (%)</label>
+                <input type="number" id="taux_tva" name="taux_tva" step="0.01" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre_chambres">Nombre de chambres *</label>
+                <input type="number" id="nombre_chambres" name="nombre_chambres" min="1" required>
+            </div>
+        </div>
+    </div>
+
+    <div class="dotted-section section-orange">
+        <h2>💵 Prix des chambres</h2>
         <div class="form-grid">
             <div class="form-group" style="grid-column: 1 / -1;">
                 <label style="font-weight: 600; margin-bottom: 1rem; display: block;">Type de tarification</label>
@@ -64,8 +121,8 @@
             </div>
             
             <div id="prix_same_container" class="form-group" style="grid-column: 1 / -1;">
-                <label for="prix_uniforme">Prix par nuit</label>
-                <input type="number" id="prix_uniforme" step="0.01" placeholder="Prix par nuit">
+                <label for="prix_uniforme">Prix par nuit (devise locale)</label>
+                <input type="number" id="prix_uniforme" step="0.01" min="0" placeholder="Prix par nuit">
             </div>
             
             <div id="prix_different_container" style="display: none; grid-column: 1 / -1;">
@@ -74,7 +131,7 @@
         </div>
     </div>
 
-    <div class="dotted-section section-green">
+    <div class="dotted-section section-cyan">
         <h2>👤 Compte utilisateur</h2>
         <div class="form-grid">
             <div class="form-group">
@@ -88,7 +145,7 @@
         </div>
     </div>
 
-    <div class="dotted-section section-orange">
+    <div class="dotted-section section-indigo" style="background: rgba(99, 102, 241, 0.05); border: 3px dotted #6366f1; box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1);">
         <h2>📊 Statistiques système</h2>
         <div class="stats-grid">
             <div class="stat-card blue">
@@ -128,6 +185,9 @@
                 option.textContent = `${country.flag} ${country.name}`;
                 option.dataset.currency = country.currency;
                 option.dataset.currencyName = country.currencyName;
+                if (country.cities) {
+                    option.dataset.cities = JSON.stringify(country.cities);
+                }
                 paysSelect.appendChild(option);
             });
         } catch (error) {
@@ -137,8 +197,26 @@
     
     document.getElementById('pays').addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.dataset.currency) {
-            document.getElementById('devise').value = selectedOption.dataset.currency;
+        const villeSelect = document.getElementById('ville');
+        
+        villeSelect.innerHTML = '<option value="">Sélectionner une ville...</option>';
+        
+        if (selectedOption.dataset.cities) {
+            try {
+                const cities = JSON.parse(selectedOption.dataset.cities);
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    villeSelect.appendChild(option);
+                });
+                villeSelect.disabled = false;
+            } catch (e) {
+                console.error('Erreur parsing villes:', e);
+                villeSelect.disabled = true;
+            }
+        } else {
+            villeSelect.disabled = true;
         }
     });
     
@@ -154,10 +232,27 @@
             
             document.getElementById('nom_etablissement').value = currentParams.nom_etablissement || '';
             document.getElementById('pays').value = currentParams.pays || '';
+            
+            const paysSelectEvent = new Event('change');
+            document.getElementById('pays').dispatchEvent(paysSelectEvent);
+            
+            setTimeout(() => {
+                document.getElementById('ville').value = currentParams.ville || '';
+            }, 100);
+            
+            document.getElementById('adresse').value = currentParams.adresse || '';
+            document.getElementById('telephone').value = currentParams.telephone || '';
+            document.getElementById('whatsapp').value = currentParams.whatsapp || '';
+            document.getElementById('email').value = currentParams.email || '';
             document.getElementById('devise').value = currentParams.devise || 'MAD';
             document.getElementById('taux_taxe_sejour').value = currentParams.taux_taxe_sejour || 0;
             document.getElementById('taux_tva').value = currentParams.taux_tva || 0;
             document.getElementById('nombre_chambres').value = currentParams.nombre_chambres || 1;
+            
+            document.getElementById('responsable_prenom').value = currentParams.responsable_prenom || '';
+            document.getElementById('responsable_nom').value = currentParams.responsable_nom || '';
+            document.getElementById('responsable_email').value = currentParams.responsable_email || '';
+            document.getElementById('responsable_telephone').value = currentParams.responsable_telephone || '';
             
             const prixChambres = currentParams.prix_chambres || [];
             if (prixChambres.length > 0) {
@@ -209,11 +304,10 @@
         container.innerHTML = '';
         for (let i = 0; i < nombreChambres; i++) {
             const div = document.createElement('div');
-            div.style.marginBottom = '0.5rem';
+            div.className = 'form-group';
             div.innerHTML = `
-                <label style="display: block; margin-bottom: 0.25rem;">Chambre ${i + 1}</label>
-                <input type="number" class="prix-chambre" step="0.01" placeholder="Prix par nuit" 
-                       style="width: 100%;" value="${prixChambres[i] || ''}">
+                <label>Chambre ${i + 1}</label>
+                <input type="number" class="prix-chambre" step="0.01" min="0" placeholder="Prix par nuit" value="${prixChambres[i] || ''}">
             `;
             container.appendChild(div);
         }
@@ -238,12 +332,21 @@
             const data = {
                 nom_etablissement: document.getElementById('nom_etablissement').value,
                 pays: document.getElementById('pays').value,
+                ville: document.getElementById('ville').value,
+                adresse: document.getElementById('adresse').value,
+                telephone: document.getElementById('telephone').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                email: document.getElementById('email').value,
                 devise: document.getElementById('devise').value,
                 taux_taxe_sejour: parseFloat(document.getElementById('taux_taxe_sejour').value) || 0,
                 taux_tva: parseFloat(document.getElementById('taux_tva').value) || 0,
                 taux_charge_plateforme: currentParams.taux_charge_plateforme || 0,
-                nombre_chambres: parseInt(document.getElementById('nombre_chambres').value) || 1,
-                prix_chambres: prixChambres
+                nombre_chambres: nombreChambres,
+                prix_chambres: prixChambres,
+                responsable_prenom: document.getElementById('responsable_prenom').value,
+                responsable_nom: document.getElementById('responsable_nom').value,
+                responsable_email: document.getElementById('responsable_email').value,
+                responsable_telephone: document.getElementById('responsable_telephone').value
             };
             
             const response = await fetch('/api/parametres', {

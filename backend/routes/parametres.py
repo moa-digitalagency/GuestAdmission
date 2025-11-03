@@ -33,23 +33,41 @@ def update_parametres():
         UPDATE parametres_systeme
         SET nom_etablissement = %s,
             pays = %s,
+            ville = %s,
+            adresse = %s,
+            telephone = %s,
+            whatsapp = %s,
+            email = %s,
             devise = %s,
             taux_taxe_sejour = %s,
             taux_tva = %s,
             taux_charge_plateforme = %s,
             nombre_chambres = %s,
             prix_chambres = %s,
+            responsable_prenom = %s,
+            responsable_nom = %s,
+            responsable_email = %s,
+            responsable_telephone = %s,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = 1
     ''', (
         data.get('nom_etablissement'),
         data.get('pays'),
+        data.get('ville'),
+        data.get('adresse'),
+        data.get('telephone'),
+        data.get('whatsapp'),
+        data.get('email'),
         data.get('devise'),
         data.get('taux_taxe_sejour'),
         data.get('taux_tva'),
         data.get('taux_charge_plateforme'),
         data.get('nombre_chambres'),
-        json.dumps(data.get('prix_chambres', []))
+        json.dumps(data.get('prix_chambres', [])),
+        data.get('responsable_prenom'),
+        data.get('responsable_nom'),
+        data.get('responsable_email'),
+        data.get('responsable_telephone')
     ))
     
     conn.commit()
