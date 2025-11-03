@@ -5,6 +5,53 @@ Application Flask de gestion de maison d'hôte avec gestion complète des établ
 
 ## État du projet - 3 novembre 2025
 
+### ✅ Dernières mises à jour (3 nov 2025 - 22:15)
+- **✨ Refactorisation Architecture - Services & Utilitaires**:
+  - Création dossier `backend/services/` pour la logique métier
+  - Création dossier `backend/utils/` pour les utilitaires
+  - Service `SejourService` pour gestion centralisée des séjours
+  - Service `ExtraService` pour gestion des suppléments
+  - Séparation claire: Routes → Services → Modèles
+
+- **💰 Système de Gestion des Extras (NOUVEAU)**:
+  - Table `extras` créée avec gestion complète
+  - Table `sejours_extras` pour liaison séjour-extra
+  - Routes API complètes: `/api/extras` (CRUD complet)
+  - Page dédiée `/extras` avec:
+    - Liste des extras par établissement
+    - Ajout/modification/suppression d'extras
+    - Sommation des extras par période
+    - Prix unitaire et unité de mesure personnalisables
+  - Facturation des extras aux séjours
+  - Calcul automatique du montant total
+
+- **🎨 Amélioration Interface Séjours**:
+  - Codes couleur pour les statuts:
+    - ✅ Vert: Séjours actifs
+    - ⚪ Gris: Séjours terminés
+    - ❌ Rouge: Séjours annulés
+  - Système de filtres avancés:
+    - Filtrage par établissement
+    - Filtrage par statut (actif/terminé/annulé)
+    - Recherche par numéro de séjour ou nom contact
+    - Filtrage par dates (arrivée/départ)
+    - Bouton réinitialiser les filtres
+  - Fonction d'impression de la liste filtrée
+  - Interface en cartes au lieu de tableau
+
+- **📄 Page Détail Séjour (NOUVELLE)**:
+  - Route `/sejour/<id>` pour accès direct
+  - Affichage complet des informations:
+    - Informations générales du séjour
+    - Détails de l'établissement
+    - Chambres assignées
+    - Liste des personnes/clients
+    - Extras facturés avec montants
+    - Récapitulatif financier total
+  - Ajout d'extras directement au séjour
+  - Suppression d'extras du séjour
+  - Fonction d'impression optimisée pour PDF
+
 ### ✅ Dernières mises à jour (3 nov 2025 - 20:30)
 - **✨ Gestion des chambres entièrement fonctionnelle**:
   - Ajout endpoint GET `/api/chambres/<id>` pour récupérer une chambre
@@ -51,31 +98,43 @@ Application Flask de gestion de maison d'hôte avec gestion complète des établ
 
 #### Backend (Flask)
 - **App principal**: `backend/app.py`
+- **Services** (NOUVEAU):
+  - `sejour_service.py` - Logique métier des séjours avec filtres
+  - `extra_service.py` - Logique métier des extras et facturation
+- **Utilitaires** (NOUVEAU):
+  - `serializers.py` - Sérialisation des données
+  - `formatters.py` - Formatage des devises, dates, numéros
 - **Routes**:
   - `auth.py` - Authentification et gestion utilisateurs
   - `etablissements.py` - Gestion des établissements (CRUD complet)
   - `chambres.py` - Gestion des chambres (CRUD complet + endpoint GET single)
   - `sejours.py` - Gestion des séjours et clients (anciennement reservations.py)
+  - `extras.py` - **NOUVEAU** Gestion des extras (CRUD complet + facturation)
   - `parametres.py` - Paramètres système
-  - `personnels.py` - **NOUVEAU** Gestion du personnel (CRUD complet)
+  - `personnels.py` - Gestion du personnel (CRUD complet)
   - `data_management.py` - Chargement demo et réinitialisation
   - `clients.py` - Gestion des clients
   - `countries.py` - API pour les pays et villes
 
 #### Frontend
 - **Templates**: `frontend/templates/`
-  - `base_dashboard.html` - Template de base avec sidebar et navigation
+  - `base_dashboard.html` - Template de base avec sidebar et navigation (+ lien Extras)
   - `login.html` - Page de connexion
   - `dashboard.html` - Tableau de bord
   - `statistiques.html` - Page statistiques dédiée
   - `parametres.html` - Page paramètres (Établissements, Chambres, Personnels)
   - `nouveau_sejour.html` - Créer un séjour (anciennement nouvelle_reservation.html)
-  - `sejours.html` - Liste des séjours (anciennement reservations.html)
+  - `sejours.html` - **AMÉLIORÉ** Liste avec filtres, couleurs et impression
+  - `sejour_detail.html` - **NOUVEAU** Page détail complet d'un séjour
+  - `extras.html` - **NOUVEAU** Gestion des extras et sommaire
   - `clients_list.html` - Liste des clients
 
 - **Static**: `frontend/static/`
   - `css/styles.css` - Styles CSS avec sections dotted
   - `data/countries.json` - Liste des pays et villes
+  - `js/sejours.js` - **AMÉLIORÉ** Filtres, couleurs et impression
+  - `js/extras.js` - **NOUVEAU** Gestion des extras
+  - `js/common.js`, `js/dashboard.js`, etc. - Scripts existants
 
 ### 🔧 Fonctionnalités
 
