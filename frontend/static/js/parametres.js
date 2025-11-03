@@ -443,13 +443,14 @@ function renderChambres() {
     
     chambres.forEach(chambre => {
         const etab = etablissements.find(e => e.id === chambre.etablissement_id);
+        const isDisponible = chambre.statut === 'disponible';
         const card = document.createElement('div');
         card.className = 'dotted-section section-purple';
         card.style.marginBottom = '1.5rem';
         card.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                 <h3 style="margin: 0; color: #7c3aed;">
-                    ${chambre.disponible ? '🏠' : '⭕'} ${chambre.numero_chambre}
+                    ${isDisponible ? '🏠' : '⭕'} ${chambre.nom}
                 </h3>
                 <div style="display: flex; gap: 0.5rem;">
                     <button type="button" class="btn btn-primary btn-small" onclick="editChambre(${chambre.id})">
@@ -465,13 +466,16 @@ function renderChambres() {
                     <strong>Établissement:</strong> ${etab?.nom_etablissement || 'N/A'}
                 </div>
                 <div>
-                    <strong>Type:</strong> ${chambre.type_chambre || 'N/A'}
+                    <strong>Description:</strong> ${chambre.description || 'N/A'}
                 </div>
                 <div>
                     <strong>Capacité:</strong> ${chambre.capacite || 'N/A'} pers.
                 </div>
                 <div>
-                    <strong>Statut:</strong> <span style="color: ${chambre.disponible ? '#059669' : '#dc2626'};">${chambre.disponible ? 'Disponible' : 'Occupée'}</span>
+                    <strong>Prix/nuit:</strong> ${chambre.prix_par_nuit || 0} MAD
+                </div>
+                <div>
+                    <strong>Statut:</strong> <span style="color: ${isDisponible ? '#059669' : '#dc2626'};">${isDisponible ? 'Disponible' : 'Occupée'}</span>
                 </div>
             </div>
         `;
@@ -535,15 +539,15 @@ function showChambreModal(chambre) {
                     </div>
                     <div class="form-group">
                         <label>Numéro *</label>
-                        <input type="text" id="chambre_numero" value="${chambre?.numero_chambre || ''}" required>
+                        <input type="text" id="chambre_numero" value="${chambre?.nom?.split(' - ')[0] || ''}" required>
                     </div>
                     <div class="form-group">
                         <label>Type *</label>
                         <select id="chambre_type" required>
-                            <option value="Simple" ${chambre?.type_chambre === 'Simple' ? 'selected' : ''}>Simple</option>
-                            <option value="Double" ${chambre?.type_chambre === 'Double' ? 'selected' : ''}>Double</option>
-                            <option value="Suite" ${chambre?.type_chambre === 'Suite' ? 'selected' : ''}>Suite</option>
-                            <option value="Familiale" ${chambre?.type_chambre === 'Familiale' ? 'selected' : ''}>Familiale</option>
+                            <option value="Simple" ${chambre?.description === 'Simple' ? 'selected' : ''}>Simple</option>
+                            <option value="Double" ${chambre?.description === 'Double' ? 'selected' : ''}>Double</option>
+                            <option value="Suite" ${chambre?.description === 'Suite' ? 'selected' : ''}>Suite</option>
+                            <option value="Familiale" ${chambre?.description === 'Familiale' ? 'selected' : ''}>Familiale</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -577,13 +581,16 @@ function closeChambreModal() {
 }
 
 async function saveChambre(chambre) {
+    const numero = document.getElementById('chambre_numero').value;
+    const type = document.getElementById('chambre_type').value;
+    
     const data = {
         etablissement_id: parseInt(document.getElementById('chambre_etab').value),
-        numero_chambre: document.getElementById('chambre_numero').value,
-        type_chambre: document.getElementById('chambre_type').value,
+        nom: `${numero} - ${type}`,
+        description: type,
         capacite: parseInt(document.getElementById('chambre_capacite').value),
         prix_par_nuit: parseFloat(document.getElementById('chambre_prix').value),
-        disponible: chambre?.disponible !== false
+        statut: chambre?.statut || 'disponible'
     };
     
     try {
