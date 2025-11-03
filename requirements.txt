@@ -58,3 +58,8 @@ sqlalchemy
 typing-extensions
 urllib3
 werkzeug
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
