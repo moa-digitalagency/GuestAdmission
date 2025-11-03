@@ -20,19 +20,20 @@ if (form) {
         try {
             const response = await fetch('/login', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
             });
             
-            if (response.ok) {
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
                 window.location.href = '/dashboard';
             } else {
-                const data = await response.json();
-                showAlert(data.error || 'Erreur de connexion', 'error');
+                showAlert(data.message || 'Identifiants incorrects', 'error');
             }
         } catch (error) {
             console.error('Erreur:', error);
-            showAlert('Erreur de connexion', 'error');
+            showAlert('Erreur de connexion au serveur', 'error');
         }
     });
 }
