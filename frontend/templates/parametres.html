@@ -8,23 +8,64 @@
     <h2>⚙️ Configuration de l'établissement</h2>
     <p style="color: #6b7280; margin-bottom: 1.5rem;">Configurez les informations de votre établissement et les paramètres du système.</p>
     
-    <div class="form-grid">
-        <div class="form-group">
+    <div style="max-width: 600px;">
+        <div class="form-group" style="margin-bottom: 1rem;">
             <label>Nom de l'établissement</label>
-            <input type="text" value="Maison d'Hôte" readonly style="background: #f9fafb;">
+            <input type="text" id="nom_etablissement" style="width: 100%;">
         </div>
-        <div class="form-group">
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Pays de l'établissement</label>
+            <input type="text" id="pays" style="width: 100%;">
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
             <label>Devise</label>
-            <input type="text" value="MAD" readonly style="background: #f9fafb;">
+            <input type="text" id="devise" style="width: 100%;">
         </div>
-        <div class="form-group">
-            <label>Taux taxe séjour (%)</label>
-            <input type="number" value="2.5" readonly style="background: #f9fafb;">
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Taxe de séjour (%)</label>
+            <input type="number" id="taux_taxe_sejour" step="0.01" style="width: 100%;">
         </div>
-        <div class="form-group">
-            <label>Taux charge plate-forme (%)</label>
-            <input type="number" value="15.0" readonly style="background: #f9fafb;">
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label>TVA (%)</label>
+            <input type="number" id="taux_tva" step="0.01" style="width: 100%;">
         </div>
+        
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label>Nombre de chambres</label>
+            <input type="number" id="nombre_chambres" min="1" style="width: 100%;">
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label>Prix des chambres</label>
+            <div style="margin-bottom: 0.5rem;">
+                <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                    <input type="radio" name="prix_type" value="same" checked style="margin-right: 0.5rem;">
+                    Prix égal pour toutes les chambres
+                </label>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                    <input type="radio" name="prix_type" value="different" style="margin-right: 0.5rem;">
+                    Prix différent par chambre
+                </label>
+            </div>
+            
+            <div id="prix_same_container">
+                <input type="number" id="prix_uniforme" step="0.01" placeholder="Prix par nuit" style="width: 100%;">
+            </div>
+            
+            <div id="prix_different_container" style="display: none;">
+                <div id="prix_chambres_list"></div>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="saveParams()" style="width: 100%;">
+            💾 Enregistrer les paramètres
+        </button>
     </div>
 </div>
 
@@ -32,14 +73,14 @@
     <h2>👤 Compte utilisateur</h2>
     <p style="color: #6b7280; margin-bottom: 1.5rem;">Informations de votre compte administrateur.</p>
     
-    <div class="form-grid">
-        <div class="form-group">
+    <div style="max-width: 600px;">
+        <div class="form-group" style="margin-bottom: 1rem;">
             <label>Nom d'utilisateur</label>
-            <input type="text" id="username" readonly style="background: #f9fafb;">
+            <input type="text" id="username" readonly style="background: #f9fafb; width: 100%;">
         </div>
         <div class="form-group">
             <label>Rôle</label>
-            <input type="text" id="role" readonly style="background: #f9fafb;">
+            <input type="text" id="role" readonly style="background: #f9fafb; width: 100%;">
         </div>
     </div>
 </div>
@@ -61,12 +102,40 @@
 
 {% block scripts %}
 <script>
+    let currentParams = {};
+    
     async function loadParams() {
         try {
             const userResponse = await fetch('/api/current-user');
             const user = await userResponse.json();
             document.getElementById('username').value = user.username;
             document.getElementById('role').value = user.role;
+            
+            const paramsResponse = await fetch('/api/parametres');
+            currentParams = await paramsResponse.json();
+            
+            document.getElementById('nom_etablissement').value = currentParams.nom_etablissement || '';
+            document.getElementById('pays').value = currentParams.pays || '';
+            document.getElementById('devise').value = currentParams.devise || 'MAD';
+            document.getElementById('taux_taxe_sejour').value = currentParams.taux_taxe_sejour || 0;
+            document.getElementById('taux_tva').value = currentParams.taux_tva || 0;
+            document.getElementById('nombre_chambres').value = currentParams.nombre_chambres || 1;
+            
+            const prixChambres = currentParams.prix_chambres || [];
+            if (prixChambres.length > 0) {
+                const allSame = prixChambres.every(prix => prix === prixChambres[0]);
+                if (allSame) {
+                    document.querySelector('input[name="prix_type"][value="same"]').checked = true;
+                    document.getElementById('prix_uniforme').value = prixChambres[0];
+                    updatePrixType();
+                } else {
+                    document.querySelector('input[name="prix_type"][value="different"]').checked = true;
+                    updatePrixType();
+                    updatePrixDifferentInputs();
+                }
+            } else {
+                document.getElementById('prix_uniforme').value = '';
+            }
             
             const resResponse = await fetch('/api/reservations');
             const reservations = await resResponse.json();
@@ -77,8 +146,98 @@
             document.getElementById('totalClients').textContent = clients.length;
         } catch (error) {
             console.error('Erreur chargement paramètres:', error);
+            alert('Erreur lors du chargement des paramètres');
         }
     }
+    
+    function updatePrixType() {
+        const prixType = document.querySelector('input[name="prix_type"]:checked').value;
+        
+        if (prixType === 'same') {
+            document.getElementById('prix_same_container').style.display = 'block';
+            document.getElementById('prix_different_container').style.display = 'none';
+        } else {
+            document.getElementById('prix_same_container').style.display = 'none';
+            document.getElementById('prix_different_container').style.display = 'block';
+            updatePrixDifferentInputs();
+        }
+    }
+    
+    function updatePrixDifferentInputs() {
+        const nombreChambres = parseInt(document.getElementById('nombre_chambres').value) || 1;
+        const container = document.getElementById('prix_chambres_list');
+        const prixChambres = currentParams.prix_chambres || [];
+        
+        container.innerHTML = '';
+        for (let i = 0; i < nombreChambres; i++) {
+            const div = document.createElement('div');
+            div.style.marginBottom = '0.5rem';
+            div.innerHTML = `
+                <label style="display: block; margin-bottom: 0.25rem;">Chambre ${i + 1}</label>
+                <input type="number" class="prix-chambre" step="0.01" placeholder="Prix par nuit" 
+                       style="width: 100%;" value="${prixChambres[i] || ''}">
+            `;
+            container.appendChild(div);
+        }
+    }
+    
+    async function saveParams() {
+        try {
+            const prixType = document.querySelector('input[name="prix_type"]:checked').value;
+            const nombreChambres = parseInt(document.getElementById('nombre_chambres').value) || 1;
+            let prixChambres = [];
+            
+            if (prixType === 'same') {
+                const prixUniforme = parseFloat(document.getElementById('prix_uniforme').value) || 0;
+                prixChambres = Array(nombreChambres).fill(prixUniforme);
+            } else {
+                const inputs = document.querySelectorAll('.prix-chambre');
+                prixChambres = Array.from(inputs).map(input => parseFloat(input.value) || 0);
+            }
+            
+            const data = {
+                nom_etablissement: document.getElementById('nom_etablissement').value,
+                pays: document.getElementById('pays').value,
+                devise: document.getElementById('devise').value,
+                taux_taxe_sejour: parseFloat(document.getElementById('taux_taxe_sejour').value) || 0,
+                taux_tva: parseFloat(document.getElementById('taux_tva').value) || 0,
+                taux_charge_plateforme: currentParams.taux_charge_plateforme || 0,
+                nombre_chambres: parseInt(document.getElementById('nombre_chambres').value) || 1,
+                prix_chambres: prixChambres
+            };
+            
+            const response = await fetch('/api/parametres', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('✅ Paramètres enregistrés avec succès!');
+                loadParams();
+            } else {
+                alert('❌ Erreur lors de l\'enregistrement');
+            }
+        } catch (error) {
+            console.error('Erreur sauvegarde paramètres:', error);
+            alert('❌ Erreur lors de l\'enregistrement des paramètres');
+        }
+    }
+    
+    document.querySelectorAll('input[name="prix_type"]').forEach(radio => {
+        radio.addEventListener('change', updatePrixType);
+    });
+    
+    document.getElementById('nombre_chambres').addEventListener('change', () => {
+        const prixType = document.querySelector('input[name="prix_type"]:checked').value;
+        if (prixType === 'different') {
+            updatePrixDifferentInputs();
+        }
+    });
     
     loadParams();
 </script>
