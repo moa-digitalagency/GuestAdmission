@@ -3,14 +3,30 @@ Routes pour la gestion des données (démonstration, réinitialisation)
 """
 
 from flask import Blueprint, jsonify, request
-from flask_login import login_required
+from flask_login import login_required, current_user
+from functools import wraps
 import subprocess
 import os
 
 data_bp = Blueprint('data', __name__)
 
+def admin_required(f):
+    """Décorateur pour restreindre l'accès aux administrateurs uniquement"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            return jsonify({'success': False, 'error': 'Authentification requise'}), 401
+        
+        user_role = getattr(current_user, 'role', None)
+        if user_role != 'admin':
+            return jsonify({'success': False, 'error': 'Accès réservé aux administrateurs'}), 403
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
 @data_bp.route('/api/load-demo-data', methods=['POST'])
 @login_required
+@admin_required
 def load_demo_data():
     """Charger les données de démonstration"""
     try:
@@ -31,6 +47,7 @@ def load_demo_data():
 
 @data_bp.route('/api/reset-data', methods=['POST'])
 @login_required
+@admin_required
 def reset_data():
     """Réinitialiser sélectivement les données"""
     try:
@@ -71,6 +88,7 @@ def reset_data():
 
 @data_bp.route('/api/reset-all-data', methods=['POST'])
 @login_required
+@admin_required
 def reset_all_data():
     """Réinitialiser toutes les données"""
     try:
