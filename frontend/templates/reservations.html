@@ -147,7 +147,7 @@
     }
     
     async function deleteReservation(id) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce séjour ?')) {
             return;
         }
         
@@ -157,7 +157,7 @@
             });
             
             if (response.ok) {
-                showAlert('Réservation supprimée avec succès', 'success');
+                showAlert('Séjour supprimé avec succès', 'success');
                 loadReservations();
             } else {
                 showAlert('Erreur lors de la suppression', 'error');

@@ -58,7 +58,7 @@
         <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;">
             <h3 style="margin: 0 0 0.75rem 0; color: #059669;">📦 Données de démonstration</h3>
             <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
-                Charger des établissements, chambres, réservations et clients de démonstration pour tester l'application.
+                Charger des établissements, chambres, séjours et clients de démonstration pour tester l'application.
             </p>
             <button type="button" onclick="loadDemoData()" class="btn btn-success" style="width: 100%;">
                 🎯 Charger les données de démo
@@ -384,7 +384,7 @@
                                 <input type="number" id="etab_charge_plateforme" step="0.01" value="${etab?.taux_charge_plateforme || 0}">
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label for="etab_format_numero">Format de numéro de réservation</label>
+                                <label for="etab_format_numero">Format de numéro de séjour</label>
                                 <input type="text" id="etab_format_numero" value="${etab?.format_numero_reservation || 'RES-{YYYY}{MM}{DD}-{NUM}'}">
                                 <small style="color: #6b7280; display: block; margin-top: 0.25rem;">
                                     Variables: {YYYY} = année, {MM} = mois, {DD} = jour, {NUM} = numéro séquentiel
@@ -525,7 +525,7 @@
     }
     
     async function loadDemoData() {
-        if (!confirm('⚠️ Charger les données de démonstration? Cela ajoutera des établissements, chambres, réservations et clients de test.')) {
+        if (!confirm('⚠️ Charger les données de démonstration? Cela ajoutera des établissements, chambres, séjours et clients de test.')) {
             return;
         }
         
@@ -565,7 +565,7 @@
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
                     <label style="display: flex; align-items: center; padding: 1rem; background: #f9fafb; border-radius: 0.5rem; cursor: pointer;">
                         <input type="checkbox" id="reset_reservations" style="margin-right: 0.75rem; width: 18px; height: 18px;">
-                        <span><strong>Réservations et clients</strong> - Supprime toutes les réservations et leurs clients associés</span>
+                        <span><strong>Séjours et clients</strong> - Supprime tous les séjours et leurs clients associés</span>
                     </label>
                     
                     <label style="display: flex; align-items: center; padding: 1rem; background: #f9fafb; border-radius: 0.5rem; cursor: pointer;">
@@ -607,7 +607,7 @@
         }
         
         const items = [];
-        if (resetReservations) items.push('réservations et clients');
+        if (resetReservations) items.push('séjours et clients');
         if (resetChambres) items.push('chambres');
         if (resetEtablissements) items.push('établissements');
         
@@ -642,7 +642,7 @@
     }
     
     async function resetAllData() {
-        if (!confirm('⚠️ ATTENTION! Cela supprimera TOUTES les données (établissements, chambres, réservations, clients). L\'utilisateur admin sera conservé. Continuer?')) {
+        if (!confirm('⚠️ ATTENTION! Cela supprimera TOUTES les données (établissements, chambres, séjours, clients). L\'utilisateur admin sera conservé. Continuer?')) {
             return;
         }
         
