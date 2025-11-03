@@ -7,30 +7,21 @@
 <div id="alert-container"></div>
 
 <form id="reservationForm">
-    <div class="dotted-section section-orange">
-        <h2>🏢 Sélection de l'établissement</h2>
-        <div class="form-grid">
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label for="etablissement">Établissement *</label>
-                <select id="etablissement" name="etablissement" required>
-                    <option value="">Sélectionner un établissement...</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
     <div class="dotted-section section-green">
         <h2>📅 Informations du séjour</h2>
         <div class="form-grid">
             <div class="form-group">
+                <label for="etablissement">🏢 Sélection de l'établissement *</label>
+                <select id="etablissement" name="etablissement" required>
+                    <option value="">Sélectionner un établissement...</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="numero_reservation">Numéro de séjour</label>
                 <div style="display: flex; gap: 0.5rem;">
                     <input type="text" id="numero_reservation" name="numero_reservation" readonly style="flex: 1; background: #f3f4f6;">
-                    <button type="button" onclick="genererNumeroReservation()" class="btn btn-primary btn-small">🔄 Générer</button>
+                    <button type="button" onclick="genererNumeroReservation()" class="btn btn-primary btn-small">🔄</button>
                 </div>
-                <small style="color: #6b7280; margin-top: 0.25rem; display: block;">
-                    Le numéro est généré automatiquement selon le format défini pour l'établissement
-                </small>
             </div>
             <div class="form-group">
                 <label for="date_arrivee">Date d'arrivée *</label>
@@ -222,17 +213,13 @@
                         <label>Téléphone</label>
                         <input type="tel" name="personne_telephone_${personneCount}" placeholder="+212 XXX XXX XXX">
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
+                    <div class="form-group">
                         <label>Pays</label>
                         <select name="personne_pays_${personneCount}" class="pays-select">
                             <option value="">Sélectionner un pays...</option>
                         </select>
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Ville</label>
-                        <input type="text" name="personne_ville_${personneCount}" placeholder="Ville de résidence">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
+                    <div class="form-group">
                         <label>Type pièce d'identité</label>
                         <select name="personne_type_piece_${personneCount}">
                             <option value="">Sélectionner...</option>
@@ -242,15 +229,11 @@
                             <option value="permis_conduire">Permis de conduire</option>
                         </select>
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
+                    <div class="form-group">
                         <label>Numéro pièce d'identité</label>
                         <input type="text" name="personne_numero_piece_${personneCount}" placeholder="Numéro du document">
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Date de naissance</label>
-                        <input type="date" name="personne_date_naissance_${personneCount}">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
+                    <div class="form-group">
                         <label>Chambre assignée</label>
                         <select name="personne_chambre_${personneCount}" class="chambre-personne-select">
                             <option value="">Sélectionner une chambre...</option>
