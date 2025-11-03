@@ -67,12 +67,16 @@ def init_db():
         CREATE TABLE IF NOT EXISTS parametres_systeme (
             id SERIAL PRIMARY KEY,
             nom_etablissement VARCHAR(200),
+            pays VARCHAR(100),
             adresse TEXT,
             telephone VARCHAR(50),
             email VARCHAR(150),
             devise VARCHAR(10) DEFAULT 'MAD',
             taux_taxe_sejour DECIMAL(5, 2),
+            taux_tva DECIMAL(5, 2),
             taux_charge_plateforme DECIMAL(5, 2),
+            nombre_chambres INTEGER,
+            prix_chambres JSONB,
             logo_url VARCHAR(500),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -95,9 +99,9 @@ def init_db():
     
     if param_count == 0:
         cur.execute('''
-            INSERT INTO parametres_systeme (nom_etablissement, devise, taux_taxe_sejour, taux_charge_plateforme)
-            VALUES (%s, %s, %s, %s)
-        ''', ('Maison d\'Hôte', 'MAD', 2.5, 15.0))
+            INSERT INTO parametres_systeme (nom_etablissement, pays, devise, taux_taxe_sejour, taux_tva, taux_charge_plateforme, nombre_chambres, prix_chambres)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        ''', ('Maison d\'Hôte', 'Maroc', 'MAD', 2.5, 20.0, 15.0, 5, '[]'))
     
     conn.commit()
     cur.close()
