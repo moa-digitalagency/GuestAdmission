@@ -5,9 +5,10 @@
 Système complet de gestion de réservations pour établissements touristiques (maisons d'hôte, riads, etc.). L'application offre un système d'authentification, la gestion multi-personnes par réservation, le calcul automatique de la durée de séjour, et une interface moderne avec navigation latérale.
 
 **Créé le:** 3 novembre 2025  
-**Version:** 2.0.0  
+**Version:** 2.1.0  
 **Design System:** MOA Design System  
-**Authentification:** Flask-Login
+**Authentification:** Flask-Login  
+**Initialisation:** Automatique à chaque déploiement
 
 ## Architecture du Projet
 
@@ -19,22 +20,37 @@ Système complet de gestion de réservations pour établissements touristiques (
 │   │   └── database.py          # Configuration PostgreSQL
 │   ├── models/
 │   │   ├── __init__.py
-│   │   └── client.py            # Modèle Client (CRUD)
+│   │   ├── client.py            # Modèle Client
+│   │   ├── user.py              # Modèle Utilisateur
+│   │   ├── reservation.py       # Modèle Réservation
+│   │   └── personne.py          # Modèle Personne
 │   ├── routes/
 │   │   ├── __init__.py
-│   │   └── clients.py           # Routes API REST
+│   │   ├── auth.py              # Routes authentification
+│   │   ├── clients.py           # Routes API clients
+│   │   ├── reservations.py      # Routes API réservations
+│   │   ├── parametres.py        # Routes API paramètres
+│   │   └── countries.py         # Routes API pays
 │   ├── __init__.py
 │   └── app.py                   # Application Flask principale
 │
 ├── frontend/
 │   ├── static/
-│   │   └── css/
-│   │       └── styles.css       # Design System MOA
+│   │   ├── css/
+│   │   │   └── styles.css       # Design System MOA
+│   │   └── data/
+│   │       └── countries.json   # Données pays et villes
 │   └── templates/
-│       ├── base.html            # Template de base
-│       ├── index.html           # Formulaire d'accueil
-│       └── clients.html         # Liste et gestion des clients
+│       ├── base_dashboard.html  # Template dashboard avec sidebar
+│       ├── login.html           # Page de connexion
+│       ├── dashboard.html       # Tableau de bord
+│       ├── nouvelle_reservation.html
+│       ├── reservations.html
+│       ├── clients_list.html
+│       └── parametres.html      # Page paramètres système
 │
+├── init_database.py             # Script d'initialisation DB
+├── main.py                      # Point d'entrée principal
 └── attached_assets/
     ├── Dowaya Fichier Clients_*.xlsx
     └── moa-design-system-style_*.json
@@ -119,6 +135,8 @@ Système complet de gestion de réservations pour établissements touristiques (
 
 ### 7. Navigation Latérale (Sidebar)
 - **Design professionnel** avec bordure pointillée bleue (MOA)
+- **Alignement à gauche** avec bords arrondis au hover
+- **Logo 🏡** dans l'en-tête
 - Menu fixe avec icônes :
   - 📊 Tableau de bord
   - ➕ Nouvelle réservation
@@ -126,6 +144,7 @@ Système complet de gestion de réservations pour établissements touristiques (
   - 👥 Base clients
   - ⚙️ Paramètres
   - 🚪 Déconnexion
+- Effet de survol moderne avec ombre bleue
 - Indicateur visuel de la page active
 - Responsive (adapté mobile/tablette/PC)
 
@@ -242,18 +261,34 @@ L'application utilise le **MOA Design System** avec :
 ## Configuration et Déploiement
 
 ### Variables d'environnement
-- `DATABASE_URL` : URL de connexion PostgreSQL
+- `DATABASE_URL` : URL de connexion PostgreSQL (requis)
+- `SESSION_SECRET` : Clé secrète pour les sessions Flask
 - `PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, `PGDATABASE` : Détails DB
+
+### Initialisation automatique de la base de données
+L'application utilise un **script d'initialisation automatique** (`init_database.py`) qui :
+- ✅ Crée toutes les tables nécessaires si elles n'existent pas
+- ✅ Crée l'utilisateur admin par défaut (admin/admin123)
+- ✅ Initialise les paramètres système avec valeurs par défaut
+- ✅ S'exécute automatiquement à chaque déploiement
+- ✅ Est idempotent (peut être exécuté plusieurs fois sans problème)
 
 ### Workflow
 - **Nom:** Flask App
-- **Commande:** `python -m backend.app`
+- **Commande:** `python init_database.py && uv run gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app`
 - **Port:** 5000
 - **Type:** webview
+- **Ordre d'exécution:**
+  1. Initialisation de la base de données
+  2. Démarrage de Gunicorn avec l'application Flask
 
 ### Lancement local
 ```bash
-python -m backend.app
+# Initialiser la base de données
+python init_database.py
+
+# Démarrer l'application
+python main.py
 ```
 L'application sera accessible sur http://localhost:5000
 
@@ -266,7 +301,17 @@ L'application sera accessible sur http://localhost:5000
 - ✅ Confirmations avant suppressions
 - ✅ Gestion d'erreurs avec messages utilisateur
 
-## Améliorations Réalisées (Version 2.0)
+## Améliorations Réalisées
+
+### Version 2.1.0 (3 novembre 2025)
+- ✅ **Initialisation automatique de la DB** à chaque déploiement
+- ✅ **Script init_database.py** robuste et idempotent
+- ✅ **Sidebar améliorée** : alignement à gauche, bords arrondis au hover
+- ✅ **Liste de devises sélectionnables** (12 devises disponibles)
+- ✅ **Gestion de plusieurs responsables** dans les paramètres
+- ✅ **Parsing JSON correct** pour les champs JSONB (responsables, prix_chambres)
+
+### Version 2.0.0 (3 novembre 2025)
 - ✅ **Authentification admin sécurisée** avec Flask-Login
 - ✅ **Gestion multi-personnes** par réservation
 - ✅ **Pièces d'identité** (Passeport/CIN) pour chaque personne

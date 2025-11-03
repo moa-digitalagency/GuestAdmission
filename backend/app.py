@@ -2,7 +2,6 @@ import os
 from flask import Flask, render_template, redirect, url_for
 from flask_cors import CORS
 from flask_login import LoginManager, login_required
-from .config.database import init_db
 from .routes.clients import clients_bp
 from .routes.auth import auth_bp
 from .routes.reservations import reservations_bp
@@ -63,5 +62,4 @@ def parametres():
     return render_template('parametres.html')
 
 if __name__ == '__main__':
-    init_db()
     app.run(host='0.0.0.0', port=5000, debug=True)
