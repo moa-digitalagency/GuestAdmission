@@ -4,105 +4,143 @@
 {% block page_title %}Paramètres Système{% endblock %}
 
 {% block content %}
-<div class="dotted-section section-purple">
-    <h2>⚙️ Configuration de l'établissement</h2>
-    <p style="color: #6b7280; margin-bottom: 1.5rem;">Configurez les informations de votre établissement et les paramètres du système.</p>
-    
-    <div style="max-width: 600px;">
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Nom de l'établissement</label>
-            <input type="text" id="nom_etablissement" style="width: 100%;">
-        </div>
+<form id="parametresForm">
+    <div class="dotted-section section-purple">
+        <h2>⚙️ Configuration de l'établissement</h2>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">Configurez les informations de votre établissement et les paramètres du système.</p>
         
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Pays de l'établissement</label>
-            <input type="text" id="pays" style="width: 100%;">
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Devise</label>
-            <input type="text" id="devise" style="width: 100%;">
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Taxe de séjour (%)</label>
-            <input type="number" id="taux_taxe_sejour" step="0.01" style="width: 100%;">
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>TVA (%)</label>
-            <input type="number" id="taux_tva" step="0.01" style="width: 100%;">
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Nombre de chambres</label>
-            <input type="number" id="nombre_chambres" min="1" style="width: 100%;">
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label>Prix des chambres</label>
-            <div style="margin-bottom: 0.5rem;">
-                <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="prix_type" value="same" checked style="margin-right: 0.5rem;">
-                    Prix égal pour toutes les chambres
-                </label>
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
-                    <input type="radio" name="prix_type" value="different" style="margin-right: 0.5rem;">
-                    Prix différent par chambre
-                </label>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="nom_etablissement">Nom de l'établissement</label>
+                <input type="text" id="nom_etablissement" name="nom_etablissement">
             </div>
             
-            <div id="prix_same_container">
-                <input type="number" id="prix_uniforme" step="0.01" placeholder="Prix par nuit" style="width: 100%;">
+            <div class="form-group">
+                <label for="pays">Pays de l'établissement</label>
+                <select id="pays" name="pays">
+                    <option value="">Sélectionner un pays...</option>
+                </select>
             </div>
             
-            <div id="prix_different_container" style="display: none;">
-                <div id="prix_chambres_list"></div>
+            <div class="form-group">
+                <label for="devise">Devise</label>
+                <input type="text" id="devise" name="devise" readonly style="background: #f9fafb;">
+            </div>
+            
+            <div class="form-group">
+                <label for="taux_taxe_sejour">Taxe de séjour (%)</label>
+                <input type="number" id="taux_taxe_sejour" name="taux_taxe_sejour" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="taux_tva">TVA (%)</label>
+                <input type="number" id="taux_tva" name="taux_tva" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre_chambres">Nombre de chambres</label>
+                <input type="number" id="nombre_chambres" name="nombre_chambres" min="1">
             </div>
         </div>
-        
-        <button class="btn btn-primary" onclick="saveParams()" style="width: 100%;">
-            💾 Enregistrer les paramètres
-        </button>
     </div>
-</div>
 
-<div class="dotted-section section-blue">
-    <h2>👤 Compte utilisateur</h2>
-    <p style="color: #6b7280; margin-bottom: 1.5rem;">Informations de votre compte administrateur.</p>
-    
-    <div style="max-width: 600px;">
-        <div class="form-group" style="margin-bottom: 1rem;">
-            <label>Nom d'utilisateur</label>
-            <input type="text" id="username" readonly style="background: #f9fafb; width: 100%;">
-        </div>
-        <div class="form-group">
-            <label>Rôle</label>
-            <input type="text" id="role" readonly style="background: #f9fafb; width: 100%;">
+    <div class="dotted-section section-blue">
+        <h2>💰 Prix des chambres</h2>
+        <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label style="font-weight: 600; margin-bottom: 1rem; display: block;">Type de tarification</label>
+                <div style="margin-bottom: 0.5rem;">
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="prix_type" value="same" checked style="margin-right: 0.5rem;">
+                        Prix égal pour toutes les chambres
+                    </label>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="prix_type" value="different" style="margin-right: 0.5rem;">
+                        Prix différent par chambre
+                    </label>
+                </div>
+            </div>
+            
+            <div id="prix_same_container" class="form-group" style="grid-column: 1 / -1;">
+                <label for="prix_uniforme">Prix par nuit</label>
+                <input type="number" id="prix_uniforme" step="0.01" placeholder="Prix par nuit">
+            </div>
+            
+            <div id="prix_different_container" style="display: none; grid-column: 1 / -1;">
+                <div id="prix_chambres_list" class="form-grid"></div>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="dotted-section section-green">
-    <h2>📊 Statistiques système</h2>
-    <div class="stats-grid">
-        <div class="stat-card blue">
-            <div class="stat-label">Total réservations</div>
-            <div class="stat-value" id="totalReservations">0</div>
-        </div>
-        <div class="stat-card green">
-            <div class="stat-label">Total clients</div>
-            <div class="stat-value" id="totalClients">0</div>
+    <div class="dotted-section section-green">
+        <h2>👤 Compte utilisateur</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="username" readonly style="background: #f9fafb;">
+            </div>
+            <div class="form-group">
+                <label for="role">Rôle</label>
+                <input type="text" id="role" readonly style="background: #f9fafb;">
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="dotted-section section-orange">
+        <h2>📊 Statistiques système</h2>
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-label">Total réservations</div>
+                <div class="stat-value" id="totalReservations">0</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-label">Total clients</div>
+                <div class="stat-value" id="totalClients">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="btn btn-success">💾 Enregistrer les paramètres</button>
+        <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+    </div>
+</form>
 {% endblock %}
 
 {% block scripts %}
 <script>
     let currentParams = {};
+    let countriesData = [];
+    
+    async function loadCountries() {
+        try {
+            const response = await fetch('/static/data/countries.json');
+            countriesData = await response.json();
+            
+            const paysSelect = document.getElementById('pays');
+            paysSelect.innerHTML = '<option value="">Sélectionner un pays...</option>';
+            
+            countriesData.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country.name;
+                option.textContent = `${country.flag} ${country.name}`;
+                option.dataset.currency = country.currency;
+                option.dataset.currencyName = country.currencyName;
+                paysSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erreur chargement pays:', error);
+        }
+    }
+    
+    document.getElementById('pays').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.dataset.currency) {
+            document.getElementById('devise').value = selectedOption.dataset.currency;
+        }
+    });
     
     async function loadParams() {
         try {
@@ -181,7 +219,9 @@
         }
     }
     
-    async function saveParams() {
+    async function saveParams(e) {
+        if (e) e.preventDefault();
+        
         try {
             const prixType = document.querySelector('input[name="prix_type"]:checked').value;
             const nombreChambres = parseInt(document.getElementById('nombre_chambres').value) || 1;
@@ -239,6 +279,9 @@
         }
     });
     
+    document.getElementById('parametresForm').addEventListener('submit', saveParams);
+    
+    loadCountries();
     loadParams();
 </script>
 {% endblock %}

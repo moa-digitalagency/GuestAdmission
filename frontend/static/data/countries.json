@@ -1,0 +1,1353 @@
+[
+  {
+    "name": "Afghanistan",
+    "flag": "🇦🇫",
+    "currency": "AFN",
+    "currencyName": "Afghani",
+    "cities": ["Kaboul", "Kandahar", "Herat", "Mazar-i-Sharif", "Jalalabad"]
+  },
+  {
+    "name": "Afrique du Sud",
+    "flag": "🇿🇦",
+    "currency": "ZAR",
+    "currencyName": "Rand",
+    "cities": ["Le Cap", "Johannesburg", "Pretoria", "Durban", "Port Elizabeth"]
+  },
+  {
+    "name": "Albanie",
+    "flag": "🇦🇱",
+    "currency": "ALL",
+    "currencyName": "Lek",
+    "cities": ["Tirana", "Durrës", "Vlorë", "Shkodër", "Korçë"]
+  },
+  {
+    "name": "Algérie",
+    "flag": "🇩🇿",
+    "currency": "DZD",
+    "currencyName": "Dinar algérien",
+    "cities": ["Alger", "Oran", "Constantine", "Annaba", "Blida", "Batna", "Sétif"]
+  },
+  {
+    "name": "Allemagne",
+    "flag": "🇩🇪",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Berlin", "Munich", "Francfort", "Hambourg", "Cologne", "Stuttgart", "Düsseldorf"]
+  },
+  {
+    "name": "Andorre",
+    "flag": "🇦🇩",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Andorre-la-Vieille", "Escaldes-Engordany", "Encamp", "La Massana"]
+  },
+  {
+    "name": "Angola",
+    "flag": "🇦🇴",
+    "currency": "AOA",
+    "currencyName": "Kwanza",
+    "cities": ["Luanda", "Huambo", "Lobito", "Benguela", "Lubango"]
+  },
+  {
+    "name": "Arabie Saoudite",
+    "flag": "🇸🇦",
+    "currency": "SAR",
+    "currencyName": "Riyal",
+    "cities": ["Riyad", "Djeddah", "La Mecque", "Médine", "Dammam"]
+  },
+  {
+    "name": "Argentine",
+    "flag": "🇦🇷",
+    "currency": "ARS",
+    "currencyName": "Peso argentin",
+    "cities": ["Buenos Aires", "Córdoba", "Rosario", "Mendoza", "La Plata"]
+  },
+  {
+    "name": "Arménie",
+    "flag": "🇦🇲",
+    "currency": "AMD",
+    "currencyName": "Dram",
+    "cities": ["Erevan", "Gyumri", "Vanadzor", "Vagharshapat", "Hrazdan"]
+  },
+  {
+    "name": "Australie",
+    "flag": "🇦🇺",
+    "currency": "AUD",
+    "currencyName": "Dollar australien",
+    "cities": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adélaïde", "Canberra"]
+  },
+  {
+    "name": "Autriche",
+    "flag": "🇦🇹",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Vienne", "Graz", "Linz", "Salzbourg", "Innsbruck"]
+  },
+  {
+    "name": "Azerbaïdjan",
+    "flag": "🇦🇿",
+    "currency": "AZN",
+    "currencyName": "Manat",
+    "cities": ["Bakou", "Gandja", "Sumqayit", "Mingachevir", "Lankaran"]
+  },
+  {
+    "name": "Bahamas",
+    "flag": "🇧🇸",
+    "currency": "BSD",
+    "currencyName": "Dollar bahaméen",
+    "cities": ["Nassau", "Freeport", "West End", "Cooper's Town"]
+  },
+  {
+    "name": "Bahreïn",
+    "flag": "🇧🇭",
+    "currency": "BHD",
+    "currencyName": "Dinar bahreïni",
+    "cities": ["Manama", "Muharraq", "Riffa", "Hamad Town"]
+  },
+  {
+    "name": "Bangladesh",
+    "flag": "🇧🇩",
+    "currency": "BDT",
+    "currencyName": "Taka",
+    "cities": ["Dacca", "Chittagong", "Khulna", "Rajshahi", "Sylhet"]
+  },
+  {
+    "name": "Barbade",
+    "flag": "🇧🇧",
+    "currency": "BBD",
+    "currencyName": "Dollar barbadien",
+    "cities": ["Bridgetown", "Speightstown", "Oistins", "Bathsheba"]
+  },
+  {
+    "name": "Belgique",
+    "flag": "🇧🇪",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Bruxelles", "Anvers", "Gand", "Charleroi", "Liège", "Bruges"]
+  },
+  {
+    "name": "Belize",
+    "flag": "🇧🇿",
+    "currency": "BZD",
+    "currencyName": "Dollar bélizien",
+    "cities": ["Belize City", "San Ignacio", "Orange Walk", "Dangriga"]
+  },
+  {
+    "name": "Bénin",
+    "flag": "🇧🇯",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Cotonou", "Porto-Novo", "Parakou", "Abomey-Calavi", "Djougou"]
+  },
+  {
+    "name": "Bhoutan",
+    "flag": "🇧🇹",
+    "currency": "BTN",
+    "currencyName": "Ngultrum",
+    "cities": ["Thimphou", "Phuntsholing", "Paro", "Punakha"]
+  },
+  {
+    "name": "Biélorussie",
+    "flag": "🇧🇾",
+    "currency": "BYN",
+    "currencyName": "Rouble biélorusse",
+    "cities": ["Minsk", "Gomel", "Moguilev", "Vitebsk", "Grodno"]
+  },
+  {
+    "name": "Bolivie",
+    "flag": "🇧🇴",
+    "currency": "BOB",
+    "currencyName": "Boliviano",
+    "cities": ["La Paz", "Santa Cruz", "Cochabamba", "Sucre", "Oruro"]
+  },
+  {
+    "name": "Bosnie-Herzégovine",
+    "flag": "🇧🇦",
+    "currency": "BAM",
+    "currencyName": "Mark convertible",
+    "cities": ["Sarajevo", "Banja Luka", "Tuzla", "Zenica", "Mostar"]
+  },
+  {
+    "name": "Botswana",
+    "flag": "🇧🇼",
+    "currency": "BWP",
+    "currencyName": "Pula",
+    "cities": ["Gaborone", "Francistown", "Molepolole", "Maun", "Serowe"]
+  },
+  {
+    "name": "Brésil",
+    "flag": "🇧🇷",
+    "currency": "BRL",
+    "currencyName": "Réal brésilien",
+    "cities": ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador", "Fortaleza", "Belo Horizonte"]
+  },
+  {
+    "name": "Brunei",
+    "flag": "🇧🇳",
+    "currency": "BND",
+    "currencyName": "Dollar de Brunei",
+    "cities": ["Bandar Seri Begawan", "Kuala Belait", "Seria", "Tutong"]
+  },
+  {
+    "name": "Bulgarie",
+    "flag": "🇧🇬",
+    "currency": "BGN",
+    "currencyName": "Lev",
+    "cities": ["Sofia", "Plovdiv", "Varna", "Burgas", "Ruse"]
+  },
+  {
+    "name": "Burkina Faso",
+    "flag": "🇧🇫",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Ouagadougou", "Bobo-Dioulasso", "Koudougou", "Ouahigouya", "Banfora"]
+  },
+  {
+    "name": "Burundi",
+    "flag": "🇧🇮",
+    "currency": "BIF",
+    "currencyName": "Franc burundais",
+    "cities": ["Gitega", "Bujumbura", "Muyinga", "Ngozi", "Ruyigi"]
+  },
+  {
+    "name": "Cambodge",
+    "flag": "🇰🇭",
+    "currency": "KHR",
+    "currencyName": "Riel",
+    "cities": ["Phnom Penh", "Siem Reap", "Battambang", "Sihanoukville", "Kampong Cham"]
+  },
+  {
+    "name": "Cameroun",
+    "flag": "🇨🇲",
+    "currency": "XAF",
+    "currencyName": "Franc CFA",
+    "cities": ["Yaoundé", "Douala", "Garoua", "Bamenda", "Bafoussam"]
+  },
+  {
+    "name": "Canada",
+    "flag": "🇨🇦",
+    "currency": "CAD",
+    "currencyName": "Dollar canadien",
+    "cities": ["Toronto", "Montréal", "Vancouver", "Calgary", "Ottawa", "Edmonton"]
+  },
+  {
+    "name": "Cap-Vert",
+    "flag": "🇨🇻",
+    "currency": "CVE",
+    "currencyName": "Escudo cap-verdien",
+    "cities": ["Praia", "Mindelo", "Santa Maria", "Assomada", "São Filipe"]
+  },
+  {
+    "name": "Chili",
+    "flag": "🇨🇱",
+    "currency": "CLP",
+    "currencyName": "Peso chilien",
+    "cities": ["Santiago", "Valparaíso", "Concepción", "La Serena", "Antofagasta"]
+  },
+  {
+    "name": "Chine",
+    "flag": "🇨🇳",
+    "currency": "CNY",
+    "currencyName": "Yuan",
+    "cities": ["Pékin", "Shanghai", "Guangzhou", "Shenzhen", "Chengdu", "Hong Kong"]
+  },
+  {
+    "name": "Chypre",
+    "flag": "🇨🇾",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Nicosie", "Limassol", "Larnaca", "Paphos", "Famagouste"]
+  },
+  {
+    "name": "Colombie",
+    "flag": "🇨🇴",
+    "currency": "COP",
+    "currencyName": "Peso colombien",
+    "cities": ["Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena"]
+  },
+  {
+    "name": "Comores",
+    "flag": "🇰🇲",
+    "currency": "KMF",
+    "currencyName": "Franc comorien",
+    "cities": ["Moroni", "Mutsamudu", "Fomboni", "Domoni", "Tsimbeo"]
+  },
+  {
+    "name": "Congo",
+    "flag": "🇨🇬",
+    "currency": "XAF",
+    "currencyName": "Franc CFA",
+    "cities": ["Brazzaville", "Pointe-Noire", "Dolisie", "Nkayi", "Owando"]
+  },
+  {
+    "name": "Corée du Nord",
+    "flag": "🇰🇵",
+    "currency": "KPW",
+    "currencyName": "Won nord-coréen",
+    "cities": ["Pyongyang", "Hamhung", "Chongjin", "Nampo", "Wonsan"]
+  },
+  {
+    "name": "Corée du Sud",
+    "flag": "🇰🇷",
+    "currency": "KRW",
+    "currencyName": "Won sud-coréen",
+    "cities": ["Séoul", "Busan", "Incheon", "Daegu", "Daejeon"]
+  },
+  {
+    "name": "Costa Rica",
+    "flag": "🇨🇷",
+    "currency": "CRC",
+    "currencyName": "Colón costaricain",
+    "cities": ["San José", "Limón", "San Francisco", "Alajuela", "Liberia"]
+  },
+  {
+    "name": "Côte d'Ivoire",
+    "flag": "🇨🇮",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Abidjan", "Yamoussoukro", "Bouaké", "Daloa", "San-Pédro"]
+  },
+  {
+    "name": "Croatie",
+    "flag": "🇭🇷",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Zagreb", "Split", "Rijeka", "Osijek", "Zadar"]
+  },
+  {
+    "name": "Cuba",
+    "flag": "🇨🇺",
+    "currency": "CUP",
+    "currencyName": "Peso cubain",
+    "cities": ["La Havane", "Santiago de Cuba", "Camagüey", "Holguín", "Santa Clara"]
+  },
+  {
+    "name": "Danemark",
+    "flag": "🇩🇰",
+    "currency": "DKK",
+    "currencyName": "Couronne danoise",
+    "cities": ["Copenhague", "Aarhus", "Odense", "Aalborg", "Esbjerg"]
+  },
+  {
+    "name": "Djibouti",
+    "flag": "🇩🇯",
+    "currency": "DJF",
+    "currencyName": "Franc djiboutien",
+    "cities": ["Djibouti", "Ali Sabieh", "Tadjourah", "Obock", "Dikhil"]
+  },
+  {
+    "name": "Dominique",
+    "flag": "🇩🇲",
+    "currency": "XCD",
+    "currencyName": "Dollar des Caraïbes orientales",
+    "cities": ["Roseau", "Portsmouth", "Marigot", "Berekua", "Saint Joseph"]
+  },
+  {
+    "name": "Égypte",
+    "flag": "🇪🇬",
+    "currency": "EGP",
+    "currencyName": "Livre égyptienne",
+    "cities": ["Le Caire", "Alexandrie", "Gizeh", "Louxor", "Assouan"]
+  },
+  {
+    "name": "Émirats Arabes Unis",
+    "flag": "🇦🇪",
+    "currency": "AED",
+    "currencyName": "Dirham",
+    "cities": ["Dubaï", "Abu Dhabi", "Sharjah", "Al Ain", "Ajman"]
+  },
+  {
+    "name": "Équateur",
+    "flag": "🇪🇨",
+    "currency": "USD",
+    "currencyName": "Dollar américain",
+    "cities": ["Quito", "Guayaquil", "Cuenca", "Santo Domingo", "Machala"]
+  },
+  {
+    "name": "Érythrée",
+    "flag": "🇪🇷",
+    "currency": "ERN",
+    "currencyName": "Nakfa",
+    "cities": ["Asmara", "Keren", "Massawa", "Assab", "Mendefera"]
+  },
+  {
+    "name": "Espagne",
+    "flag": "🇪🇸",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Madrid", "Barcelone", "Valence", "Séville", "Saragosse", "Málaga"]
+  },
+  {
+    "name": "Estonie",
+    "flag": "🇪🇪",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Tallinn", "Tartu", "Narva", "Pärnu", "Kohtla-Järve"]
+  },
+  {
+    "name": "Eswatini",
+    "flag": "🇸🇿",
+    "currency": "SZL",
+    "currencyName": "Lilangeni",
+    "cities": ["Mbabane", "Manzini", "Lobamba", "Siteki", "Malkerns"]
+  },
+  {
+    "name": "États-Unis",
+    "flag": "🇺🇸",
+    "currency": "USD",
+    "currencyName": "Dollar américain",
+    "cities": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphie", "Miami"]
+  },
+  {
+    "name": "Éthiopie",
+    "flag": "🇪🇹",
+    "currency": "ETB",
+    "currencyName": "Birr",
+    "cities": ["Addis-Abeba", "Dire Dawa", "Mekele", "Gondar", "Bahir Dar"]
+  },
+  {
+    "name": "Fidji",
+    "flag": "🇫🇯",
+    "currency": "FJD",
+    "currencyName": "Dollar fidjien",
+    "cities": ["Suva", "Lautoka", "Nadi", "Labasa", "Ba"]
+  },
+  {
+    "name": "Finlande",
+    "flag": "🇫🇮",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Helsinki", "Espoo", "Tampere", "Vantaa", "Oulu"]
+  },
+  {
+    "name": "France",
+    "flag": "🇫🇷",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg"]
+  },
+  {
+    "name": "Gabon",
+    "flag": "🇬🇦",
+    "currency": "XAF",
+    "currencyName": "Franc CFA",
+    "cities": ["Libreville", "Port-Gentil", "Franceville", "Oyem", "Moanda"]
+  },
+  {
+    "name": "Gambie",
+    "flag": "🇬🇲",
+    "currency": "GMD",
+    "currencyName": "Dalasi",
+    "cities": ["Banjul", "Serekunda", "Brikama", "Bakau", "Farafenni"]
+  },
+  {
+    "name": "Géorgie",
+    "flag": "🇬🇪",
+    "currency": "GEL",
+    "currencyName": "Lari",
+    "cities": ["Tbilissi", "Batoumi", "Kutaisi", "Roustavi", "Soukhoumi"]
+  },
+  {
+    "name": "Ghana",
+    "flag": "🇬🇭",
+    "currency": "GHS",
+    "currencyName": "Cedi",
+    "cities": ["Accra", "Kumasi", "Tamale", "Sekondi-Takoradi", "Ashaiman"]
+  },
+  {
+    "name": "Grèce",
+    "flag": "🇬🇷",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Athènes", "Thessalonique", "Patras", "Héraklion", "Larissa"]
+  },
+  {
+    "name": "Grenade",
+    "flag": "🇬🇩",
+    "currency": "XCD",
+    "currencyName": "Dollar des Caraïbes orientales",
+    "cities": ["Saint-Georges", "Gouyave", "Grenville", "Victoria", "Saint David's"]
+  },
+  {
+    "name": "Guatemala",
+    "flag": "🇬🇹",
+    "currency": "GTQ",
+    "currencyName": "Quetzal",
+    "cities": ["Guatemala", "Quetzaltenango", "Escuintla", "Mixco", "Villa Nueva"]
+  },
+  {
+    "name": "Guinée",
+    "flag": "🇬🇳",
+    "currency": "GNF",
+    "currencyName": "Franc guinéen",
+    "cities": ["Conakry", "Nzérékoré", "Kankan", "Kindia", "Labé"]
+  },
+  {
+    "name": "Guinée-Bissau",
+    "flag": "🇬🇼",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Bissau", "Bafatá", "Gabú", "Bissorã", "Bolama"]
+  },
+  {
+    "name": "Guinée équatoriale",
+    "flag": "🇬🇶",
+    "currency": "XAF",
+    "currencyName": "Franc CFA",
+    "cities": ["Malabo", "Bata", "Ebebiyin", "Aconibe", "Añisoc"]
+  },
+  {
+    "name": "Guyana",
+    "flag": "🇬🇾",
+    "currency": "GYD",
+    "currencyName": "Dollar guyanien",
+    "cities": ["Georgetown", "Linden", "New Amsterdam", "Anna Regina", "Bartica"]
+  },
+  {
+    "name": "Haïti",
+    "flag": "🇭🇹",
+    "currency": "HTG",
+    "currencyName": "Gourde",
+    "cities": ["Port-au-Prince", "Cap-Haïtien", "Gonaïves", "Les Cayes", "Pétion-Ville"]
+  },
+  {
+    "name": "Honduras",
+    "flag": "🇭🇳",
+    "currency": "HNL",
+    "currencyName": "Lempira",
+    "cities": ["Tegucigalpa", "San Pedro Sula", "Choloma", "La Ceiba", "El Progreso"]
+  },
+  {
+    "name": "Hongrie",
+    "flag": "🇭🇺",
+    "currency": "HUF",
+    "currencyName": "Forint",
+    "cities": ["Budapest", "Debrecen", "Szeged", "Miskolc", "Pécs"]
+  },
+  {
+    "name": "Inde",
+    "flag": "🇮🇳",
+    "currency": "INR",
+    "currencyName": "Roupie indienne",
+    "cities": ["New Delhi", "Mumbai", "Bangalore", "Chennai", "Kolkata", "Hyderabad"]
+  },
+  {
+    "name": "Indonésie",
+    "flag": "🇮🇩",
+    "currency": "IDR",
+    "currencyName": "Rupiah",
+    "cities": ["Jakarta", "Surabaya", "Bandung", "Medan", "Semarang"]
+  },
+  {
+    "name": "Irak",
+    "flag": "🇮🇶",
+    "currency": "IQD",
+    "currencyName": "Dinar irakien",
+    "cities": ["Bagdad", "Bassorah", "Mossoul", "Erbil", "Kirkouk"]
+  },
+  {
+    "name": "Iran",
+    "flag": "🇮🇷",
+    "currency": "IRR",
+    "currencyName": "Rial iranien",
+    "cities": ["Téhéran", "Mashhad", "Ispahan", "Karaj", "Tabriz"]
+  },
+  {
+    "name": "Irlande",
+    "flag": "🇮🇪",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Dublin", "Cork", "Limerick", "Galway", "Waterford"]
+  },
+  {
+    "name": "Islande",
+    "flag": "🇮🇸",
+    "currency": "ISK",
+    "currencyName": "Couronne islandaise",
+    "cities": ["Reykjavik", "Kópavogur", "Hafnarfjörður", "Akureyri", "Reykjanesbær"]
+  },
+  {
+    "name": "Israël",
+    "flag": "🇮🇱",
+    "currency": "ILS",
+    "currencyName": "Shekel",
+    "cities": ["Jérusalem", "Tel Aviv", "Haïfa", "Rishon LeZion", "Petah Tikva"]
+  },
+  {
+    "name": "Italie",
+    "flag": "🇮🇹",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Rome", "Milan", "Naples", "Turin", "Palerme", "Gênes", "Florence"]
+  },
+  {
+    "name": "Jamaïque",
+    "flag": "🇯🇲",
+    "currency": "JMD",
+    "currencyName": "Dollar jamaïcain",
+    "cities": ["Kingston", "Montego Bay", "Spanish Town", "Portmore", "May Pen"]
+  },
+  {
+    "name": "Japon",
+    "flag": "🇯🇵",
+    "currency": "JPY",
+    "currencyName": "Yen",
+    "cities": ["Tokyo", "Osaka", "Yokohama", "Nagoya", "Sapporo", "Kyoto"]
+  },
+  {
+    "name": "Jordanie",
+    "flag": "🇯🇴",
+    "currency": "JOD",
+    "currencyName": "Dinar jordanien",
+    "cities": ["Amman", "Zarqa", "Irbid", "Aqaba", "Madaba"]
+  },
+  {
+    "name": "Kazakhstan",
+    "flag": "🇰🇿",
+    "currency": "KZT",
+    "currencyName": "Tenge",
+    "cities": ["Almaty", "Astana", "Shymkent", "Karaganda", "Aktobe"]
+  },
+  {
+    "name": "Kenya",
+    "flag": "🇰🇪",
+    "currency": "KES",
+    "currencyName": "Shilling kényan",
+    "cities": ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret"]
+  },
+  {
+    "name": "Kirghizistan",
+    "flag": "🇰🇬",
+    "currency": "KGS",
+    "currencyName": "Som",
+    "cities": ["Bichkek", "Osh", "Jalal-Abad", "Karakol", "Tokmok"]
+  },
+  {
+    "name": "Kiribati",
+    "flag": "🇰🇮",
+    "currency": "AUD",
+    "currencyName": "Dollar australien",
+    "cities": ["Tarawa-Sud", "Betio", "Bikenibeu", "Teaoraereke"]
+  },
+  {
+    "name": "Kosovo",
+    "flag": "🇽🇰",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Pristina", "Prizren", "Peć", "Ferizaj", "Gjakova"]
+  },
+  {
+    "name": "Koweït",
+    "flag": "🇰🇼",
+    "currency": "KWD",
+    "currencyName": "Dinar koweïtien",
+    "cities": ["Koweït", "Hawalli", "Salmiya", "Sabah Al-Salem", "Al Farwaniyah"]
+  },
+  {
+    "name": "Laos",
+    "flag": "🇱🇦",
+    "currency": "LAK",
+    "currencyName": "Kip",
+    "cities": ["Vientiane", "Savannakhet", "Paksé", "Luang Prabang", "Thakhek"]
+  },
+  {
+    "name": "Lesotho",
+    "flag": "🇱🇸",
+    "currency": "LSL",
+    "currencyName": "Loti",
+    "cities": ["Maseru", "Teyateyaneng", "Mafeteng", "Hlotse", "Mohale's Hoek"]
+  },
+  {
+    "name": "Lettonie",
+    "flag": "🇱🇻",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Riga", "Daugavpils", "Liepāja", "Jelgava", "Jūrmala"]
+  },
+  {
+    "name": "Liban",
+    "flag": "🇱🇧",
+    "currency": "LBP",
+    "currencyName": "Livre libanaise",
+    "cities": ["Beyrouth", "Tripoli", "Sidon", "Tyre", "Nabatieh"]
+  },
+  {
+    "name": "Liberia",
+    "flag": "🇱🇷",
+    "currency": "LRD",
+    "currencyName": "Dollar libérien",
+    "cities": ["Monrovia", "Gbarnga", "Kakata", "Bensonville", "Harper"]
+  },
+  {
+    "name": "Libye",
+    "flag": "🇱🇾",
+    "currency": "LYD",
+    "currencyName": "Dinar libyen",
+    "cities": ["Tripoli", "Benghazi", "Misrata", "Tobrouk", "Bayda"]
+  },
+  {
+    "name": "Liechtenstein",
+    "flag": "🇱🇮",
+    "currency": "CHF",
+    "currencyName": "Franc suisse",
+    "cities": ["Vaduz", "Schaan", "Balzers", "Triesen", "Eschen"]
+  },
+  {
+    "name": "Lituanie",
+    "flag": "🇱🇹",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Vilnius", "Kaunas", "Klaipėda", "Šiauliai", "Panevėžys"]
+  },
+  {
+    "name": "Luxembourg",
+    "flag": "🇱🇺",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Luxembourg", "Esch-sur-Alzette", "Differdange", "Dudelange", "Ettelbruck"]
+  },
+  {
+    "name": "Macédoine du Nord",
+    "flag": "🇲🇰",
+    "currency": "MKD",
+    "currencyName": "Denar",
+    "cities": ["Skopje", "Bitola", "Kumanovo", "Prilep", "Tetovo"]
+  },
+  {
+    "name": "Madagascar",
+    "flag": "🇲🇬",
+    "currency": "MGA",
+    "currencyName": "Ariary",
+    "cities": ["Antananarivo", "Toamasina", "Antsirabe", "Fianarantsoa", "Mahajanga"]
+  },
+  {
+    "name": "Malaisie",
+    "flag": "🇲🇾",
+    "currency": "MYR",
+    "currencyName": "Ringgit",
+    "cities": ["Kuala Lumpur", "George Town", "Ipoh", "Johor Bahru", "Malacca"]
+  },
+  {
+    "name": "Malawi",
+    "flag": "🇲🇼",
+    "currency": "MWK",
+    "currencyName": "Kwacha malawite",
+    "cities": ["Lilongwe", "Blantyre", "Mzuzu", "Zomba", "Kasungu"]
+  },
+  {
+    "name": "Maldives",
+    "flag": "🇲🇻",
+    "currency": "MVR",
+    "currencyName": "Rufiyaa",
+    "cities": ["Malé", "Addu City", "Fuvahmulah", "Kulhudhuffushi", "Thinadhoo"]
+  },
+  {
+    "name": "Mali",
+    "flag": "🇲🇱",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Bamako", "Sikasso", "Mopti", "Koutiala", "Kayes"]
+  },
+  {
+    "name": "Malte",
+    "flag": "🇲🇹",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["La Valette", "Birkirkara", "Mosta", "Qormi", "Żabbar"]
+  },
+  {
+    "name": "Maroc",
+    "flag": "🇲🇦",
+    "currency": "MAD",
+    "currencyName": "Dirham marocain",
+    "cities": ["Casablanca", "Rabat", "Fès", "Marrakech", "Agadir", "Tanger", "Meknès", "Oujda", "Kenitra", "Tétouan", "Safi", "El Jadida"]
+  },
+  {
+    "name": "Maurice",
+    "flag": "🇲🇺",
+    "currency": "MUR",
+    "currencyName": "Roupie mauricienne",
+    "cities": ["Port-Louis", "Beau Bassin-Rose Hill", "Vacoas-Phoenix", "Curepipe", "Quatre Bornes"]
+  },
+  {
+    "name": "Mauritanie",
+    "flag": "🇲🇷",
+    "currency": "MRU",
+    "currencyName": "Ouguiya",
+    "cities": ["Nouakchott", "Nouadhibou", "Rosso", "Kaédi", "Kiffa"]
+  },
+  {
+    "name": "Mexique",
+    "flag": "🇲🇽",
+    "currency": "MXN",
+    "currencyName": "Peso mexicain",
+    "cities": ["Mexico", "Guadalajara", "Monterrey", "Puebla", "Tijuana", "Cancún"]
+  },
+  {
+    "name": "Micronésie",
+    "flag": "🇫🇲",
+    "currency": "USD",
+    "currencyName": "Dollar américain",
+    "cities": ["Palikir", "Weno", "Kolonia", "Tofol", "Colonia"]
+  },
+  {
+    "name": "Moldavie",
+    "flag": "🇲🇩",
+    "currency": "MDL",
+    "currencyName": "Leu moldave",
+    "cities": ["Chișinău", "Tiraspol", "Bălți", "Bender", "Rîbnița"]
+  },
+  {
+    "name": "Monaco",
+    "flag": "🇲🇨",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Monaco", "Monte-Carlo", "La Condamine", "Fontvieille"]
+  },
+  {
+    "name": "Mongolie",
+    "flag": "🇲🇳",
+    "currency": "MNT",
+    "currencyName": "Tugrik",
+    "cities": ["Oulan-Bator", "Erdenet", "Darkhan", "Choibalsan", "Mörön"]
+  },
+  {
+    "name": "Monténégro",
+    "flag": "🇲🇪",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Podgorica", "Nikšić", "Pljevlja", "Bijelo Polje", "Cetinje"]
+  },
+  {
+    "name": "Mozambique",
+    "flag": "🇲🇿",
+    "currency": "MZN",
+    "currencyName": "Metical",
+    "cities": ["Maputo", "Matola", "Beira", "Nampula", "Chimoio"]
+  },
+  {
+    "name": "Myanmar",
+    "flag": "🇲🇲",
+    "currency": "MMK",
+    "currencyName": "Kyat",
+    "cities": ["Naypyidaw", "Yangon", "Mandalay", "Bago", "Mawlamyine"]
+  },
+  {
+    "name": "Namibie",
+    "flag": "🇳🇦",
+    "currency": "NAD",
+    "currencyName": "Dollar namibien",
+    "cities": ["Windhoek", "Rundu", "Walvis Bay", "Swakopmund", "Oshakati"]
+  },
+  {
+    "name": "Nauru",
+    "flag": "🇳🇷",
+    "currency": "AUD",
+    "currencyName": "Dollar australien",
+    "cities": ["Yaren", "Denigomodu", "Aiwo", "Anabar", "Anibare"]
+  },
+  {
+    "name": "Népal",
+    "flag": "🇳🇵",
+    "currency": "NPR",
+    "currencyName": "Roupie népalaise",
+    "cities": ["Katmandou", "Pokhara", "Lalitpur", "Biratnagar", "Bharatpur"]
+  },
+  {
+    "name": "Nicaragua",
+    "flag": "🇳🇮",
+    "currency": "NIO",
+    "currencyName": "Córdoba",
+    "cities": ["Managua", "León", "Masaya", "Matagalpa", "Chinandega"]
+  },
+  {
+    "name": "Niger",
+    "flag": "🇳🇪",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Niamey", "Zinder", "Maradi", "Agadez", "Tahoua"]
+  },
+  {
+    "name": "Nigeria",
+    "flag": "🇳🇬",
+    "currency": "NGN",
+    "currencyName": "Naira",
+    "cities": ["Lagos", "Kano", "Ibadan", "Abuja", "Port Harcourt"]
+  },
+  {
+    "name": "Norvège",
+    "flag": "🇳🇴",
+    "currency": "NOK",
+    "currencyName": "Couronne norvégienne",
+    "cities": ["Oslo", "Bergen", "Stavanger", "Trondheim", "Drammen"]
+  },
+  {
+    "name": "Nouvelle-Zélande",
+    "flag": "🇳🇿",
+    "currency": "NZD",
+    "currencyName": "Dollar néo-zélandais",
+    "cities": ["Auckland", "Wellington", "Christchurch", "Hamilton", "Tauranga"]
+  },
+  {
+    "name": "Oman",
+    "flag": "🇴🇲",
+    "currency": "OMR",
+    "currencyName": "Rial omanais",
+    "cities": ["Mascate", "Salalah", "Sohar", "Nizwa", "Sur"]
+  },
+  {
+    "name": "Ouganda",
+    "flag": "🇺🇬",
+    "currency": "UGX",
+    "currencyName": "Shilling ougandais",
+    "cities": ["Kampala", "Gulu", "Lira", "Mbarara", "Jinja"]
+  },
+  {
+    "name": "Ouzbékistan",
+    "flag": "🇺🇿",
+    "currency": "UZS",
+    "currencyName": "Sum",
+    "cities": ["Tachkent", "Samarcande", "Namangan", "Andijan", "Boukhara"]
+  },
+  {
+    "name": "Pakistan",
+    "flag": "🇵🇰",
+    "currency": "PKR",
+    "currencyName": "Roupie pakistanaise",
+    "cities": ["Karachi", "Lahore", "Faisalabad", "Rawalpindi", "Multan"]
+  },
+  {
+    "name": "Palaos",
+    "flag": "🇵🇼",
+    "currency": "USD",
+    "currencyName": "Dollar américain",
+    "cities": ["Ngerulmud", "Koror", "Melekeok", "Airai", "Ngarchelong"]
+  },
+  {
+    "name": "Palestine",
+    "flag": "🇵🇸",
+    "currency": "ILS",
+    "currencyName": "Shekel",
+    "cities": ["Ramallah", "Gaza", "Hébron", "Naplouse", "Jéricho"]
+  },
+  {
+    "name": "Panama",
+    "flag": "🇵🇦",
+    "currency": "PAB",
+    "currencyName": "Balboa",
+    "cities": ["Panama", "San Miguelito", "Tocumen", "David", "Arraiján"]
+  },
+  {
+    "name": "Papouasie-Nouvelle-Guinée",
+    "flag": "🇵🇬",
+    "currency": "PGK",
+    "currencyName": "Kina",
+    "cities": ["Port Moresby", "Lae", "Mount Hagen", "Madang", "Wewak"]
+  },
+  {
+    "name": "Paraguay",
+    "flag": "🇵🇾",
+    "currency": "PYG",
+    "currencyName": "Guaraní",
+    "cities": ["Asunción", "Ciudad del Este", "San Lorenzo", "Luque", "Capiatá"]
+  },
+  {
+    "name": "Pays-Bas",
+    "flag": "🇳🇱",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Amsterdam", "Rotterdam", "La Haye", "Utrecht", "Eindhoven"]
+  },
+  {
+    "name": "Pérou",
+    "flag": "🇵🇪",
+    "currency": "PEN",
+    "currencyName": "Sol",
+    "cities": ["Lima", "Arequipa", "Trujillo", "Chiclayo", "Cusco"]
+  },
+  {
+    "name": "Philippines",
+    "flag": "🇵🇭",
+    "currency": "PHP",
+    "currencyName": "Peso philippin",
+    "cities": ["Manille", "Quezon City", "Davao", "Cebu", "Zamboanga"]
+  },
+  {
+    "name": "Pologne",
+    "flag": "🇵🇱",
+    "currency": "PLN",
+    "currencyName": "Zloty",
+    "cities": ["Varsovie", "Cracovie", "Łódź", "Wrocław", "Poznań"]
+  },
+  {
+    "name": "Portugal",
+    "flag": "🇵🇹",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Lisbonne", "Porto", "Amadora", "Braga", "Setúbal"]
+  },
+  {
+    "name": "Qatar",
+    "flag": "🇶🇦",
+    "currency": "QAR",
+    "currencyName": "Riyal qatarien",
+    "cities": ["Doha", "Al Rayyan", "Umm Salal", "Al Wakrah", "Al Khor"]
+  },
+  {
+    "name": "RD Congo",
+    "flag": "🇨🇩",
+    "currency": "CDF",
+    "currencyName": "Franc congolais",
+    "cities": ["Kinshasa", "Lubumbashi", "Mbuji-Mayi", "Kananga", "Kisangani"]
+  },
+  {
+    "name": "République centrafricaine",
+    "flag": "🇨🇫",
+    "currency": "XAF",
+    "currencyName": "Franc CFA",
+    "cities": ["Bangui", "Bimbo", "Berbérati", "Carnot", "Bambari"]
+  },
+  {
+    "name": "République dominicaine",
+    "flag": "🇩🇴",
+    "currency": "DOP",
+    "currencyName": "Peso dominicain",
+    "cities": ["Saint-Domingue", "Santiago", "Santo Domingo Este", "San Pedro de Macorís", "La Romana"]
+  },
+  {
+    "name": "République tchèque",
+    "flag": "🇨🇿",
+    "currency": "CZK",
+    "currencyName": "Couronne tchèque",
+    "cities": ["Prague", "Brno", "Ostrava", "Plzeň", "Liberec"]
+  },
+  {
+    "name": "Roumanie",
+    "flag": "🇷🇴",
+    "currency": "RON",
+    "currencyName": "Leu roumain",
+    "cities": ["Bucarest", "Cluj-Napoca", "Timișoara", "Iași", "Constanța"]
+  },
+  {
+    "name": "Royaume-Uni",
+    "flag": "🇬🇧",
+    "currency": "GBP",
+    "currencyName": "Livre sterling",
+    "cities": ["Londres", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Édimbourg"]
+  },
+  {
+    "name": "Russie",
+    "flag": "🇷🇺",
+    "currency": "RUB",
+    "currencyName": "Rouble",
+    "cities": ["Moscou", "Saint-Pétersbourg", "Novossibirsk", "Iekaterinbourg", "Kazan"]
+  },
+  {
+    "name": "Rwanda",
+    "flag": "🇷🇼",
+    "currency": "RWF",
+    "currencyName": "Franc rwandais",
+    "cities": ["Kigali", "Butare", "Gitarama", "Ruhengeri", "Gisenyi"]
+  },
+  {
+    "name": "Saint-Kitts-et-Nevis",
+    "flag": "🇰🇳",
+    "currency": "XCD",
+    "currencyName": "Dollar des Caraïbes orientales",
+    "cities": ["Basseterre", "Charlestown", "Dieppe Bay Town", "Saint Paul's"]
+  },
+  {
+    "name": "Saint-Marin",
+    "flag": "🇸🇲",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Saint-Marin", "Serravalle", "Borgo Maggiore", "Domagnano"]
+  },
+  {
+    "name": "Saint-Vincent-et-les-Grenadines",
+    "flag": "🇻🇨",
+    "currency": "XCD",
+    "currencyName": "Dollar des Caraïbes orientales",
+    "cities": ["Kingstown", "Georgetown", "Barrouallie", "Port Elizabeth"]
+  },
+  {
+    "name": "Sainte-Lucie",
+    "flag": "🇱🇨",
+    "currency": "XCD",
+    "currencyName": "Dollar des Caraïbes orientales",
+    "cities": ["Castries", "Vieux Fort", "Micoud", "Soufrière", "Gros Islet"]
+  },
+  {
+    "name": "Salvador",
+    "flag": "🇸🇻",
+    "currency": "USD",
+    "currencyName": "Dollar américain",
+    "cities": ["San Salvador", "Santa Ana", "San Miguel", "Mejicanos", "Soyapango"]
+  },
+  {
+    "name": "Samoa",
+    "flag": "🇼🇸",
+    "currency": "WST",
+    "currencyName": "Tala",
+    "cities": ["Apia", "Vaitele", "Faleula", "Siusega", "Malie"]
+  },
+  {
+    "name": "São Tomé-et-Príncipe",
+    "flag": "🇸🇹",
+    "currency": "STN",
+    "currencyName": "Dobra",
+    "cities": ["São Tomé", "Trindade", "Neves", "Santana", "Santo António"]
+  },
+  {
+    "name": "Sénégal",
+    "flag": "🇸🇳",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Dakar", "Touba", "Thiès", "Kaolack", "Saint-Louis"]
+  },
+  {
+    "name": "Serbie",
+    "flag": "🇷🇸",
+    "currency": "RSD",
+    "currencyName": "Dinar serbe",
+    "cities": ["Belgrade", "Novi Sad", "Niš", "Kragujevac", "Subotica"]
+  },
+  {
+    "name": "Seychelles",
+    "flag": "🇸🇨",
+    "currency": "SCR",
+    "currencyName": "Roupie seychelloise",
+    "cities": ["Victoria", "Anse Boileau", "Beau Vallon", "Takamaka", "Anse Royale"]
+  },
+  {
+    "name": "Sierra Leone",
+    "flag": "🇸🇱",
+    "currency": "SLL",
+    "currencyName": "Leone",
+    "cities": ["Freetown", "Bo", "Kenema", "Makeni", "Koidu"]
+  },
+  {
+    "name": "Singapour",
+    "flag": "🇸🇬",
+    "currency": "SGD",
+    "currencyName": "Dollar de Singapour",
+    "cities": ["Singapour", "Woodlands", "Tampines", "Jurong West", "Bedok"]
+  },
+  {
+    "name": "Slovaquie",
+    "flag": "🇸🇰",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Bratislava", "Košice", "Prešov", "Žilina", "Banská Bystrica"]
+  },
+  {
+    "name": "Slovénie",
+    "flag": "🇸🇮",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Ljubljana", "Maribor", "Celje", "Kranj", "Velenje"]
+  },
+  {
+    "name": "Somalie",
+    "flag": "🇸🇴",
+    "currency": "SOS",
+    "currencyName": "Shilling somalien",
+    "cities": ["Mogadiscio", "Hargeisa", "Bosaso", "Kismayo", "Merca"]
+  },
+  {
+    "name": "Soudan",
+    "flag": "🇸🇩",
+    "currency": "SDG",
+    "currencyName": "Livre soudanaise",
+    "cities": ["Khartoum", "Omdurman", "Port-Soudan", "Kassala", "Nyala"]
+  },
+  {
+    "name": "Soudan du Sud",
+    "flag": "🇸🇸",
+    "currency": "SSP",
+    "currencyName": "Livre sud-soudanaise",
+    "cities": ["Djouba", "Wau", "Malakal", "Yei", "Bor"]
+  },
+  {
+    "name": "Sri Lanka",
+    "flag": "🇱🇰",
+    "currency": "LKR",
+    "currencyName": "Roupie srilankaise",
+    "cities": ["Colombo", "Dehiwala-Mount Lavinia", "Moratuwa", "Jaffna", "Negombo"]
+  },
+  {
+    "name": "Suède",
+    "flag": "🇸🇪",
+    "currency": "SEK",
+    "currencyName": "Couronne suédoise",
+    "cities": ["Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås"]
+  },
+  {
+    "name": "Suisse",
+    "flag": "🇨🇭",
+    "currency": "CHF",
+    "currencyName": "Franc suisse",
+    "cities": ["Zurich", "Genève", "Bâle", "Lausanne", "Berne"]
+  },
+  {
+    "name": "Suriname",
+    "flag": "🇸🇷",
+    "currency": "SRD",
+    "currencyName": "Dollar surinamien",
+    "cities": ["Paramaribo", "Lelydorp", "Nieuw Nickerie", "Moengo", "Nieuw Amsterdam"]
+  },
+  {
+    "name": "Syrie",
+    "flag": "🇸🇾",
+    "currency": "SYP",
+    "currencyName": "Livre syrienne",
+    "cities": ["Damas", "Alep", "Homs", "Lattaquié", "Hama"]
+  },
+  {
+    "name": "Tadjikistan",
+    "flag": "🇹🇯",
+    "currency": "TJS",
+    "currencyName": "Somoni",
+    "cities": ["Douchanbé", "Khujand", "Kulob", "Qurghonteppa", "Istaravshan"]
+  },
+  {
+    "name": "Tanzanie",
+    "flag": "🇹🇿",
+    "currency": "TZS",
+    "currencyName": "Shilling tanzanien",
+    "cities": ["Dar es Salaam", "Mwanza", "Arusha", "Dodoma", "Mbeya"]
+  },
+  {
+    "name": "Tchad",
+    "flag": "🇹🇩",
+    "currency": "XAF",
+    "currencyName": "Franc CFA",
+    "cities": ["N'Djamena", "Moundou", "Sarh", "Abéché", "Kelo"]
+  },
+  {
+    "name": "Thaïlande",
+    "flag": "🇹🇭",
+    "currency": "THB",
+    "currencyName": "Baht",
+    "cities": ["Bangkok", "Chiang Mai", "Pattaya", "Phuket", "Nakhon Ratchasima"]
+  },
+  {
+    "name": "Timor oriental",
+    "flag": "🇹🇱",
+    "currency": "USD",
+    "currencyName": "Dollar américain",
+    "cities": ["Dili", "Baucau", "Maliana", "Suai", "Lospalos"]
+  },
+  {
+    "name": "Togo",
+    "flag": "🇹🇬",
+    "currency": "XOF",
+    "currencyName": "Franc CFA",
+    "cities": ["Lomé", "Sokodé", "Kara", "Kpalimé", "Atakpamé"]
+  },
+  {
+    "name": "Tonga",
+    "flag": "🇹🇴",
+    "currency": "TOP",
+    "currencyName": "Pa'anga",
+    "cities": ["Nuku'alofa", "Neiafu", "Haveluloto", "Vaini", "Pangai"]
+  },
+  {
+    "name": "Trinité-et-Tobago",
+    "flag": "🇹🇹",
+    "currency": "TTD",
+    "currencyName": "Dollar trinidadien",
+    "cities": ["Port of Spain", "San Fernando", "Chaguanas", "Arima", "Point Fortin"]
+  },
+  {
+    "name": "Tunisie",
+    "flag": "🇹🇳",
+    "currency": "TND",
+    "currencyName": "Dinar tunisien",
+    "cities": ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte", "Gabès"]
+  },
+  {
+    "name": "Turkménistan",
+    "flag": "🇹🇲",
+    "currency": "TMT",
+    "currencyName": "Manat turkmène",
+    "cities": ["Achgabat", "Türkmenabat", "Daşoguz", "Mary", "Balkanabat"]
+  },
+  {
+    "name": "Turquie",
+    "flag": "🇹🇷",
+    "currency": "TRY",
+    "currencyName": "Livre turque",
+    "cities": ["Istanbul", "Ankara", "Izmir", "Bursa", "Antalya", "Adana"]
+  },
+  {
+    "name": "Tuvalu",
+    "flag": "🇹🇻",
+    "currency": "AUD",
+    "currencyName": "Dollar australien",
+    "cities": ["Funafuti", "Vaiaku", "Asau", "Lolua", "Tanrake"]
+  },
+  {
+    "name": "Ukraine",
+    "flag": "🇺🇦",
+    "currency": "UAH",
+    "currencyName": "Hryvnia",
+    "cities": ["Kiev", "Kharkiv", "Odessa", "Dnipro", "Donetsk", "Lviv"]
+  },
+  {
+    "name": "Uruguay",
+    "flag": "🇺🇾",
+    "currency": "UYU",
+    "currencyName": "Peso uruguayen",
+    "cities": ["Montevideo", "Salto", "Paysandú", "Las Piedras", "Rivera"]
+  },
+  {
+    "name": "Vanuatu",
+    "flag": "🇻🇺",
+    "currency": "VUV",
+    "currencyName": "Vatu",
+    "cities": ["Port-Vila", "Luganville", "Isangel", "Sola", "Lakatoro"]
+  },
+  {
+    "name": "Vatican",
+    "flag": "🇻🇦",
+    "currency": "EUR",
+    "currencyName": "Euro",
+    "cities": ["Cité du Vatican"]
+  },
+  {
+    "name": "Venezuela",
+    "flag": "🇻🇪",
+    "currency": "VES",
+    "currencyName": "Bolívar",
+    "cities": ["Caracas", "Maracaibo", "Valencia", "Barquisimeto", "Maracay"]
+  },
+  {
+    "name": "Vietnam",
+    "flag": "🇻🇳",
+    "currency": "VND",
+    "currencyName": "Dong",
+    "cities": ["Hanoï", "Hô Chi Minh-Ville", "Haïphong", "Da Nang", "Cần Thơ"]
+  },
+  {
+    "name": "Yémen",
+    "flag": "🇾🇪",
+    "currency": "YER",
+    "currencyName": "Rial yéménite",
+    "cities": ["Sanaa", "Aden", "Taïz", "Hodeida", "Ibb"]
+  },
+  {
+    "name": "Zambie",
+    "flag": "🇿🇲",
+    "currency": "ZMW",
+    "currencyName": "Kwacha zambien",
+    "cities": ["Lusaka", "Ndola", "Kitwe", "Kabwe", "Chingola"]
+  },
+  {
+    "name": "Zimbabwe",
+    "flag": "🇿🇼",
+    "currency": "ZWL",
+    "currencyName": "Dollar zimbabwéen",
+    "cities": ["Harare", "Bulawayo", "Chitungwiza", "Mutare", "Gweru"]
+  }
+]

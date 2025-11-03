@@ -70,6 +70,26 @@
 {% block scripts %}
 <script>
     let personneCount = 0;
+    let countriesData = [];
+    
+    async function loadCountries() {
+        try {
+            const response = await fetch('/static/data/countries.json');
+            countriesData = await response.json();
+        } catch (error) {
+            console.error('Erreur chargement pays:', error);
+        }
+    }
+    
+    function populateCountrySelect(selectElement) {
+        selectElement.innerHTML = '<option value="">Sélectionner un pays...</option>';
+        countriesData.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.name;
+            option.textContent = `${country.flag} ${country.name}`;
+            selectElement.appendChild(option);
+        });
+    }
     
     function calculateDays() {
         const arrivee = document.getElementById('date_arrivee').value;
@@ -115,7 +135,9 @@
                     </div>
                     <div class="form-group">
                         <label>Pays</label>
-                        <input type="text" name="personne_pays_${personneCount}">
+                        <select name="personne_pays_${personneCount}" class="pays-select">
+                            <option value="">Sélectionner un pays...</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Type pièce d'identité</label>
@@ -138,6 +160,12 @@
         `;
         
         document.getElementById('personnesContainer').insertAdjacentHTML('beforeend', personneHtml);
+        
+        const newPersonCard = document.getElementById(`personne_${personneCount}`);
+        const paysSelect = newPersonCard.querySelector('.pays-select');
+        if (paysSelect && countriesData.length > 0) {
+            populateCountrySelect(paysSelect);
+        }
     }
     
     function removePersonne(id) {
@@ -197,6 +225,8 @@
         }
     });
     
-    addPersonne();
+    loadCountries().then(() => {
+        addPersonne();
+    });
 </script>
 {% endblock %}
