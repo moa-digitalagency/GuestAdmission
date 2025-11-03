@@ -20,9 +20,11 @@
                 <input type="text" id="numero_identification" name="numero_identification" placeholder="Ex: ICE001234567890">
             </div>
             
-            <div class="form-group">
-                <label for="logo_url">URL du logo</label>
-                <input type="url" id="logo_url" name="logo_url" placeholder="https://exemple.com/logo.png">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label for="logo_file">Logo de l'établissement</label>
+                <input type="file" id="logo_file" name="logo_file" accept="image/*" style="padding: 0.5rem;">
+                <input type="hidden" id="logo_url" name="logo_url">
+                <div id="logo_preview" style="margin-top: 1rem;"></div>
             </div>
             
             <div class="form-group">
@@ -120,33 +122,14 @@
     </div>
 
     <div class="dotted-section section-orange">
-        <h2>💵 Prix des chambres</h2>
-        <div class="form-grid">
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label style="font-weight: 600; margin-bottom: 1rem; display: block;">Type de tarification</label>
-                <div style="margin-bottom: 0.5rem;">
-                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="prix_type" value="same" checked style="margin-right: 0.5rem;">
-                        Prix égal pour toutes les chambres
-                    </label>
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="prix_type" value="different" style="margin-right: 0.5rem;">
-                        Prix différent par chambre
-                    </label>
-                </div>
-            </div>
-            
-            <div id="prix_same_container" class="form-group" style="grid-column: 1 / -1;">
-                <label for="prix_uniforme">Prix par nuit (devise locale)</label>
-                <input type="number" id="prix_uniforme" step="0.01" min="0" placeholder="Prix par nuit">
-            </div>
-            
-            <div id="prix_different_container" style="display: none; grid-column: 1 / -1;">
-                <div id="prix_chambres_list" class="form-grid"></div>
-            </div>
-        </div>
+        <h2>🏠 Configuration des chambres</h2>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">Configurez chaque chambre avec son nom, prix et capacité maximale.</p>
+        
+        <div id="chambres-container"></div>
+        
+        <button type="button" id="add-chambre-btn" class="btn btn-primary btn-small" style="margin-top: 1rem;">
+            ➕ Ajouter une chambre
+        </button>
     </div>
 
     <div class="dotted-section section-cyan">
@@ -189,6 +172,101 @@
     let currentParams = {};
     let countriesData = [];
     let responsables = [];
+    let chambres = [];
+    
+    document.getElementById('logo_file').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('logo', file);
+            
+            try {
+                const response = await fetch('/api/parametres/upload-logo', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('logo_url').value = result.logo_url;
+                    document.getElementById('logo_preview').innerHTML = `
+                        <img src="${result.logo_url}" alt="Logo" style="max-width: 200px; max-height: 100px; border: 2px solid #e5e7eb; border-radius: 8px; padding: 0.5rem;">
+                    `;
+                    alert('✅ Logo téléchargé avec succès!');
+                } else {
+                    alert('❌ ' + result.error);
+                }
+            } catch (error) {
+                console.error('Erreur upload logo:', error);
+                alert('❌ Erreur lors du téléchargement du logo');
+            }
+        }
+    });
+    
+    function renderChambres() {
+        const container = document.getElementById('chambres-container');
+        container.innerHTML = '';
+        
+        chambres.forEach((chambre, index) => {
+            const card = document.createElement('div');
+            card.className = 'person-card';
+            card.innerHTML = `
+                <div class="person-header">
+                    <span class="person-badge">Chambre ${index + 1}</span>
+                    ${chambres.length > 1 ? `<button type="button" class="person-remove" onclick="removeChambre(${index})">✕ Supprimer</button>` : ''}
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nom de la chambre *</label>
+                        <input type="text" class="chambre-nom" data-index="${index}" value="${chambre.nom || ''}" placeholder="Ex: Chambre 1, Suite Royale, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prix par nuit *</label>
+                        <input type="number" class="chambre-prix" data-index="${index}" value="${chambre.prix || 0}" step="0.01" min="0" placeholder="Prix" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Capacité maximale (personnes) *</label>
+                        <input type="number" class="chambre-capacite" data-index="${index}" value="${chambre.capacite || 2}" min="1" max="10" placeholder="Nombre de personnes" required>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    function addChambre() {
+        chambres.push({
+            nom: '',
+            prix: 0,
+            capacite: 2
+        });
+        renderChambres();
+    }
+    
+    function removeChambre(index) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette chambre?')) {
+            chambres.splice(index, 1);
+            renderChambres();
+        }
+    }
+    
+    function collectChambresData() {
+        const noms = document.querySelectorAll('.chambre-nom');
+        const prix = document.querySelectorAll('.chambre-prix');
+        const capacites = document.querySelectorAll('.chambre-capacite');
+        
+        const collected = [];
+        for (let i = 0; i < noms.length; i++) {
+            collected.push({
+                nom: noms[i].value,
+                prix: parseFloat(prix[i].value) || 0,
+                capacite: parseInt(capacites[i].value) || 2
+            });
+        }
+        return collected;
+    }
+    
+    document.getElementById('add-chambre-btn').addEventListener('click', addChambre);
     
     function renderResponsables() {
         const container = document.getElementById('responsables-container');
@@ -324,6 +402,11 @@
             document.getElementById('nom_etablissement').value = currentParams.nom_etablissement || '';
             document.getElementById('numero_identification').value = currentParams.numero_identification || '';
             document.getElementById('logo_url').value = currentParams.logo_url || '';
+            if (currentParams.logo_url) {
+                document.getElementById('logo_preview').innerHTML = `
+                    <img src="${currentParams.logo_url}" alt="Logo" style="max-width: 200px; max-height: 100px; border: 2px solid #e5e7eb; border-radius: 8px; padding: 0.5rem;">
+                `;
+            }
             document.getElementById('pays').value = currentParams.pays || '';
             
             const paysSelectEvent = new Event('change');
@@ -357,24 +440,22 @@
             }
             renderResponsables();
             
-            const prixChambres = typeof currentParams.prix_chambres === 'string' 
-                ? JSON.parse(currentParams.prix_chambres || '[]')
-                : (currentParams.prix_chambres || []);
-            
-            if (prixChambres.length > 0) {
-                const allSame = prixChambres.every(prix => prix === prixChambres[0]);
-                if (allSame) {
-                    document.querySelector('input[name="prix_type"][value="same"]').checked = true;
-                    document.getElementById('prix_uniforme').value = prixChambres[0];
-                    updatePrixType();
-                } else {
-                    document.querySelector('input[name="prix_type"][value="different"]').checked = true;
-                    updatePrixType();
-                    updatePrixDifferentInputs();
-                }
+            const chambresResponse = await fetch('/api/chambres');
+            const chambresData = await chambresResponse.json();
+            if (chambresData && chambresData.length > 0) {
+                chambres = chambresData.map(ch => ({
+                    nom: ch.nom,
+                    prix: ch.prix_par_nuit,
+                    capacite: ch.capacite
+                }));
             } else {
-                document.getElementById('prix_uniforme').value = '';
+                chambres = [{
+                    nom: 'Chambre 1',
+                    prix: 0,
+                    capacite: 2
+                }];
             }
+            renderChambres();
             
             const resResponse = await fetch('/api/reservations');
             const reservations = await resResponse.json();
@@ -389,51 +470,13 @@
         }
     }
     
-    function updatePrixType() {
-        const prixType = document.querySelector('input[name="prix_type"]:checked').value;
-        
-        if (prixType === 'same') {
-            document.getElementById('prix_same_container').style.display = 'block';
-            document.getElementById('prix_different_container').style.display = 'none';
-        } else {
-            document.getElementById('prix_same_container').style.display = 'none';
-            document.getElementById('prix_different_container').style.display = 'block';
-            updatePrixDifferentInputs();
-        }
-    }
-    
-    function updatePrixDifferentInputs() {
-        const nombreChambres = parseInt(document.getElementById('nombre_chambres').value) || 1;
-        const container = document.getElementById('prix_chambres_list');
-        const prixChambres = currentParams.prix_chambres || [];
-        
-        container.innerHTML = '';
-        for (let i = 0; i < nombreChambres; i++) {
-            const div = document.createElement('div');
-            div.className = 'form-group';
-            div.innerHTML = `
-                <label>Chambre ${i + 1}</label>
-                <input type="number" class="prix-chambre" step="0.01" min="0" placeholder="Prix par nuit" value="${prixChambres[i] || ''}">
-            `;
-            container.appendChild(div);
-        }
-    }
-    
     async function saveParams(e) {
         if (e) e.preventDefault();
         
         try {
-            const prixType = document.querySelector('input[name="prix_type"]:checked').value;
-            const nombreChambres = parseInt(document.getElementById('nombre_chambres').value) || 1;
-            let prixChambres = [];
-            
-            if (prixType === 'same') {
-                const prixUniforme = parseFloat(document.getElementById('prix_uniforme').value) || 0;
-                prixChambres = Array(nombreChambres).fill(prixUniforme);
-            } else {
-                const inputs = document.querySelectorAll('.prix-chambre');
-                prixChambres = Array.from(inputs).map(input => parseFloat(input.value) || 0);
-            }
+            const chambresConfig = collectChambresData();
+            const nombreChambres = chambresConfig.length;
+            const prixChambres = chambresConfig.map(ch => ch.prix);
             
             const data = {
                 nom_etablissement: document.getElementById('nom_etablissement').value,
@@ -451,6 +494,7 @@
                 taux_charge_plateforme: currentParams.taux_charge_plateforme || 0,
                 nombre_chambres: nombreChambres,
                 prix_chambres: prixChambres,
+                chambres_config: chambresConfig,
                 responsables: collectResponsablesData(),
                 responsable_prenom: collectResponsablesData()[0]?.prenom || '',
                 responsable_nom: collectResponsablesData()[0]?.nom || '',
@@ -480,17 +524,6 @@
             alert('❌ Erreur lors de l\'enregistrement des paramètres');
         }
     }
-    
-    document.querySelectorAll('input[name="prix_type"]').forEach(radio => {
-        radio.addEventListener('change', updatePrixType);
-    });
-    
-    document.getElementById('nombre_chambres').addEventListener('change', () => {
-        const prixType = document.querySelector('input[name="prix_type"]:checked').value;
-        if (prixType === 'different') {
-            updatePrixDifferentInputs();
-        }
-    });
     
     document.getElementById('parametresForm').addEventListener('submit', saveParams);
     

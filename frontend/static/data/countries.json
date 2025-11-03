@@ -32,7 +32,7 @@
     "flag": "🇩🇪",
     "currency": "EUR",
     "currencyName": "Euro",
-    "cities": ["Berlin", "Munich", "Francfort", "Hambourg", "Cologne", "Stuttgart", "Düsseldorf"]
+    "cities": ["Berlin", "Munich", "Francfort", "Hambourg", "Cologne", "Stuttgart", "Düsseldorf", "Dortmund", "Essen", "Leipzig", "Brême", "Dresde", "Hanovre", "Nuremberg", "Duisbourg", "Bochum", "Wuppertal", "Bielefeld", "Bonn", "Münster", "Mannheim", "Karlsruhe", "Augsbourg", "Wiesbaden", "Mönchengladbach", "Gelsenkirchen", "Aix-la-Chapelle", "Braunschweig", "Chemnitz", "Kiel", "Heidelberg", "Fribourg-en-Brisgau", "Lübeck", "Erfurt", "Potsdam", "Ratisbonne", "Würzburg", "Rostock", "Göttingen", "Bamberg", "Rothenburg ob der Tauber"]
   },
   {
     "name": "Andorre",
@@ -375,7 +375,7 @@
     "flag": "🇪🇸",
     "currency": "EUR",
     "currencyName": "Euro",
-    "cities": ["Madrid", "Barcelone", "Valence", "Séville", "Saragosse", "Málaga"]
+    "cities": ["Madrid", "Barcelone", "Valence", "Séville", "Saragosse", "Málaga", "Murcie", "Palma de Majorque", "Las Palmas", "Bilbao", "Alicante", "Cordoue", "Valladolid", "Vigo", "Gijón", "L'Hospitalet", "Grenade", "Saint-Sébastien", "La Corogne", "Salamanque", "Pampelune", "Burgos", "Santander", "Castellón", "Almería", "Oviedo", "Tarragone", "Badajoz", "Logroño", "Albacete", "Marbella", "Benidorm", "Ibiza", "Gérone", "Saint-Jacques-de-Compostelle", "Tolède", "Cadix", "Ségovie", "Cuenca", "Ávila", "Ronda", "Jerez de la Frontera", "León", "Vitoria", "Zamora", "Cáceres"]
   },
   {
     "name": "Estonie",
@@ -396,7 +396,7 @@
     "flag": "🇺🇸",
     "currency": "USD",
     "currencyName": "Dollar américain",
-    "cities": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphie", "Miami"]
+    "cities": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphie", "Miami", "San Antonio", "San Diego", "Dallas", "San José", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Indianapolis", "Charlotte", "San Francisco", "Seattle", "Denver", "Washington DC", "Boston", "Nashville", "El Paso", "Detroit", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque", "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas City", "Colorado Springs", "Raleigh", "Omaha", "Long Beach", "Virginia Beach", "Oakland", "Minneapolis", "Tampa", "New Orleans", "Cleveland", "Honolulu", "Anchorage", "Orlando", "Pittsburgh", "Cincinnati", "St. Louis", "Buffalo", "Richmond", "Savannah", "Charleston", "Aspen", "Napa Valley"]
   },
   {
     "name": "Éthiopie",
@@ -424,7 +424,7 @@
     "flag": "🇫🇷",
     "currency": "EUR",
     "currencyName": "Euro",
-    "cities": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg"]
+    "cities": ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Strasbourg", "Montpellier", "Bordeaux", "Lille", "Rennes", "Reims", "Le Havre", "Saint-Étienne", "Toulon", "Grenoble", "Dijon", "Angers", "Nîmes", "Villeurbanne", "Le Mans", "Aix-en-Provence", "Clermont-Ferrand", "Brest", "Tours", "Amiens", "Limoges", "Annecy", "Perpignan", "Boulogne-Billancourt", "Metz", "Besançon", "Orléans", "Mulhouse", "Rouen", "Saint-Denis", "Argenteuil", "Caen", "Nancy", "Montreuil", "Versailles", "Cannes", "Avignon", "La Rochelle", "Dunkerque", "Poitiers", "Nanterre", "Courbevoie", "Créteil", "Pau", "Bayonne", "Calais", "Biarritz", "Saint-Malo", "Menton", "Chamonix"]
   },
   {
     "name": "Gabon",
@@ -578,7 +578,7 @@
     "flag": "🇮🇹",
     "currency": "EUR",
     "currencyName": "Euro",
-    "cities": ["Rome", "Milan", "Naples", "Turin", "Palerme", "Gênes", "Florence"]
+    "cities": ["Rome", "Milan", "Naples", "Turin", "Palerme", "Gênes", "Florence", "Bologne", "Venise", "Vérone", "Bari", "Catane", "Messine", "Padoue", "Trieste", "Tarente", "Brescia", "Parme", "Modène", "Reggio de Calabre", "Prato", "Cagliari", "Livourne", "Foggia", "Rimini", "Salerne", "Ferrare", "Ravenne", "Pérouse", "Monza", "Bergame", "Pescara", "Trente", "Forlì", "Vicence", "Terni", "Novare", "Ancône", "Reggio d'Émilie", "Andria", "Pise", "Côme", "Sienne", "Assise", "Positano", "Capri", "Portofino", "Amalfi", "Cinque Terre"]
   },
   {
     "name": "Jamaïque",
@@ -592,7 +592,7 @@
     "flag": "🇯🇵",
     "currency": "JPY",
     "currencyName": "Yen",
-    "cities": ["Tokyo", "Osaka", "Yokohama", "Nagoya", "Sapporo", "Kyoto"]
+    "cities": ["Tokyo", "Osaka", "Yokohama", "Nagoya", "Sapporo", "Kyoto", "Fukuoka", "Kobe", "Kawasaki", "Saitama", "Hiroshima", "Sendai", "Chiba", "Kitakyushu", "Sakai", "Niigata", "Hamamatsu", "Shizuoka", "Okayama", "Kagoshima", "Kumamoto", "Sagamihara", "Hachioji", "Nara", "Kanazawa", "Takayama", "Nikko", "Hakone", "Kamakura", "Matsumoto", "Naha", "Hakuba"]
   },
   {
     "name": "Jordanie",
@@ -760,7 +760,7 @@
     "flag": "🇲🇦",
     "currency": "MAD",
     "currencyName": "Dirham marocain",
-    "cities": ["Casablanca", "Rabat", "Fès", "Marrakech", "Agadir", "Tanger", "Meknès", "Oujda", "Kenitra", "Tétouan", "Safi", "El Jadida"]
+    "cities": ["Casablanca", "Rabat", "Fès", "Marrakech", "Agadir", "Tanger", "Meknès", "Oujda", "Kenitra", "Tétouan", "Safi", "El Jadida", "Essaouira", "Mohammedia", "Salé", "Beni Mellal", "Nador", "Laâyoune", "Khouribga", "Taza", "Settat", "Errachidia", "Larache", "Khemisset", "Guelmim", "Berrechid", "Ksar El Kebir", "Ouarzazate", "Ifrane", "Chefchaouen", "Azrou", "Tiznit", "Dakhla", "Berkane", "Sidi Kacem", "Taourirt", "Youssoufia", "Sidi Slimane", "Khenifra", "Midelt", "Tinghir", "Zagora", "Tan-Tan", "Taroudant", "Bouarfa", "Sefrou", "Tiflet", "Imzouren", "Sidi Bennour", "Souk Larbaâ El Gharb", "Oued Zem", "Martil", "Fnideq", "Asilah", "Chichaoua", "Azilal", "Demnate", "Ait Melloul", "Inezgane", "Biougra", "Bouskoura"]
   },
   {
     "name": "Maurice",
@@ -1033,7 +1033,7 @@
     "flag": "🇬🇧",
     "currency": "GBP",
     "currencyName": "Livre sterling",
-    "cities": ["Londres", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Édimbourg"]
+    "cities": ["Londres", "Birmingham", "Manchester", "Glasgow", "Liverpool", "Édimbourg", "Leeds", "Bristol", "Sheffield", "Leicester", "Coventry", "Bradford", "Nottingham", "Newcastle", "Cardiff", "Belfast", "Brighton", "Southampton", "Portsmouth", "York", "Cambridge", "Oxford", "Bath", "Canterbury", "Inverness", "Aberdeen", "Dundee", "Stirling", "St Andrews", "Norwich", "Chester", "Winchester", "Plymouth", "Exeter", "Durham", "Stratford-upon-Avon"]
   },
   {
     "name": "Russie",

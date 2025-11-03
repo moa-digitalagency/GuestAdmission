@@ -1,9 +1,17 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_required
 from ..config.database import get_db_connection
+from werkzeug.utils import secure_filename
 import json
+import os
+import time
 
 parametres_bp = Blueprint('parametres', __name__)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'svg'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @parametres_bp.route('/api/parametres', methods=['GET'])
 @login_required
@@ -21,6 +29,30 @@ def get_parametres():
         return jsonify(dict(params))
     return jsonify({})
 
+@parametres_bp.route('/api/parametres/upload-logo', methods=['POST'])
+@login_required
+def upload_logo():
+    if 'logo' not in request.files:
+        return jsonify({'error': 'Aucun fichier fourni'}), 400
+    
+    file = request.files['logo']
+    if file.filename == '':
+        return jsonify({'error': 'Aucun fichier sélectionné'}), 400
+    
+    if file and allowed_file(file.filename):
+        os.makedirs(current_app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        filename = secure_filename(file.filename)
+        timestamp = str(int(time.time() * 1000))
+        filename = f"logo_{timestamp}_{filename}"
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        logo_url = f"/static/uploads/{filename}"
+        return jsonify({'success': True, 'logo_url': logo_url})
+    
+    return jsonify({'error': 'Type de fichier non autorisé'}), 400
+
 @parametres_bp.route('/api/parametres', methods=['PUT'])
 @login_required
 def update_parametres():
@@ -28,6 +60,8 @@ def update_parametres():
     
     conn = get_db_connection()
     cur = conn.cursor()
+    
+    chambres_config = data.get('chambres_config', [])
     
     cur.execute('''
         UPDATE parametres_systeme
@@ -77,6 +111,19 @@ def update_parametres():
         data.get('logo_url'),
         data.get('format_numero_reservation')
     ))
+    
+    cur.execute('DELETE FROM chambres')
+    
+    for chambre in chambres_config:
+        cur.execute('''
+            INSERT INTO chambres (nom, capacite, prix_par_nuit, statut)
+            VALUES (%s, %s, %s, %s)
+        ''', (
+            chambre.get('nom'),
+            chambre.get('capacite', 2),
+            chambre.get('prix', 0),
+            'disponible'
+        ))
     
     conn.commit()
     cur.close()

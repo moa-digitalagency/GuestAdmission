@@ -30,21 +30,9 @@
     </div>
 
     <div class="dotted-section section-purple">
-        <h2>💰 Informations financières</h2>
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="facture_hebergement">Facture hébergement</label>
-                <input type="number" step="0.01" id="facture_hebergement" name="facture_hebergement">
-            </div>
-            <div class="form-group">
-                <label for="charge_plateforme">Charge plate-forme</label>
-                <input type="number" step="0.01" id="charge_plateforme" name="charge_plateforme">
-            </div>
-            <div class="form-group">
-                <label for="taxe_sejour">Taxe séjour</label>
-                <input type="number" step="0.01" id="taxe_sejour" name="taxe_sejour">
-            </div>
-        </div>
+        <h2>🏠 Sélection des chambres</h2>
+        <p style="color: #6b7280; margin-bottom: 1rem;">Sélectionnez une ou plusieurs chambres pour cette réservation.</p>
+        <div id="chambresSelectionContainer"></div>
     </div>
 
     <div class="dotted-section section-blue">
@@ -71,6 +59,52 @@
 <script>
     let personneCount = 0;
     let countriesData = [];
+    let chambresDisponibles = [];
+    let selectedChambres = [];
+    
+    async function loadChambres() {
+        try {
+            const response = await fetch('/api/chambres');
+            chambresDisponibles = await response.json();
+            renderChambresSelection();
+        } catch (error) {
+            console.error('Erreur chargement chambres:', error);
+        }
+    }
+    
+    function renderChambresSelection() {
+        const container = document.getElementById('chambresSelectionContainer');
+        container.innerHTML = '';
+        
+        if (chambresDisponibles.length === 0) {
+            container.innerHTML = '<p style="color: #ef4444;">Aucune chambre configurée. Veuillez d\'abord configurer les chambres dans les paramètres.</p>';
+            return;
+        }
+        
+        const gridHtml = chambresDisponibles.map(chambre => `
+            <label style="display: flex; align-items: center; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; margin-bottom: 0.5rem;" class="chambre-option">
+                <input type="checkbox" value="${chambre.id}" style="margin-right: 1rem;" onchange="toggleChambre(${chambre.id})">
+                <div style="flex: 1;">
+                    <strong style="font-size: 1.1em; color: #1f2937;">${chambre.nom}</strong>
+                    <div style="color: #6b7280; margin-top: 0.25rem;">
+                        💰 ${chambre.prix_par_nuit} / nuit &nbsp;|&nbsp; 
+                        👥 Capacité: ${chambre.capacite} personne(s)
+                    </div>
+                </div>
+            </label>
+        `).join('');
+        
+        container.innerHTML = gridHtml;
+    }
+    
+    function toggleChambre(chambreId) {
+        const index = selectedChambres.indexOf(chambreId);
+        if (index > -1) {
+            selectedChambres.splice(index, 1);
+        } else {
+            selectedChambres.push(chambreId);
+        }
+    }
     
     async function loadCountries() {
         try {
@@ -207,11 +241,20 @@
             }
         }
         
+        if (selectedChambres.length === 0) {
+            showAlert('Veuillez sélectionner au moins une chambre', 'error');
+            return;
+        }
+        
         try {
             const response = await fetch('/api/reservations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ reservation, personnes: personnes.filter(p => p) })
+                body: JSON.stringify({ 
+                    reservation, 
+                    personnes: personnes.filter(p => p),
+                    chambres: selectedChambres
+                })
             });
             
             if (response.ok) {
@@ -225,8 +268,8 @@
         }
     });
     
-    loadCountries().then(() => {
-        addPersonne();
-    });
+    loadCountries();
+    loadChambres();
+    addPersonne();
 </script>
 {% endblock %}

@@ -16,6 +16,8 @@ app = Flask(__name__,
             template_folder=os.path.join(base_dir, 'frontend', 'templates'),
             static_folder=os.path.join(base_dir, 'frontend', 'static'))
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['UPLOAD_FOLDER'] = os.path.join(base_dir, 'frontend', 'static', 'uploads')
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 CORS(app)
 
 login_manager = LoginManager()
