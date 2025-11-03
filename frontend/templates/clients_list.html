@@ -30,41 +30,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    async function loadClients() {
-        try {
-            const response = await fetch('/api/personnes');
-            const clients = await response.json();
-            renderClients(clients);
-        } catch (error) {
-            console.error('Erreur chargement clients:', error);
-        }
-    }
-    
-    function renderClients(clients) {
-        const tbody = document.getElementById('clientsBody');
-        
-        if (clients.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Aucun client</td></tr>';
-            return;
-        }
-        
-        tbody.innerHTML = clients.map(client => `
-            <tr>
-                <td>${client.nom || '-'}</td>
-                <td>${client.prenom || '-'}</td>
-                <td>${client.email || '-'}</td>
-                <td>${client.telephone || '-'}</td>
-                <td>${client.pays || '-'}</td>
-                <td>${client.type_piece_identite || '-'}</td>
-                <td>${client.numero_piece_identite || '-'}</td>
-                <td>
-                    ${client.est_contact_principal ? '<span class="badge badge-green">Contact principal</span>' : ''}
-                </td>
-            </tr>
-        `).join('');
-    }
-    
-    loadClients();
-</script>
+<script src="{{ url_for('static', filename='js/clients_list.js') }}"></script>
 {% endblock %}

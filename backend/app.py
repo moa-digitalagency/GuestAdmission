@@ -25,7 +25,7 @@ CORS(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'auth.login_page'
+login_manager.login_view = 'auth.login_page'  # type: ignore
 
 @login_manager.user_loader
 def load_user(user_id):

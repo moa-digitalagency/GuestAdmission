@@ -50,57 +50,7 @@
 </div>
 {% endblock %}
 
+
 {% block scripts %}
-<script>
-    async function loadDashboardData() {
-        try {
-            const response = await fetch('/api/reservations');
-            const reservations = await response.json();
-            
-            const active = reservations.filter(r => r.statut === 'active').length;
-            document.getElementById('statsActiveReservations').textContent = active;
-            
-            const uniqueClients = new Set(reservations.map(r => `${r.contact_nom}-${r.contact_prenom}`)).size;
-            document.getElementById('statsTotalClients').textContent = uniqueClients;
-            
-            const today = new Date().toISOString().split('T')[0];
-            const arrivalsToday = reservations.filter(r => r.date_arrivee === today).length;
-            document.getElementById('statsArrivalsToday').textContent = arrivalsToday;
-            
-            const currentMonth = new Date().getMonth();
-            const monthlyRevenue = reservations
-                .filter(r => new Date(r.created_at).getMonth() === currentMonth)
-                .reduce((sum, r) => sum + parseFloat(r.facture_hebergement || 0), 0);
-            document.getElementById('statsMonthlyRevenue').textContent = monthlyRevenue.toFixed(2) + ' MAD';
-            
-            renderRecentReservations(reservations.slice(0, 10));
-        } catch (error) {
-            console.error('Erreur chargement dashboard:', error);
-        }
-    }
-    
-    function renderRecentReservations(reservations) {
-        const tbody = document.getElementById('recentReservationsBody');
-        
-        if (reservations.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Aucun séjour</td></tr>';
-            return;
-        }
-        
-        tbody.innerHTML = reservations.map(res => `
-            <tr>
-                <td>${res.contact_nom || ''} ${res.contact_prenom || ''}</td>
-                <td>${res.date_arrivee || '-'}</td>
-                <td>${res.date_depart || '-'}</td>
-                <td>${res.nombre_jours || '-'}</td>
-                <td><span class="badge badge-green">${res.statut || 'active'}</span></td>
-                <td>
-                    <a href="/reservations?id=${res.id}" class="btn btn-small btn-primary">Voir</a>
-                </td>
-            </tr>
-        `).join('');
-    }
-    
-    loadDashboardData();
-</script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}
