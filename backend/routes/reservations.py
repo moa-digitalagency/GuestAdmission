@@ -3,6 +3,8 @@ from flask_login import login_required
 from ..models.reservation import Reservation
 from ..models.personne import Personne
 from ..utils import serialize_rows, serialize_row
+from ..config.database import get_db_connection
+from datetime import datetime
 
 reservations_bp = Blueprint('reservations', __name__)
 
@@ -18,11 +20,59 @@ def get_reservation(reservation_id):
     reservation = Reservation.get_by_id(reservation_id)
     if reservation:
         personnes = Personne.get_by_reservation(reservation_id)
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('''
+            SELECT c.id, c.nom, c.description, c.capacite
+            FROM chambres c
+            JOIN reservations_chambres rc ON c.id = rc.chambre_id
+            WHERE rc.reservation_id = %s
+        ''', (reservation_id,))
+        chambres = cur.fetchall()
+        cur.close()
+        conn.close()
+        
         return jsonify({
             'reservation': serialize_row(reservation),
-            'personnes': serialize_rows(personnes)
+            'personnes': serialize_rows(personnes),
+            'chambres': [dict(c) for c in chambres] if chambres else []
         })
     return jsonify({'error': 'Réservation non trouvée'}), 404
+
+@reservations_bp.route('/api/reservations/generer-numero', methods=['GET'])
+@login_required
+def generer_numero_reservation():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('SELECT format_numero_reservation, prochain_numero_sequence FROM parametres_systeme LIMIT 1')
+        params = cur.fetchone()
+        
+        if params:
+            format_str = params['format_numero_reservation'] or 'RES-{YYYY}{MM}{DD}-{NUM}'
+            numero_seq = params['prochain_numero_sequence'] or 1
+            
+            now = datetime.now()
+            numero = format_str.replace('{YYYY}', now.strftime('%Y'))
+            numero = numero.replace('{MM}', now.strftime('%m'))
+            numero = numero.replace('{DD}', now.strftime('%d'))
+            numero = numero.replace('{NUM}', str(numero_seq).zfill(4))
+            
+            cur.execute('UPDATE parametres_systeme SET prochain_numero_sequence = prochain_numero_sequence + 1')
+            conn.commit()
+            
+            cur.close()
+            conn.close()
+            
+            return jsonify({'numero': numero})
+        
+        cur.close()
+        conn.close()
+        return jsonify({'numero': f'RES-{datetime.now().strftime("%Y%m%d")}-0001'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @reservations_bp.route('/api/reservations', methods=['POST'])
 @login_required
@@ -31,14 +81,28 @@ def create_reservation():
     
     reservation_data = data.get('reservation', {})
     personnes_data = data.get('personnes', [])
+    chambres_ids = data.get('chambres', [])
     
     reservation_id = Reservation.create(reservation_data)
     
-    if reservation_id and personnes_data:
-        for i, personne_data in enumerate(personnes_data):
-            personne_data['reservation_id'] = reservation_id
-            personne_data['est_contact_principal'] = (i == 0)
-            Personne.create(personne_data)
+    if reservation_id:
+        if chambres_ids:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            for chambre_id in chambres_ids:
+                cur.execute('''
+                    INSERT INTO reservations_chambres (reservation_id, chambre_id)
+                    VALUES (%s, %s)
+                ''', (reservation_id, chambre_id))
+            conn.commit()
+            cur.close()
+            conn.close()
+        
+        if personnes_data:
+            for i, personne_data in enumerate(personnes_data):
+                personne_data['reservation_id'] = reservation_id
+                personne_data['est_contact_principal'] = (i == 0)
+                Personne.create(personne_data)
     
     return jsonify({
         'success': True,

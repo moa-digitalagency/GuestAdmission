@@ -85,7 +85,35 @@ def init_database():
                 type_piece_identite VARCHAR(50),
                 numero_piece_identite VARCHAR(100),
                 date_naissance DATE,
+                chambre_assignee VARCHAR(100),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table chambres
+        print("  📋 Création de la table 'chambres'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS chambres (
+                id SERIAL PRIMARY KEY,
+                nom VARCHAR(100) NOT NULL,
+                description TEXT,
+                capacite INTEGER DEFAULT 2,
+                prix_par_nuit DECIMAL(10, 2),
+                statut VARCHAR(50) DEFAULT 'disponible',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table reservations_chambres (relation many-to-many)
+        print("  📋 Création de la table 'reservations_chambres'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS reservations_chambres (
+                id SERIAL PRIMARY KEY,
+                reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
+                chambre_id INTEGER REFERENCES chambres(id) ON DELETE CASCADE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(reservation_id, chambre_id)
             )
         ''')
         
@@ -95,6 +123,7 @@ def init_database():
             CREATE TABLE IF NOT EXISTS parametres_systeme (
                 id SERIAL PRIMARY KEY,
                 nom_etablissement VARCHAR(200),
+                numero_identification VARCHAR(100),
                 pays VARCHAR(100),
                 ville VARCHAR(100),
                 adresse TEXT,
@@ -113,6 +142,8 @@ def init_database():
                 responsable_email VARCHAR(150),
                 responsable_telephone VARCHAR(50),
                 logo_url VARCHAR(500),
+                format_numero_reservation VARCHAR(100) DEFAULT 'RES-{YYYY}{MM}{DD}-{NUM}',
+                prochain_numero_sequence INTEGER DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )

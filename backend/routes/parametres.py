@@ -32,6 +32,7 @@ def update_parametres():
     cur.execute('''
         UPDATE parametres_systeme
         SET nom_etablissement = %s,
+            numero_identification = %s,
             pays = %s,
             ville = %s,
             adresse = %s,
@@ -49,10 +50,13 @@ def update_parametres():
             responsable_nom = %s,
             responsable_email = %s,
             responsable_telephone = %s,
+            logo_url = %s,
+            format_numero_reservation = %s,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = 1
     ''', (
         data.get('nom_etablissement'),
+        data.get('numero_identification'),
         data.get('pays'),
         data.get('ville'),
         data.get('adresse'),
@@ -69,7 +73,9 @@ def update_parametres():
         data.get('responsable_prenom'),
         data.get('responsable_nom'),
         data.get('responsable_email'),
-        data.get('responsable_telephone')
+        data.get('responsable_telephone'),
+        data.get('logo_url'),
+        data.get('format_numero_reservation')
     ))
     
     conn.commit()
