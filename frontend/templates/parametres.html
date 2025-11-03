@@ -83,6 +83,8 @@
 
 {% block scripts %}
 <script>
+    console.log('✅ Script parametres.html chargé - DÉBUT');
+    
     let etablissements = [];
     let countriesData = [];
     let editingEtablissement = null;
@@ -218,6 +220,7 @@
     }
     
     async function addEtablissement() {
+        console.log('✅ addEtablissement appelée');
         showEtablissementModal(null);
     }
     
@@ -541,6 +544,7 @@
     }
     
     async function addChambre() {
+        console.log('✅ addChambre appelée');
         showChambreModal(null);
     }
     
@@ -748,6 +752,7 @@
     }
     
     function addPersonnel() {
+        console.log('✅ addPersonnel appelée');
         showPersonnelModal(null);
     }
     
@@ -1142,5 +1147,8 @@
             showAlert('❌ Erreur lors du chargement de la page: ' + error.message, 'error');
         }
     })();
+    
+    console.log('✅ Script parametres.html chargé - FIN');
+    console.log('✅ Fonctions définies:', typeof addEtablissement, typeof addChambre, typeof addPersonnel);
 </script>
 {% endblock %}
