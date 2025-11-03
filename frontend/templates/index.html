@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil Client{% endblock %}
+
+{% block content %}
+<h1>Enregistrement Client</h1>
+
+<div id="alert-container"></div>
+
+<form id="clientForm">
+    <div class="dotted-section section-blue">
+        <h2>Informations Personnelles</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="nom">Nom *</label>
+                <input type="text" id="nom" name="nom" required placeholder="Nom du client">
+            </div>
+            <div class="form-group">
+                <label for="prenom">Prénom *</label>
+                <input type="text" id="prenom" name="prenom" required placeholder="Prénom du client">
+            </div>
+            <div class="form-group">
+                <label for="mail">Email</label>
+                <input type="email" id="mail" name="mail" placeholder="email@exemple.com">
+            </div>
+            <div class="form-group">
+                <label for="pays">Pays</label>
+                <input type="text" id="pays" name="pays" placeholder="Pays">
+            </div>
+            <div class="form-group">
+                <label for="tel">Téléphone</label>
+                <input type="tel" id="tel" name="tel" placeholder="+212 6XX XXX XXX">
+            </div>
+        </div>
+    </div>
+
+    <div class="dotted-section section-green">
+        <h2>Informations de Séjour</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="arrivee">Date d'arrivée</label>
+                <input type="date" id="arrivee" name="arrivee">
+            </div>
+            <div class="form-group">
+                <label for="depart">Date de départ</label>
+                <input type="date" id="depart" name="depart">
+            </div>
+            <div class="form-group">
+                <label for="sejour_numero">Numéro de séjour</label>
+                <input type="text" id="sejour_numero" name="sejour_numero" placeholder="N° de séjour">
+            </div>
+        </div>
+    </div>
+
+    <div class="dotted-section section-purple">
+        <h2>Informations Financières</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="facture_hebergement">Facture hébergement</label>
+                <input type="number" step="0.01" id="facture_hebergement" name="facture_hebergement" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label for="charge_plateforme">Charge plate-forme</label>
+                <input type="number" step="0.01" id="charge_plateforme" name="charge_plateforme" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label for="taxe_sejour">Taxe séjour</label>
+                <input type="number" step="0.01" id="taxe_sejour" name="taxe_sejour" placeholder="0.00">
+            </div>
+        </div>
+    </div>
+
+    <div class="dotted-section section-orange">
+        <h2>Informations Mensuelles</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="revenu_mensuel_hebergement">Revenu mensuel hébergement</label>
+                <input type="number" step="0.01" id="revenu_mensuel_hebergement" name="revenu_mensuel_hebergement" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label for="charges_plateforme_mensuelle">Charges plate-forme mensuelle</label>
+                <input type="number" step="0.01" id="charges_plateforme_mensuelle" name="charges_plateforme_mensuelle" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label for="taxe_sejour_mensuelle">Taxe séjour mensuelle</label>
+                <input type="number" step="0.01" id="taxe_sejour_mensuelle" name="taxe_sejour_mensuelle" placeholder="0.00">
+            </div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button type="submit" class="btn btn-primary">Enregistrer le client</button>
+        <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+        <a href="/clients" class="btn btn-secondary">Voir tous les clients</a>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const form = document.getElementById('clientForm');
+    const alertContainer = document.getElementById('alert-container');
+
+    function showAlert(message, type = 'success') {
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.textContent = message;
+        alertContainer.innerHTML = '';
+        alertContainer.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.remove();
+        }, 5000);
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const data = {};
+        
+        formData.forEach((value, key) => {
+            data[key] = value || null;
+        });
+        
+        try {
+            const response = await fetch('/api/clients', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                showAlert('Client enregistré avec succès !', 'success');
+                form.reset();
+            } else {
+                showAlert('Erreur lors de l\'enregistrement du client', 'error');
+            }
+        } catch (error) {
+            showAlert('Erreur de connexion au serveur', 'error');
+        }
+    });
+</script>
+{% endblock %}

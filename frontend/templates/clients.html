@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des Clients{% endblock %}
+
+{% block content %}
+<h1>Liste des Clients</h1>
+
+<div class="dotted-section section-blue">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin: 0;">Clients enregistrés</h2>
+        <a href="/" class="btn btn-primary">Nouveau client</a>
+    </div>
+    
+    <div id="alert-container"></div>
+    
+    <div class="table-container">
+        <table id="clientsTable">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Pays</th>
+                    <th>Téléphone</th>
+                    <th>Arrivée</th>
+                    <th>Départ</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="clientsBody">
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 2rem;">Chargement...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 style="margin: 0;">Détails du Client</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let clients = [];
+    
+    function showAlert(message, type = 'success') {
+        const alertContainer = document.getElementById('alert-container');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type}`;
+        alert.textContent = message;
+        alertContainer.innerHTML = '';
+        alertContainer.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.remove();
+        }, 5000);
+    }
+    
+    async function loadClients() {
+        try {
+            const response = await fetch('/api/clients');
+            clients = await response.json();
+            renderClients();
+        } catch (error) {
+            showAlert('Erreur lors du chargement des clients', 'error');
+        }
+    }
+    
+    function renderClients() {
+        const tbody = document.getElementById('clientsBody');
+        
+        if (clients.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Aucun client enregistré</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = clients.map(client => `
+            <tr>
+                <td>${client.nom || '-'}</td>
+                <td>${client.prenom || '-'}</td>
+                <td>${client.mail || '-'}</td>
+                <td>${client.pays || '-'}</td>
+                <td>${client.tel || '-'}</td>
+                <td>${client.arrivee || '-'}</td>
+                <td>${client.depart || '-'}</td>
+                <td>
+                    <div class="actions">
+                        <button class="btn btn-small btn-primary" onclick="viewClient(${client.id})">Détails</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteClient(${client.id})">Supprimer</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    function viewClient(id) {
+        const client = clients.find(c => c.id === id);
+        if (!client) return;
+        
+        const modal = document.getElementById('detailModal');
+        const modalBody = document.getElementById('modalBody');
+        
+        modalBody.innerHTML = `
+            <div class="dotted-section section-green" style="margin-bottom: 1rem;">
+                <h3 style="margin-bottom: 1rem;">Informations Personnelles</h3>
+                <p><strong>Nom:</strong> ${client.nom || '-'}</p>
+                <p><strong>Prénom:</strong> ${client.prenom || '-'}</p>
+                <p><strong>Email:</strong> ${client.mail || '-'}</p>
+                <p><strong>Pays:</strong> ${client.pays || '-'}</p>
+                <p><strong>Téléphone:</strong> ${client.tel || '-'}</p>
+            </div>
+            
+            <div class="dotted-section section-purple" style="margin-bottom: 1rem;">
+                <h3 style="margin-bottom: 1rem;">Séjour</h3>
+                <p><strong>Arrivée:</strong> ${client.arrivee || '-'}</p>
+                <p><strong>Départ:</strong> ${client.depart || '-'}</p>
+                <p><strong>N° Séjour:</strong> ${client.sejour_numero || '-'}</p>
+            </div>
+            
+            <div class="dotted-section section-orange">
+                <h3 style="margin-bottom: 1rem;">Informations Financières</h3>
+                <p><strong>Facture hébergement:</strong> ${client.facture_hebergement || '0.00'}</p>
+                <p><strong>Charge plate-forme:</strong> ${client.charge_plateforme || '0.00'}</p>
+                <p><strong>Taxe séjour:</strong> ${client.taxe_sejour || '0.00'}</p>
+                <p><strong>Revenu mensuel:</strong> ${client.revenu_mensuel_hebergement || '0.00'}</p>
+                <p><strong>Charges mensuelles:</strong> ${client.charges_plateforme_mensuelle || '0.00'}</p>
+                <p><strong>Taxe mensuelle:</strong> ${client.taxe_sejour_mensuelle || '0.00'}</p>
+            </div>
+        `;
+        
+        modal.classList.add('active');
+    }
+    
+    function closeModal() {
+        const modal = document.getElementById('detailModal');
+        modal.classList.remove('active');
+    }
+    
+    async function deleteClient(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/clients/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                showAlert('Client supprimé avec succès', 'success');
+                loadClients();
+            } else {
+                showAlert('Erreur lors de la suppression', 'error');
+            }
+        } catch (error) {
+            showAlert('Erreur de connexion au serveur', 'error');
+        }
+    }
+    
+    window.onclick = function(event) {
+        const modal = document.getElementById('detailModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+    
+    loadClients();
+</script>
+{% endblock %}
