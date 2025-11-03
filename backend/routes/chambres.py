@@ -66,6 +66,28 @@ def create_chambre():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@chambres_bp.route('/api/chambres/<int:chambre_id>', methods=['GET'])
+def get_chambre(chambre_id):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('''
+            SELECT id, etablissement_id, nom, description, capacite, prix_par_nuit, statut, created_at
+            FROM chambres
+            WHERE id = %s
+        ''', (chambre_id,))
+        
+        chambre = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        if chambre:
+            return jsonify(dict(chambre))
+        return jsonify({'error': 'Chambre non trouvée'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @chambres_bp.route('/api/chambres/<int:chambre_id>', methods=['PUT'])
 def update_chambre(chambre_id):
     try:

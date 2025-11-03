@@ -10,6 +10,7 @@ from .routes.countries import countries_bp
 from .routes.chambres import chambres_bp
 from .routes.etablissements import etablissements_bp
 from .routes.data_management import data_bp
+from .routes.personnels import personnels_bp
 from .models.user import User
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +39,7 @@ app.register_blueprint(countries_bp)
 app.register_blueprint(chambres_bp)
 app.register_blueprint(etablissements_bp)
 app.register_blueprint(data_bp)
+app.register_blueprint(personnels_bp)
 
 @app.route('/')
 @login_required

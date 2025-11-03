@@ -570,12 +570,150 @@
         `).join('');
     }
     
-    function addChambre() {
-        showAlert('La gestion des chambres est en cours de développement. Utilisez la page "Nouveau séjour" pour créer des chambres.', 'info');
+    async function addChambre() {
+        showChambreModal(null);
     }
     
-    function editChambre(id) {
-        showAlert('Modification des chambres en cours de développement.', 'info');
+    async function editChambre(id) {
+        try {
+            const response = await fetch(`/api/chambres/${id}`);
+            if (!response.ok) {
+                throw new Error('Chambre non trouvée');
+            }
+            const chambre = await response.json();
+            showChambreModal(chambre);
+        } catch (error) {
+            console.error('Erreur chargement chambre:', error);
+            showAlert('Erreur lors du chargement de la chambre', 'error');
+        }
+    }
+    
+    function showChambreModal(chambre) {
+        const isEdit = chambre !== null;
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 2rem;';
+        modal.id = 'chambreModal';
+        
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 12px; max-width: 600px; width: 100%; padding: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="margin: 0;">${isEdit ? '✏️ Modifier la chambre' : '➕ Nouvelle chambre'}</h2>
+                    <button type="button" onclick="closeChambreModal()" class="btn btn-secondary btn-small">✖ Fermer</button>
+                </div>
+                
+                <form id="chambreForm">
+                    <div class="dotted-section section-blue" style="margin-bottom: 1.5rem;">
+                        <h3>📝 Informations de la chambre</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="chambre_etablissement">Établissement *</label>
+                                <select id="chambre_etablissement" required>
+                                    <option value="">Sélectionner un établissement...</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="chambre_nom">Nom de la chambre *</label>
+                                <input type="text" id="chambre_nom" value="${chambre?.nom || ''}" required placeholder="Ex: Chambre 101">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="chambre_description">Description</label>
+                                <textarea id="chambre_description" rows="3" placeholder="Description de la chambre...">${chambre?.description || ''}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="chambre_capacite">Capacité (personnes) *</label>
+                                <input type="number" id="chambre_capacite" value="${chambre?.capacite || 2}" required min="1" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label for="chambre_prix">Prix par nuit *</label>
+                                <input type="number" id="chambre_prix" value="${chambre?.prix_par_nuit || 0}" required min="0" step="0.01">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="chambre_statut">Statut *</label>
+                                <select id="chambre_statut" required>
+                                    <option value="disponible" ${!chambre || chambre.statut === 'disponible' ? 'selected' : ''}>Disponible</option>
+                                    <option value="occupée" ${chambre?.statut === 'occupée' ? 'selected' : ''}>Occupée</option>
+                                    <option value="maintenance" ${chambre?.statut === 'maintenance' ? 'selected' : ''}>En maintenance</option>
+                                    <option value="hors_service" ${chambre?.statut === 'hors_service' ? 'selected' : ''}>Hors service</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+                        <button type="button" onclick="closeChambreModal()" class="btn btn-secondary">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        const etabSelect = document.getElementById('chambre_etablissement');
+        etablissements.filter(e => e.actif).forEach(etab => {
+            const option = document.createElement('option');
+            option.value = etab.id;
+            option.textContent = etab.nom_etablissement;
+            if (chambre && chambre.etablissement_id === etab.id) {
+                option.selected = true;
+            }
+            etabSelect.appendChild(option);
+        });
+        
+        if (!isEdit && etablissements.length > 0) {
+            const firstActif = etablissements.find(e => e.actif);
+            if (firstActif) {
+                etabSelect.value = firstActif.id;
+            }
+        }
+        
+        document.getElementById('chambreForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await saveChambre(chambre);
+        });
+    }
+    
+    function closeChambreModal() {
+        const modal = document.getElementById('chambreModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+    
+    async function saveChambre(chambre) {
+        const data = {
+            etablissement_id: parseInt(document.getElementById('chambre_etablissement').value),
+            nom: document.getElementById('chambre_nom').value,
+            description: document.getElementById('chambre_description').value,
+            capacite: parseInt(document.getElementById('chambre_capacite').value),
+            prix_par_nuit: parseFloat(document.getElementById('chambre_prix').value),
+            statut: document.getElementById('chambre_statut').value
+        };
+        
+        try {
+            const isEdit = chambre !== null;
+            const url = isEdit ? `/api/chambres/${chambre.id}` : '/api/chambres';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                showAlert(`Chambre ${isEdit ? 'modifiée' : 'créée'} avec succès`, 'success');
+                closeChambreModal();
+                loadChambres();
+            } else {
+                const error = await response.json();
+                showAlert('Erreur: ' + (error.error || 'Erreur inconnue'), 'error');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('Erreur lors de l\'enregistrement', 'error');
+        }
     }
     
     async function deleteChambre(id) {
@@ -598,6 +736,8 @@
             if (response.ok) {
                 personnels = await response.json();
                 renderPersonnels();
+            } else {
+                console.error('Erreur chargement personnels');
             }
         } catch (error) {
             console.error('Erreur chargement personnels:', error);
@@ -606,11 +746,259 @@
     
     function renderPersonnels() {
         const container = document.getElementById('personnels-container');
-        container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">La gestion du personnel sera bientôt disponible.</p>';
+        
+        if (personnels.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">Aucun personnel. Cliquez sur "Ajouter un personnel" pour commencer.</p>';
+            return;
+        }
+        
+        container.innerHTML = personnels.map(personnel => `
+            <div class="dotted-section section-purple" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0;">${personnel.actif ? '👤' : '⭕'} ${personnel.prenom} ${personnel.nom}</h3>
+                        <p style="color: #6b7280; margin: 0;">Poste: ${personnel.poste || 'Non défini'}</p>
+                        <p style="color: #6b7280; margin: 0.25rem 0 0 0; font-size: 0.875rem;">
+                            Email: ${personnel.email || 'Non défini'} | Tél: ${personnel.telephone || 'Non défini'}
+                        </p>
+                        <p style="color: #6b7280; margin: 0.25rem 0 0 0; font-size: 0.875rem;">
+                            Statut: <span style="color: ${personnel.actif ? '#059669' : '#dc2626'};">${personnel.actif ? 'Actif' : 'Inactif'}</span>
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" onclick="editPersonnel(${personnel.id})" class="btn btn-primary btn-small">✏️ Modifier</button>
+                        <button type="button" onclick="togglePersonnelStatus(${personnel.id})" class="btn ${personnel.actif ? 'btn-secondary' : 'btn-success'} btn-small">
+                            ${personnel.actif ? '🚫 Désactiver' : '✅ Activer'}
+                        </button>
+                        <button type="button" onclick="deletePersonnel(${personnel.id})" class="btn btn-danger btn-small">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
     }
     
     function addPersonnel() {
-        showAlert('La gestion du personnel sera bientôt disponible.', 'info');
+        showPersonnelModal(null);
+    }
+    
+    async function editPersonnel(id) {
+        try {
+            const response = await fetch(`/api/personnels/${id}`);
+            if (!response.ok) {
+                throw new Error('Personnel non trouvé');
+            }
+            const personnel = await response.json();
+            showPersonnelModal(personnel);
+        } catch (error) {
+            console.error('Erreur chargement personnel:', error);
+            showAlert('Erreur lors du chargement du personnel', 'error');
+        }
+    }
+    
+    async function togglePersonnelStatus(id) {
+        try {
+            const response = await fetch(`/api/personnels/${id}`);
+            const personnel = await response.json();
+            
+            const updateResponse = await fetch(`/api/personnels/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...personnel, actif: !personnel.actif })
+            });
+            
+            if (updateResponse.ok) {
+                showAlert(`Personnel ${!personnel.actif ? 'activé' : 'désactivé'} avec succès`, 'success');
+                loadPersonnels();
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('Erreur lors du changement de statut', 'error');
+        }
+    }
+    
+    async function deletePersonnel(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce membre du personnel ?')) return;
+        
+        try {
+            const response = await fetch(`/api/personnels/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                showAlert('Personnel supprimé avec succès', 'success');
+                loadPersonnels();
+            }
+        } catch (error) {
+            showAlert('Erreur lors de la suppression', 'error');
+        }
+    }
+    
+    function showPersonnelModal(personnel) {
+        const isEdit = personnel !== null;
+        
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 2rem; overflow-y: auto;';
+        modal.id = 'personnelModal';
+        
+        const pagesOptions = [
+            { value: 'dashboard', label: 'Tableau de bord' },
+            { value: 'sejours', label: 'Séjours' },
+            { value: 'clients', label: 'Clients' },
+            { value: 'parametres', label: 'Paramètres' },
+            { value: 'statistiques', label: 'Statistiques' }
+        ];
+        
+        const pagesAcces = personnel?.pages_acces || [];
+        
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="margin: 0;">${isEdit ? '✏️ Modifier le personnel' : '➕ Nouveau personnel'}</h2>
+                    <button type="button" onclick="closePersonnelModal()" class="btn btn-secondary btn-small">✖ Fermer</button>
+                </div>
+                
+                <form id="personnelForm">
+                    <div class="dotted-section section-blue" style="margin-bottom: 1.5rem;">
+                        <h3>👤 Informations personnelles</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="personnel_etablissement">Établissement *</label>
+                                <select id="personnel_etablissement" required>
+                                    <option value="">Sélectionner un établissement...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="personnel_prenom">Prénom *</label>
+                                <input type="text" id="personnel_prenom" value="${personnel?.prenom || ''}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="personnel_nom">Nom *</label>
+                                <input type="text" id="personnel_nom" value="${personnel?.nom || ''}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="personnel_email">Email</label>
+                                <input type="email" id="personnel_email" value="${personnel?.email || ''}" placeholder="exemple@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="personnel_telephone">Téléphone</label>
+                                <input type="tel" id="personnel_telephone" value="${personnel?.telephone || ''}" placeholder="+212 XXX XXX XXX">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dotted-section section-green" style="margin-bottom: 1.5rem;">
+                        <h3>💼 Informations professionnelles</h3>
+                        <div class="form-grid">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="personnel_poste">Poste *</label>
+                                <input type="text" id="personnel_poste" value="${personnel?.poste || ''}" required placeholder="Ex: Réceptionniste, Femme de chambre, Manager">
+                            </div>
+                            <div class="form-group">
+                                <label for="personnel_date_embauche">Date d'embauche</label>
+                                <input type="date" id="personnel_date_embauche" value="${personnel?.date_embauche || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label for="personnel_salaire">Salaire</label>
+                                <input type="number" id="personnel_salaire" value="${personnel?.salaire || ''}" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dotted-section section-purple" style="margin-bottom: 1.5rem;">
+                        <h3>🔐 Accès aux pages</h3>
+                        <p style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1rem;">
+                            Sélectionnez les pages auxquelles ce membre du personnel aura accès.
+                        </p>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            ${pagesOptions.map(page => `
+                                <label style="display: flex; align-items: center; padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; cursor: pointer;">
+                                    <input type="checkbox" name="pages_acces" value="${page.value}" 
+                                        ${pagesAcces.includes(page.value) ? 'checked' : ''}
+                                        style="margin-right: 0.75rem; width: 18px; height: 18px;">
+                                    <span>${page.label}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+                        <button type="button" onclick="closePersonnelModal()" class="btn btn-secondary">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        const etabSelect = document.getElementById('personnel_etablissement');
+        etablissements.filter(e => e.actif).forEach(etab => {
+            const option = document.createElement('option');
+            option.value = etab.id;
+            option.textContent = etab.nom_etablissement;
+            if (personnel && personnel.etablissement_id === etab.id) {
+                option.selected = true;
+            }
+            etabSelect.appendChild(option);
+        });
+        
+        if (!isEdit && etablissements.length > 0) {
+            const firstActif = etablissements.find(e => e.actif);
+            if (firstActif) {
+                etabSelect.value = firstActif.id;
+            }
+        }
+        
+        document.getElementById('personnelForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await savePersonnel(personnel);
+        });
+    }
+    
+    function closePersonnelModal() {
+        const modal = document.getElementById('personnelModal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+    
+    async function savePersonnel(personnel) {
+        const checkboxes = document.querySelectorAll('input[name="pages_acces"]:checked');
+        const pagesAcces = Array.from(checkboxes).map(cb => cb.value);
+        
+        const data = {
+            etablissement_id: parseInt(document.getElementById('personnel_etablissement').value),
+            prenom: document.getElementById('personnel_prenom').value,
+            nom: document.getElementById('personnel_nom').value,
+            email: document.getElementById('personnel_email').value || null,
+            telephone: document.getElementById('personnel_telephone').value || null,
+            poste: document.getElementById('personnel_poste').value,
+            date_embauche: document.getElementById('personnel_date_embauche').value || null,
+            salaire: parseFloat(document.getElementById('personnel_salaire').value) || null,
+            pages_acces: pagesAcces,
+            actif: personnel?.actif !== false
+        };
+        
+        try {
+            const isEdit = personnel !== null;
+            const url = isEdit ? `/api/personnels/${personnel.id}` : '/api/personnels';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                showAlert(`Personnel ${isEdit ? 'modifié' : 'créé'} avec succès`, 'success');
+                closePersonnelModal();
+                loadPersonnels();
+            } else {
+                const error = await response.json();
+                showAlert('Erreur: ' + (error.error || 'Erreur inconnue'), 'error');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            showAlert('Erreur lors de l\'enregistrement', 'error');
+        }
     }
     
     async function loadDemoData() {
