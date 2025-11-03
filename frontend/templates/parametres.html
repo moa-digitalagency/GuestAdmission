@@ -261,17 +261,21 @@
                     <div class="dotted-section section-blue" style="margin-bottom: 1.5rem;">
                         <h3>📝 Informations générales</h3>
                         <div class="form-grid">
-                            <div class="form-group">
+                            <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="etab_nom">Nom de l'établissement *</label>
                                 <input type="text" id="etab_nom" value="${etab?.nom_etablissement || ''}" required>
                             </div>
-                            <div class="form-group">
-                                <label for="etab_numero">Numéro d'identification (ICE, SIRET, etc.)</label>
-                                <input type="text" id="etab_numero" value="${etab?.numero_identification || ''}">
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label for="etab_numero">Numéro d'identification (ICE, SIRET, EIN, etc.)</label>
+                                <input type="text" id="etab_numero" value="${etab?.numero_identification || ''}" placeholder="Ex: ICE001234567890">
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
-                                <label for="etab_logo">URL du logo</label>
-                                <input type="text" id="etab_logo" value="${etab?.logo_url || ''}" placeholder="https://...">
+                                <label for="etab_logo_file">Logo de l'établissement</label>
+                                <input type="file" id="etab_logo_file" accept="image/*" style="padding: 0.5rem;">
+                                <input type="hidden" id="etab_logo_url" value="${etab?.logo_url || ''}">
+                                <div id="etab_logo_preview" style="margin-top: 1rem;">
+                                    ${etab?.logo_url ? `<img src="${etab.logo_url}" alt="Logo" style="max-width: 200px; max-height: 100px; border: 2px solid #e5e7eb; border-radius: 8px; padding: 0.5rem;">` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -279,13 +283,13 @@
                     <div class="dotted-section section-green" style="margin-bottom: 1.5rem;">
                         <h3>📍 Localisation</h3>
                         <div class="form-grid">
-                            <div class="form-group">
+                            <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="etab_pays">Pays *</label>
                                 <select id="etab_pays" required>
                                     <option value="">Sélectionner un pays...</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="etab_ville">Ville</label>
                                 <select id="etab_ville">
                                     <option value="">Sélectionner une ville...</option>
@@ -293,7 +297,7 @@
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="etab_adresse">Adresse complète</label>
-                                <textarea id="etab_adresse" rows="2">${etab?.adresse || ''}</textarea>
+                                <textarea id="etab_adresse" rows="3">${etab?.adresse || ''}</textarea>
                             </div>
                         </div>
                     </div>
@@ -301,17 +305,17 @@
                     <div class="dotted-section section-purple" style="margin-bottom: 1.5rem;">
                         <h3>📞 Contact</h3>
                         <div class="form-grid">
-                            <div class="form-group">
+                            <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="etab_telephone">Téléphone</label>
-                                <input type="tel" id="etab_telephone" value="${etab?.telephone || ''}">
+                                <input type="tel" id="etab_telephone" value="${etab?.telephone || ''}" placeholder="+212 XXX XXX XXX">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="etab_whatsapp">WhatsApp</label>
-                                <input type="tel" id="etab_whatsapp" value="${etab?.whatsapp || ''}">
+                                <input type="tel" id="etab_whatsapp" value="${etab?.whatsapp || ''}" placeholder="+212 XXX XXX XXX">
                             </div>
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label for="etab_email">Email</label>
-                                <input type="email" id="etab_email" value="${etab?.email || ''}">
+                                <input type="email" id="etab_email" value="${etab?.email || ''}" placeholder="contact@etablissement.com">
                             </div>
                         </div>
                     </div>
@@ -377,6 +381,36 @@
             }, 50);
         }
         
+        // Gestion de l'upload du logo
+        document.getElementById('etab_logo_file').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('logo', file);
+                
+                try {
+                    const response = await fetch('/api/etablissements/upload-logo', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById('etab_logo_url').value = result.logo_url;
+                        document.getElementById('etab_logo_preview').innerHTML = \`
+                            <img src="\${result.logo_url}" alt="Logo" style="max-width: 200px; max-height: 100px; border: 2px solid #e5e7eb; border-radius: 8px; padding: 0.5rem;">
+                        \`;
+                        showAlert('✅ Logo téléchargé avec succès!', 'success');
+                    } else {
+                        showAlert('❌ ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Erreur upload logo:', error);
+                    showAlert('❌ Erreur lors du téléchargement du logo', 'error');
+                }
+            }
+        });
+        
         document.getElementById('etablissementForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             await saveEtablissement();
@@ -395,7 +429,7 @@
         const data = {
             nom_etablissement: document.getElementById('etab_nom').value,
             numero_identification: document.getElementById('etab_numero').value,
-            logo_url: document.getElementById('etab_logo').value,
+            logo_url: document.getElementById('etab_logo_url').value,
             pays: document.getElementById('etab_pays').value,
             ville: document.getElementById('etab_ville').value,
             adresse: document.getElementById('etab_adresse').value,
