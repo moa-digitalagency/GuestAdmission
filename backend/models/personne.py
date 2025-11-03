@@ -10,14 +10,15 @@ class Personne:
             INSERT INTO personnes (
                 reservation_id, est_contact_principal, nom, prenom, email,
                 telephone, pays, type_piece_identite, numero_piece_identite,
-                date_naissance
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                date_naissance, chambre_assignee
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
             data.get('reservation_id'), data.get('est_contact_principal', False),
             data.get('nom'), data.get('prenom'), data.get('email'),
             data.get('telephone'), data.get('pays'), data.get('type_piece_identite'),
-            data.get('numero_piece_identite'), data.get('date_naissance')
+            data.get('numero_piece_identite'), data.get('date_naissance'),
+            data.get('chambre_assignee')
         ))
         
         result = cur.fetchone()
@@ -68,12 +69,13 @@ class Personne:
             UPDATE personnes SET
                 nom = %s, prenom = %s, email = %s, telephone = %s,
                 pays = %s, type_piece_identite = %s, numero_piece_identite = %s,
-                date_naissance = %s
+                date_naissance = %s, chambre_assignee = %s
             WHERE id = %s
         ''', (
             data.get('nom'), data.get('prenom'), data.get('email'),
             data.get('telephone'), data.get('pays'), data.get('type_piece_identite'),
             data.get('numero_piece_identite'), data.get('date_naissance'),
+            data.get('chambre_assignee'),
             personne_id
         ))
         
