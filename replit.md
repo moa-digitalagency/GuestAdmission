@@ -5,6 +5,27 @@ Application Flask de gestion de maison d'hôte avec gestion complète des établ
 
 ## État du projet - 3 novembre 2025
 
+### ✅ Dernières mises à jour (3 nov 2025 - 20:30)
+- **✨ Gestion des chambres entièrement fonctionnelle**:
+  - Ajout endpoint GET `/api/chambres/<id>` pour récupérer une chambre
+  - Modal d'ajout/modification avec sélection d'établissement
+  - Suppression et édition des chambres
+  - Interface complète dans la page Paramètres
+
+- **✨ Système de gestion du personnel créé de zéro**:
+  - Table `personnels` créée avec tous les champs nécessaires
+  - Routes API complètes: GET, POST, PUT, DELETE (`backend/routes/personnels.py`)
+  - Interface de gestion dans Paramètres avec:
+    - Ajout/modification/suppression de personnels
+    - Gestion des accès par page (dashboard, séjours, clients, etc.)
+    - Activation/désactivation des comptes
+    - Suivi des informations professionnelles (poste, salaire, date embauche)
+
+- **🔧 Corrections et améliorations**:
+  - Tous les boutons de la page Paramètres fonctionnent maintenant
+  - Application redémarrée avec toutes les nouvelles routes
+  - Migration d'importation complétée
+
 ### ✅ Restructuration complétée
 - Migration terminologie: "Réservations" → "Séjours" dans toute l'application
 - Nouvelle page Statistiques dédiée créée
@@ -32,11 +53,14 @@ Application Flask de gestion de maison d'hôte avec gestion complète des établ
 - **App principal**: `backend/app.py`
 - **Routes**:
   - `auth.py` - Authentification et gestion utilisateurs
-  - `etablissements.py` - Gestion des établissements
-  - `chambres.py` - Gestion des chambres
+  - `etablissements.py` - Gestion des établissements (CRUD complet)
+  - `chambres.py` - Gestion des chambres (CRUD complet + endpoint GET single)
   - `sejours.py` - Gestion des séjours et clients (anciennement reservations.py)
   - `parametres.py` - Paramètres système
+  - `personnels.py` - **NOUVEAU** Gestion du personnel (CRUD complet)
   - `data_management.py` - Chargement demo et réinitialisation
+  - `clients.py` - Gestion des clients
+  - `countries.py` - API pour les pays et villes
 
 #### Frontend
 - **Templates**: `frontend/templates/`
@@ -73,10 +97,25 @@ Application Flask de gestion de maison d'hôte avec gestion complète des établ
    - Métriques établissements
    - Occupation des chambres
 
-4. **Paramètres système**
-   - Gestion établissements
-   - Gestion chambres
-   - Gestion personnels
+4. **Gestion des chambres** (NOUVEAU - Pleinement fonctionnel)
+   - Création de chambres avec établissement associé
+   - Modification des informations (nom, capacité, prix, statut)
+   - Suppression de chambres
+   - Statuts: disponible, occupée, maintenance, hors service
+
+5. **Gestion du personnel** (NOUVEAU - Pleinement fonctionnel)
+   - Création de fiches personnel
+   - Informations personnelles (prénom, nom, email, téléphone)
+   - Informations professionnelles (poste, salaire, date d'embauche)
+   - Gestion des accès par page (permissions granulaires)
+   - Activation/désactivation des comptes
+   - Association à un établissement
+
+6. **Paramètres système**
+   - Gestion multi-établissements
+   - Gestion chambres (nouvelle interface complète)
+   - Gestion personnels (nouvelle interface complète)
+   - Compte utilisateur
    - Chargement données demo
    - Réinitialisation sélective/complète
 
