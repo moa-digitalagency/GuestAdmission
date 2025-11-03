@@ -22,20 +22,20 @@ args = "Flask App"
 name = "Flask App"
 author = "agent"
 
-[workflows.workflow.metadata]
-outputType = "webview"
-
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python init_database.py && uv run gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
+args = "python init_database.py && gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 37095
+localPort = 44597
 externalPort = 3000
 
 [deployment]
