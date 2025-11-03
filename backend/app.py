@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_login import LoginManager, login_required
 from .routes.clients import clients_bp
 from .routes.auth import auth_bp
-from .routes.reservations import reservations_bp
+from .routes.sejours import sejours_bp
 from .routes.parametres import parametres_bp
 from .routes.countries import countries_bp
 from .routes.chambres import chambres_bp
@@ -32,7 +32,7 @@ def load_user(user_id):
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(clients_bp)
-app.register_blueprint(reservations_bp)
+app.register_blueprint(sejours_bp)
 app.register_blueprint(parametres_bp)
 app.register_blueprint(countries_bp)
 app.register_blueprint(chambres_bp)
@@ -49,15 +49,15 @@ def index():
 def dashboard():
     return render_template('dashboard.html')
 
-@app.route('/nouvelle-reservation')
+@app.route('/nouveau-sejour')
 @login_required
-def nouvelle_reservation():
-    return render_template('nouvelle_reservation.html')
+def nouveau_sejour():
+    return render_template('nouveau_sejour.html')
 
-@app.route('/reservations')
+@app.route('/sejours')
 @login_required
-def reservations_page():
-    return render_template('reservations.html')
+def sejours_page():
+    return render_template('sejours.html')
 
 @app.route('/clients')
 @login_required
@@ -68,6 +68,11 @@ def clients_page():
 @login_required
 def parametres():
     return render_template('parametres.html')
+
+@app.route('/statistiques')
+@login_required
+def statistiques():
+    return render_template('statistiques.html')
 
 @app.route('/favicon.ico')
 def favicon():

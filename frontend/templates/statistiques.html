@@ -1,0 +1,98 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Statistiques{% endblock %}
+{% block page_title %}Statistiques{% endblock %}
+
+{% block content %}
+<div id="alert-container"></div>
+
+<div class="dotted-section section-indigo">
+    <h2>📊 Statistiques globales</h2>
+    <div class="stats-grid">
+        <div class="stat-card blue">
+            <div class="stat-label">Total séjours</div>
+            <div class="stat-value" id="totalSejours">0</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-label">Total clients</div>
+            <div class="stat-value" id="totalClients">0</div>
+        </div>
+        <div class="stat-card orange">
+            <div class="stat-label">Établissements actifs</div>
+            <div class="stat-value" id="totalEtablissements">0</div>
+        </div>
+        <div class="stat-card purple">
+            <div class="stat-label">Chambres disponibles</div>
+            <div class="stat-value" id="totalChambres">0</div>
+        </div>
+    </div>
+</div>
+
+<div class="dotted-section section-blue">
+    <h2>📈 Statistiques par établissement</h2>
+    <div id="statsEtablissements"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    async function loadStatistiques() {
+        try {
+            const [sejoursResp, clientsResp, etabsResp, chambresResp] = await Promise.all([
+                fetch('/api/sejours'),
+                fetch('/api/personnes'),
+                fetch('/api/etablissements'),
+                fetch('/api/chambres')
+            ]);
+            
+            const sejours = await sejoursResp.json();
+            const clients = await clientsResp.json();
+            const etablissements = await etabsResp.json();
+            const chambres = await chambresResp.json();
+            
+            document.getElementById('totalSejours').textContent = sejours.length;
+            document.getElementById('totalClients').textContent = clients.length;
+            document.getElementById('totalEtablissements').textContent = etablissements.filter(e => e.actif).length;
+            document.getElementById('totalChambres').textContent = chambres.length;
+            
+            renderStatsParEtablissement(etablissements, sejours);
+        } catch (error) {
+            console.error('Erreur lors du chargement des statistiques:', error);
+        }
+    }
+    
+    function renderStatsParEtablissement(etablissements, sejours) {
+        const container = document.getElementById('statsEtablissements');
+        
+        if (etablissements.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">Aucun établissement</p>';
+            return;
+        }
+        
+        container.innerHTML = etablissements.map(etab => {
+            const sejoursEtab = sejours.filter(s => s.etablissement_id === etab.id);
+            const totalRevenu = sejoursEtab.reduce((sum, s) => sum + parseFloat(s.facture_hebergement || 0), 0);
+            
+            return `
+                <div class="dotted-section section-green" style="margin-bottom: 1.5rem;">
+                    <h3>${etab.actif ? '🏢' : '⭕'} ${etab.nom_etablissement || 'Sans nom'}</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <div>
+                            <strong>Nombre de séjours:</strong> ${sejoursEtab.length}
+                        </div>
+                        <div>
+                            <strong>Revenu total:</strong> ${totalRevenu.toFixed(2)} ${etab.devise || 'MAD'}
+                        </div>
+                        <div>
+                            <strong>Statut:</strong> <span style="color: ${etab.actif ? '#059669' : '#dc2626'};">${etab.actif ? 'Actif' : 'Inactif'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    loadStatistiques();
+</script>
+{% endblock %}

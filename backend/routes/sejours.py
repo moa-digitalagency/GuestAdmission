@@ -6,20 +6,20 @@ from ..utils import serialize_rows, serialize_row
 from ..config.database import get_db_connection
 from datetime import datetime
 
-reservations_bp = Blueprint('reservations', __name__)
+sejours_bp = Blueprint('sejours', __name__)
 
-@reservations_bp.route('/api/reservations', methods=['GET'])
+@sejours_bp.route('/api/sejours', methods=['GET'])
 @login_required
-def get_reservations():
-    reservations = Reservation.get_all()
-    return jsonify(serialize_rows(reservations))
+def get_sejours():
+    sejours = Reservation.get_all()
+    return jsonify(serialize_rows(sejours))
 
-@reservations_bp.route('/api/reservations/<int:reservation_id>', methods=['GET'])
+@sejours_bp.route('/api/sejours/<int:sejour_id>', methods=['GET'])
 @login_required
-def get_reservation(reservation_id):
-    reservation = Reservation.get_by_id(reservation_id)
-    if reservation:
-        personnes = Personne.get_by_reservation(reservation_id)
+def get_sejour(sejour_id):
+    sejour = Reservation.get_by_id(sejour_id)
+    if sejour:
+        personnes = Personne.get_by_reservation(sejour_id)
         
         conn = get_db_connection()
         cur = conn.cursor()
@@ -28,21 +28,21 @@ def get_reservation(reservation_id):
             FROM chambres c
             JOIN reservations_chambres rc ON c.id = rc.chambre_id
             WHERE rc.reservation_id = %s
-        ''', (reservation_id,))
+        ''', (sejour_id,))
         chambres = cur.fetchall()
         cur.close()
         conn.close()
         
         return jsonify({
-            'reservation': serialize_row(reservation),
+            'sejour': serialize_row(sejour),
             'personnes': serialize_rows(personnes),
             'chambres': [dict(c) for c in chambres] if chambres else []
         })
-    return jsonify({'error': 'Réservation non trouvée'}), 404
+    return jsonify({'error': 'Séjour non trouvé'}), 404
 
-@reservations_bp.route('/api/reservations/generer-numero', methods=['GET'])
+@sejours_bp.route('/api/sejours/generer-numero', methods=['GET'])
 @login_required
-def generer_numero_reservation():
+def generer_numero_sejour():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
@@ -74,18 +74,18 @@ def generer_numero_reservation():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@reservations_bp.route('/api/reservations', methods=['POST'])
+@sejours_bp.route('/api/sejours', methods=['POST'])
 @login_required
-def create_reservation():
+def create_sejour():
     data = request.get_json()
     
-    reservation_data = data.get('reservation', {})
+    sejour_data = data.get('sejour', {}) or data.get('reservation', {})
     personnes_data = data.get('personnes', [])
     chambres_ids = data.get('chambres', [])
     
-    reservation_id = Reservation.create(reservation_data)
+    sejour_id = Reservation.create(sejour_data)
     
-    if reservation_id:
+    if sejour_id:
         if chambres_ids:
             conn = get_db_connection()
             cur = conn.cursor()
@@ -93,37 +93,37 @@ def create_reservation():
                 cur.execute('''
                     INSERT INTO reservations_chambres (reservation_id, chambre_id)
                     VALUES (%s, %s)
-                ''', (reservation_id, chambre_id))
+                ''', (sejour_id, chambre_id))
             conn.commit()
             cur.close()
             conn.close()
         
         if personnes_data:
             for i, personne_data in enumerate(personnes_data):
-                personne_data['reservation_id'] = reservation_id
+                personne_data['reservation_id'] = sejour_id
                 personne_data['est_contact_principal'] = (i == 0)
                 Personne.create(personne_data)
     
     return jsonify({
         'success': True,
-        'reservation_id': reservation_id,
-        'message': 'Réservation créée avec succès'
+        'sejour_id': sejour_id,
+        'message': 'Séjour créé avec succès'
     }), 201
 
-@reservations_bp.route('/api/reservations/<int:reservation_id>', methods=['PUT'])
+@sejours_bp.route('/api/sejours/<int:sejour_id>', methods=['PUT'])
 @login_required
-def update_reservation(reservation_id):
+def update_sejour(sejour_id):
     data = request.get_json()
-    Reservation.update(reservation_id, data)
-    return jsonify({'message': 'Réservation mise à jour avec succès'})
+    Reservation.update(sejour_id, data)
+    return jsonify({'message': 'Séjour mis à jour avec succès'})
 
-@reservations_bp.route('/api/reservations/<int:reservation_id>', methods=['DELETE'])
+@sejours_bp.route('/api/sejours/<int:sejour_id>', methods=['DELETE'])
 @login_required
-def delete_reservation(reservation_id):
-    Reservation.delete(reservation_id)
-    return jsonify({'message': 'Réservation supprimée avec succès'})
+def delete_sejour(sejour_id):
+    Reservation.delete(sejour_id)
+    return jsonify({'message': 'Séjour supprimé avec succès'})
 
-@reservations_bp.route('/api/personnes', methods=['POST'])
+@sejours_bp.route('/api/personnes', methods=['POST'])
 @login_required
 def add_personne():
     data = request.get_json()
@@ -134,20 +134,20 @@ def add_personne():
         'message': 'Personne ajoutée avec succès'
     }), 201
 
-@reservations_bp.route('/api/personnes/<int:personne_id>', methods=['PUT'])
+@sejours_bp.route('/api/personnes/<int:personne_id>', methods=['PUT'])
 @login_required
 def update_personne(personne_id):
     data = request.get_json()
     Personne.update(personne_id, data)
     return jsonify({'message': 'Personne mise à jour avec succès'})
 
-@reservations_bp.route('/api/personnes/<int:personne_id>', methods=['DELETE'])
+@sejours_bp.route('/api/personnes/<int:personne_id>', methods=['DELETE'])
 @login_required
 def delete_personne(personne_id):
     Personne.delete(personne_id)
     return jsonify({'message': 'Personne supprimée avec succès'})
 
-@reservations_bp.route('/api/personnes', methods=['GET'])
+@sejours_bp.route('/api/personnes', methods=['GET'])
 @login_required
 def get_all_personnes():
     personnes = Personne.get_all()

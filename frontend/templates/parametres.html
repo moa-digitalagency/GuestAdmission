@@ -18,6 +18,30 @@
     <div id="etablissements-container"></div>
 </div>
 
+<div class="dotted-section section-green" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">🏠 Chambres</h2>
+        <button type="button" onclick="addChambre()" class="btn btn-primary">
+            ➕ Ajouter une chambre
+        </button>
+    </div>
+    <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez les chambres de vos établissements.</p>
+    
+    <div id="chambres-container"></div>
+</div>
+
+<div class="dotted-section section-purple" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0;">👥 Personnels</h2>
+        <button type="button" onclick="addPersonnel()" class="btn btn-primary">
+            ➕ Ajouter un personnel
+        </button>
+    </div>
+    <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez les membres du personnel et définissez les pages auxquelles ils ont accès.</p>
+    
+    <div id="personnels-container"></div>
+</div>
+
 <div class="dotted-section section-cyan">
     <h2>👤 Compte utilisateur</h2>
     <div class="form-grid">
@@ -28,24 +52,6 @@
         <div class="form-group">
             <label for="role">Rôle</label>
             <input type="text" id="role" readonly style="background: #f9fafb;">
-        </div>
-    </div>
-</div>
-
-<div class="dotted-section section-indigo" style="background: rgba(99, 102, 241, 0.05); border: 3px dotted #6366f1; box-shadow: 0 4px 6px rgba(99, 102, 241, 0.1);">
-    <h2>📊 Statistiques système</h2>
-    <div class="stats-grid">
-        <div class="stat-card blue">
-            <div class="stat-label">Total séjours</div>
-            <div class="stat-value" id="totalReservations">0</div>
-        </div>
-        <div class="stat-card green">
-            <div class="stat-label">Total clients</div>
-            <div class="stat-value" id="totalClients">0</div>
-        </div>
-        <div class="stat-card orange">
-            <div class="stat-label">Établissements actifs</div>
-            <div class="stat-value" id="totalEtablissements">0</div>
         </div>
     </div>
 </div>
@@ -510,7 +516,10 @@
         }
     }
     
-    async function loadStats() {
+    let chambres = [];
+    let personnels = [];
+    
+    async function loadUserInfo() {
         try {
             const userResponse = await fetch('/api/current-user');
             if (!userResponse.ok) {
@@ -519,22 +528,89 @@
             const user = await userResponse.json();
             document.getElementById('username').value = user.username || 'Non défini';
             document.getElementById('role').value = user.role || 'utilisateur';
-            
-            const resResponse = await fetch('/api/reservations');
-            if (resResponse.ok) {
-                const reservations = await resResponse.json();
-                document.getElementById('totalReservations').textContent = reservations.length;
-            }
-            
-            const clientsResponse = await fetch('/api/personnes');
-            if (clientsResponse.ok) {
-                const clients = await clientsResponse.json();
-                document.getElementById('totalClients').textContent = clients.length;
+        } catch (error) {
+            console.error('Erreur chargement utilisateur:', error);
+            showAlert('Erreur lors du chargement des informations utilisateur', 'error');
+        }
+    }
+    
+    async function loadChambres() {
+        try {
+            const response = await fetch('/api/chambres');
+            chambres = await response.json();
+            renderChambres();
+        } catch (error) {
+            console.error('Erreur chargement chambres:', error);
+            showAlert('Erreur lors du chargement des chambres', 'error');
+        }
+    }
+    
+    function renderChambres() {
+        const container = document.getElementById('chambres-container');
+        
+        if (chambres.length === 0) {
+            container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">Aucune chambre. Cliquez sur "Ajouter une chambre" pour commencer.</p>';
+            return;
+        }
+        
+        container.innerHTML = chambres.map(chambre => `
+            <div class="dotted-section section-blue" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0 0 0.5rem 0;">🛏️ ${chambre.nom || 'Sans nom'}</h3>
+                        <p style="color: #6b7280; margin: 0;">Capacité: ${chambre.capacite || 0} personne(s) | Prix: ${chambre.prix_par_nuit || 0} MAD/nuit</p>
+                        <p style="color: #6b7280; margin: 0.25rem 0 0 0; font-size: 0.875rem;">Statut: ${chambre.statut || 'disponible'}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" onclick="editChambre(${chambre.id})" class="btn btn-primary btn-small">✏️ Modifier</button>
+                        <button type="button" onclick="deleteChambre(${chambre.id})" class="btn btn-danger btn-small">🗑️</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    function addChambre() {
+        showAlert('La gestion des chambres est en cours de développement. Utilisez la page "Nouveau séjour" pour créer des chambres.', 'info');
+    }
+    
+    function editChambre(id) {
+        showAlert('Modification des chambres en cours de développement.', 'info');
+    }
+    
+    async function deleteChambre(id) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer cette chambre ?')) return;
+        
+        try {
+            const response = await fetch(`/api/chambres/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                showAlert('Chambre supprimée avec succès', 'success');
+                loadChambres();
             }
         } catch (error) {
-            console.error('Erreur chargement stats:', error);
-            showAlert('Erreur lors du chargement des statistiques', 'error');
+            showAlert('Erreur lors de la suppression', 'error');
         }
+    }
+    
+    async function loadPersonnels() {
+        try {
+            const response = await fetch('/api/personnels');
+            if (response.ok) {
+                personnels = await response.json();
+                renderPersonnels();
+            }
+        } catch (error) {
+            console.error('Erreur chargement personnels:', error);
+        }
+    }
+    
+    function renderPersonnels() {
+        const container = document.getElementById('personnels-container');
+        container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">La gestion du personnel sera bientôt disponible.</p>';
+    }
+    
+    function addPersonnel() {
+        showAlert('La gestion du personnel sera bientôt disponible.', 'info');
     }
     
     async function loadDemoData() {
@@ -550,7 +626,8 @@
             if (response.ok) {
                 showAlert('✅ Données de démonstration chargées avec succès!', 'success');
                 loadEtablissements();
-                loadStats();
+                loadChambres();
+                loadUserInfo();
             } else {
                 const data = await response.json();
                 showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
@@ -643,8 +720,9 @@
                 showAlert('✅ Données supprimées avec succès!', 'success');
                 closeResetModal();
                 loadEtablissements();
-                loadStats();
-            } else {
+                loadChambres();
+                loadUserInfo();
+            } else{
                 const data = await response.json();
                 showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
             }
@@ -671,7 +749,8 @@
             if (response.ok) {
                 showAlert('✅ Toutes les données ont été réinitialisées!', 'success');
                 loadEtablissements();
-                loadStats();
+                loadChambres();
+                loadUserInfo();
             } else {
                 const data = await response.json();
                 showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
@@ -694,9 +773,17 @@
             await loadEtablissements();
             console.log('✅ Établissements chargés:', etablissements.length);
             
-            console.log('📊 Chargement des statistiques...');
-            await loadStats();
-            console.log('✅ Statistiques chargées');
+            console.log('🏠 Chargement des chambres...');
+            await loadChambres();
+            console.log('✅ Chambres chargées:', chambres.length);
+            
+            console.log('👤 Chargement des informations utilisateur...');
+            await loadUserInfo();
+            console.log('✅ Informations utilisateur chargées');
+            
+            console.log('👥 Chargement des personnels...');
+            await loadPersonnels();
+            console.log('✅ Personnels chargés');
             
             console.log('✨ Initialisation terminée avec succès');
         } catch (error) {

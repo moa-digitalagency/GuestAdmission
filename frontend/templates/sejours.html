@@ -5,7 +5,7 @@
 
 {% block content %}
 <div style="margin-bottom: 1.5rem;">
-    <a href="/nouvelle-reservation" class="btn btn-primary">+ Nouveau séjour</a>
+    <a href="/nouveau-sejour" class="btn btn-primary">+ Nouveau séjour</a>
 </div>
 
 <div id="alert-container"></div>
@@ -25,7 +25,7 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody id="reservationsBody">
+            <tbody id="sejoursBody">
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 2rem;">Chargement...</td>
                 </tr>
@@ -47,7 +47,7 @@
 
 {% block scripts %}
 <script>
-    let reservations = [];
+    let sejours = [];
     
     function showAlert(message, type = 'success') {
         const alertContainer = document.getElementById('alert-container');
@@ -60,65 +60,67 @@
         setTimeout(() => alert.remove(), 5000);
     }
     
-    async function loadReservations() {
+    async function loadSejours() {
         try {
-            const response = await fetch('/api/reservations');
-            reservations = await response.json();
-            renderReservations();
+            const response = await fetch('/api/sejours');
+            sejours = await response.json();
+            renderSejours();
         } catch (error) {
             showAlert('Erreur lors du chargement des séjours', 'error');
         }
     }
     
-    function renderReservations() {
-        const tbody = document.getElementById('reservationsBody');
+    function renderSejours() {
+        const tbody = document.getElementById('sejoursBody');
         
-        if (reservations.length === 0) {
+        if (sejours.length === 0) {
             tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">Aucun séjour</td></tr>';
             return;
         }
         
-        tbody.innerHTML = reservations.map(res => `
+        tbody.innerHTML = sejours.map(sejour => `
             <tr>
-                <td>#${res.id}</td>
-                <td>${res.contact_nom || ''} ${res.contact_prenom || ''}</td>
-                <td>${res.date_arrivee || '-'}</td>
-                <td>${res.date_depart || '-'}</td>
-                <td>${res.nombre_jours || '-'}</td>
-                <td>${parseFloat(res.facture_hebergement || 0).toFixed(2)} MAD</td>
-                <td><span class="badge badge-green">${res.statut || 'active'}</span></td>
+                <td>#${sejour.id}</td>
+                <td>${sejour.contact_nom || ''} ${sejour.contact_prenom || ''}</td>
+                <td>${sejour.date_arrivee || '-'}</td>
+                <td>${sejour.date_depart || '-'}</td>
+                <td>${sejour.nombre_jours || '-'}</td>
+                <td>${parseFloat(sejour.facture_hebergement || 0).toFixed(2)} MAD</td>
+                <td><span class="badge badge-green">${sejour.statut || 'active'}</span></td>
                 <td>
                     <div class="actions">
-                        <button class="btn btn-small btn-primary" onclick="viewReservation(${res.id})">Détails</button>
-                        <button class="btn btn-small btn-danger" onclick="deleteReservation(${res.id})">Supprimer</button>
+                        <button class="btn btn-small btn-primary" onclick="viewSejour(${sejour.id})">Détails</button>
+                        <button class="btn btn-small btn-danger" onclick="deleteSejour(${sejour.id})">Supprimer</button>
                     </div>
                 </td>
             </tr>
         `).join('');
     }
     
-    async function viewReservation(id) {
+    async function viewSejour(id) {
         try {
-            const response = await fetch(`/api/reservations/${id}`);
+            const response = await fetch(`/api/sejours/${id}`);
             const data = await response.json();
             
             const modal = document.getElementById('detailModal');
             const modalBody = document.getElementById('modalBody');
             
+            const sejour = data.sejour || data.reservation;
+            
             modalBody.innerHTML = `
                 <div class="dotted-section section-green" style="margin-bottom: 1rem;">
                     <h3>Informations de séjour</h3>
-                    <p><strong>Arrivée:</strong> ${data.reservation.date_arrivee || '-'}</p>
-                    <p><strong>Départ:</strong> ${data.reservation.date_depart || '-'}</p>
-                    <p><strong>Nombre de jours:</strong> ${data.reservation.nombre_jours || '-'}</p>
-                    <p><strong>Numéro séjour:</strong> ${data.reservation.sejour_numero || '-'}</p>
+                    <p><strong>Arrivée:</strong> ${sejour.date_arrivee || '-'}</p>
+                    <p><strong>Départ:</strong> ${sejour.date_depart || '-'}</p>
+                    <p><strong>Nombre de jours:</strong> ${sejour.nombre_jours || '-'}</p>
+                    <p><strong>Numéro séjour:</strong> ${sejour.numero_reservation || '-'}</p>
                 </div>
                 
                 <div class="dotted-section section-purple" style="margin-bottom: 1rem;">
                     <h3>Informations financières</h3>
-                    <p><strong>Facture hébergement:</strong> ${parseFloat(data.reservation.facture_hebergement || 0).toFixed(2)} MAD</p>
-                    <p><strong>Charge plate-forme:</strong> ${parseFloat(data.reservation.charge_plateforme || 0).toFixed(2)} MAD</p>
-                    <p><strong>Taxe séjour:</strong> ${parseFloat(data.reservation.taxe_sejour || 0).toFixed(2)} MAD</p>
+                    <p><strong>Facture hébergement:</strong> ${parseFloat(sejour.facture_hebergement || 0).toFixed(2)} MAD</p>
+                    <p><strong>Charge plate-forme:</strong> ${parseFloat(sejour.charge_plateforme || 0).toFixed(2)} MAD</p>
+                    <p><strong>Taxe séjour:</strong> ${parseFloat(sejour.taxe_sejour || 0).toFixed(2)} MAD</p>
                 </div>
                 
                 <div class="dotted-section section-blue">
@@ -146,19 +148,19 @@
         document.getElementById('detailModal').classList.remove('active');
     }
     
-    async function deleteReservation(id) {
+    async function deleteSejour(id) {
         if (!confirm('Êtes-vous sûr de vouloir supprimer ce séjour ?')) {
             return;
         }
         
         try {
-            const response = await fetch(`/api/reservations/${id}`, {
+            const response = await fetch(`/api/sejours/${id}`, {
                 method: 'DELETE'
             });
             
             if (response.ok) {
                 showAlert('Séjour supprimé avec succès', 'success');
-                loadReservations();
+                loadSejours();
             } else {
                 showAlert('Erreur lors de la suppression', 'error');
             }
@@ -174,6 +176,6 @@
         }
     }
     
-    loadReservations();
+    loadSejours();
 </script>
 {% endblock %}

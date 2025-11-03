@@ -278,7 +278,7 @@
         }
         
         const formData = new FormData(e.target);
-        const reservation = {
+        const sejour = {
             etablissement_id: selectedEtablissement,
             numero_reservation: document.getElementById('numero_reservation').value,
             observations: document.getElementById('observations').value
@@ -303,7 +303,7 @@
                     }
                 }
             } else if (!['etablissement', 'numero_reservation', 'observations'].includes(key)) {
-                reservation[key] = value || null;
+                sejour[key] = value || null;
             }
         }
         
@@ -316,11 +316,11 @@
         const uniqueChambres = [...new Set(chambreIds)];
         
         try {
-            const response = await fetch('/api/reservations', {
+            const response = await fetch('/api/sejours', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    reservation, 
+                    sejour, 
                     personnes: personnes.filter(p => p),
                     chambres: uniqueChambres
                 })
@@ -328,7 +328,7 @@
             
             if (response.ok) {
                 showAlert('Séjour créé avec succès !', 'success');
-                setTimeout(() => window.location.href = '/reservations', 1500);
+                setTimeout(() => window.location.href = '/sejours', 1500);
             } else {
                 const errorData = await response.json();
                 showAlert(`Erreur: ${errorData.error || 'Erreur lors de la création du séjour'}`, 'error');

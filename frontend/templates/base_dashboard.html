@@ -18,14 +18,17 @@
             <a href="/dashboard" class="sidebar-link {% if request.path == '/dashboard' %}active{% endif %}">
                 <span>📊</span> Tableau de bord
             </a>
-            <a href="/nouvelle-reservation" class="sidebar-link {% if request.path == '/nouvelle-reservation' %}active{% endif %}">
+            <a href="/nouveau-sejour" class="sidebar-link {% if request.path == '/nouveau-sejour' %}active{% endif %}">
                 <span>➕</span> Nouveau séjour
             </a>
-            <a href="/reservations" class="sidebar-link {% if request.path == '/reservations' %}active{% endif %}">
+            <a href="/sejours" class="sidebar-link {% if request.path == '/sejours' %}active{% endif %}">
                 <span>📅</span> Séjours
             </a>
             <a href="/clients" class="sidebar-link {% if request.path == '/clients' %}active{% endif %}">
                 <span>👥</span> Base clients
+            </a>
+            <a href="/statistiques" class="sidebar-link {% if request.path == '/statistiques' %}active{% endif %}">
+                <span>📈</span> Statistiques
             </a>
             <a href="/parametres" class="sidebar-link {% if request.path == '/parametres' %}active{% endif %}">
                 <span>⚙️</span> Paramètres
