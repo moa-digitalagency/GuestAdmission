@@ -684,12 +684,24 @@
     
     // Charger les données immédiatement car le script est en fin de page
     (async function() {
+        console.log('🚀 Initialisation de la page paramètres...');
         try {
+            console.log('📁 Chargement des pays...');
             await loadCountries();
+            console.log('✅ Pays chargés:', countriesData.length);
+            
+            console.log('🏢 Chargement des établissements...');
             await loadEtablissements();
+            console.log('✅ Établissements chargés:', etablissements.length);
+            
+            console.log('📊 Chargement des statistiques...');
             await loadStats();
+            console.log('✅ Statistiques chargées');
+            
+            console.log('✨ Initialisation terminée avec succès');
         } catch (error) {
-            console.error('Erreur lors du chargement initial:', error);
+            console.error('❌ Erreur lors du chargement initial:', error);
+            showAlert('❌ Erreur lors du chargement de la page: ' + error.message, 'error');
         }
     })();
 </script>
