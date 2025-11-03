@@ -225,12 +225,16 @@ L'application utilise le **MOA Design System** avec :
 |---------|------|-------------|
 | id | SERIAL | Clé primaire |
 | nom_etablissement | VARCHAR(200) | Nom de l'établissement |
+| **pays** | VARCHAR(100) | **Pays de l'établissement** |
 | adresse | TEXT | Adresse |
 | telephone | VARCHAR(50) | Téléphone |
 | email | VARCHAR(150) | Email |
 | devise | VARCHAR(10) | Devise (MAD par défaut) |
 | taux_taxe_sejour | DECIMAL(5,2) | Taux taxe séjour (%) |
+| **taux_tva** | DECIMAL(5,2) | **Taux TVA (%)** |
 | taux_charge_plateforme | DECIMAL(5,2) | Taux charge plate-forme (%) |
+| **nombre_chambres** | INTEGER | **Nombre de chambres** |
+| **prix_chambres** | JSONB | **Prix par chambre (tableau)** |
 | logo_url | VARCHAR(500) | URL du logo |
 | created_at | TIMESTAMP | Date de création |
 | updated_at | TIMESTAMP | Date de modification |
@@ -304,4 +308,4 @@ Pour toute question ou amélioration, contactez l'équipe de développement.
 
 ---
 
-**Dernière mise à jour:** 3 novembre 2025
+**Dernière mise à jour:** 3 novembre 2025 (Page paramètres améliorée)
