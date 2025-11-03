@@ -159,7 +159,7 @@ label {
 input, select, textarea {
     padding: 0.5rem 0.75rem;
     border: 1px solid #d1d5db;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     background: #ffffff;
     color: #1f2937;
     font-size: 0.95rem;
