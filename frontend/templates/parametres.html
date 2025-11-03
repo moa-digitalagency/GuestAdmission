@@ -669,8 +669,15 @@
         }
     }
     
-    loadCountries();
-    loadEtablissements();
-    loadStats();
+    // Charger les données immédiatement car le script est en fin de page
+    (async function() {
+        try {
+            await loadCountries();
+            await loadEtablissements();
+            await loadStats();
+        } catch (error) {
+            console.error('Erreur lors du chargement initial:', error);
+        }
+    })();
 </script>
 {% endblock %}
