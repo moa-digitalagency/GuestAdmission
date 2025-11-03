@@ -12,5 +12,6 @@ dependencies = [
     "gunicorn>=23.0.0",
     "openpyxl>=3.1.5",
     "psycopg2-binary>=2.9.11",
+    "requests>=2.32.5",
     "werkzeug>=3.1.3",
 ]

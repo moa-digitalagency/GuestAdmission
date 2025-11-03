@@ -1,0 +1,622 @@
+{
+  "_comment": "MOA Design System Style - TalentsMaroc.com",
+  "_author": "MOA Digital Agency LLC",
+  "_created_by": "Aisance KALONJI",
+  "_email": "moa@myoneart.com",
+  "_website": "www.myoneart.com",
+  "_version": "1.0.0",
+  "_description": "Système de design complet pour les applications MOA - Couleurs, typographie, composants, bordures pointillées, boutons, badges et animations",
+  
+  "colors": {
+    "_comment": "Palette de couleurs complète du système MOA",
+    
+    "primary": {
+      "blue": {
+        "50": "#eff6ff",
+        "100": "#dbeafe",
+        "200": "#bfdbfe",
+        "300": "#93c5fd",
+        "400": "#60a5fa",
+        "500": "#3b82f6",
+        "600": "#2563eb",
+        "700": "#1d4ed8",
+        "800": "#1e40af",
+        "900": "#1e3a8a"
+      }
+    },
+    
+    "secondary": {
+      "gray": {
+        "50": "#f9fafb",
+        "100": "#f3f4f6",
+        "200": "#e5e7eb",
+        "300": "#d1d5db",
+        "400": "#9ca3af",
+        "500": "#6b7280",
+        "600": "#4b5563",
+        "700": "#374151",
+        "800": "#1f2937",
+        "900": "#111827"
+      }
+    },
+    
+    "accent_colors": {
+      "_comment": "Couleurs d'accentuation pour les sections et badges",
+      
+      "green": {
+        "50": "#dcfce7",
+        "500": "#22c55e",
+        "600": "#16a34a",
+        "700": "#166534",
+        "rgba": "rgba(34, 197, 94, 0.05)"
+      },
+      
+      "red": {
+        "50": "#fee2e2",
+        "500": "#ef4444",
+        "rgba": "rgba(239, 68, 68, 0.05)"
+      },
+      
+      "purple": {
+        "50": "#fae8ff",
+        "500": "#a855f7",
+        "rgba": "rgba(168, 85, 247, 0.05)"
+      },
+      
+      "violet": {
+        "50": "#ede9fe",
+        "500": "#8b5cf6",
+        "rgba": "rgba(139, 92, 246, 0.08)"
+      },
+      
+      "orange": {
+        "50": "#ffedd5",
+        "500": "#f97316",
+        "rgba": "rgba(249, 115, 22, 0.05)"
+      },
+      
+      "cyan": {
+        "50": "#cffafe",
+        "500": "#06b6d4",
+        "600": "#0e7490",
+        "rgba": "rgba(6, 182, 212, 0.05)"
+      },
+      
+      "pink": {
+        "50": "#fce7f3",
+        "500": "#ec4899",
+        "600": "#9f1239",
+        "rgba": "rgba(236, 72, 153, 0.05)"
+      },
+      
+      "yellow": {
+        "50": "#fef9c3",
+        "500": "#eab308",
+        "600": "#854d0e",
+        "rgba": "rgba(234, 179, 8, 0.05)"
+      },
+      
+      "indigo": {
+        "50": "#e0e7ff",
+        "500": "#6366f1",
+        "rgba": "rgba(99, 102, 241, 0.05)"
+      },
+      
+      "emerald": {
+        "50": "#d1fae5",
+        "500": "#10b981",
+        "rgba": "rgba(16, 185, 129, 0.05)"
+      },
+      
+      "teal": {
+        "50": "#ccfbf1",
+        "500": "#14b8a6"
+      }
+    },
+    
+    "backgrounds": {
+      "_comment": "Couleurs de fond pour l'application",
+      "page": "#f9fafb",
+      "card": "#ffffff",
+      "gradient": "#f9fafb"
+    }
+  },
+  
+  "typography": {
+    "_comment": "Système typographique complet - Police, tailles, poids",
+    
+    "font_family": {
+      "sans": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "mono": "'Courier New', Courier, monospace"
+    },
+    
+    "font_sizes": {
+      "_comment": "Tailles de police réduites pour un design compact et professionnel",
+      "base": "0.95rem",
+      "xs": "0.8rem",
+      "sm": "0.875rem",
+      "lg": "1rem",
+      "xl": "1.05rem",
+      "2xl": "1.15rem",
+      "3xl": "1.3rem",
+      "4xl": "1.6rem"
+    },
+    
+    "font_weights": {
+      "normal": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700
+    },
+    
+    "headings": {
+      "_comment": "Styles des titres",
+      "h1": {
+        "size": "1.6rem",
+        "weight": 600,
+        "color": "#1f2937",
+        "alt_size": "1.5rem"
+      },
+      "h2": {
+        "size": "1.3rem",
+        "weight": 600,
+        "color": "#1f2937",
+        "alt_size": "1rem"
+      },
+      "h3": {
+        "size": "1.15rem",
+        "weight": 600,
+        "color": "#1f2937",
+        "alt_size": "0.95rem"
+      }
+    },
+    
+    "special_text": {
+      "_comment": "Tailles spéciales pour tables, cartes, etc.",
+      "table": "0.9rem",
+      "card_content": "0.9rem",
+      "nav_link": "0.875rem"
+    }
+  },
+  
+  "spacing": {
+    "_comment": "Système d'espacement - Padding et Margin",
+    
+    "scale": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem"
+    },
+    
+    "reduced_padding": {
+      "_comment": "Padding réduit pour un design compact",
+      "p-6": "1rem",
+      "p-8": "1.25rem",
+      "py-8": "1.5rem (vertical)",
+      "px-4": "0.75rem (horizontal)"
+    }
+  },
+  
+  "border_radius": {
+    "_comment": "Arrondis des bordures",
+    "none": "0",
+    "sm": "0.125rem",
+    "default": "0.25rem",
+    "md": "0.375rem",
+    "lg": "0.5rem",
+    "xl": "0.75rem",
+    "2xl": "1rem",
+    "full": "9999px"
+  },
+  
+  "shadows": {
+    "_comment": "Ombres pour profondeur et hiérarchie",
+    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "default": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    "lg": "0 1px 3px 0 rgb(0 0 0 / 0.1)",
+    "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+    
+    "button_shadows": {
+      "primary": "0 2px 4px rgba(59, 130, 246, 0.15)",
+      "primary_hover": "0 6px 10px rgba(59, 130, 246, 0.3)",
+      "secondary": "0 2px 4px rgba(156, 163, 175, 0.15)",
+      "secondary_hover": "0 6px 10px rgba(156, 163, 175, 0.3)"
+    },
+    
+    "section_shadows": {
+      "_comment": "Ombres pour les sections pointillées",
+      "blue": "0 4px 6px rgba(59, 130, 246, 0.1)",
+      "green": "0 4px 6px rgba(34, 197, 94, 0.1)",
+      "red": "0 4px 6px rgba(239, 68, 68, 0.1)",
+      "purple": "0 4px 6px rgba(168, 85, 247, 0.1)",
+      "violet": "0 4px 6px rgba(139, 92, 246, 0.15)",
+      "orange": "0 4px 6px rgba(249, 115, 22, 0.1)",
+      "cyan": "0 4px 6px rgba(6, 182, 212, 0.1)",
+      "pink": "0 4px 6px rgba(236, 72, 153, 0.1)",
+      "yellow": "0 4px 6px rgba(234, 179, 8, 0.1)",
+      "indigo": "0 4px 6px rgba(99, 102, 241, 0.1)",
+      "emerald": "0 4px 6px rgba(16, 185, 129, 0.1)",
+      "hover": "0 8px 12px rgba(0, 0, 0, 0.15)"
+    }
+  },
+  
+  "buttons": {
+    "_comment": "Styles de boutons - Primary, Secondary et variants",
+    
+    "primary": {
+      "description": "Bouton principal bleu avec bordure solide",
+      "background": "#eff6ff",
+      "background_hover": "#dbeafe",
+      "color": "#1d4ed8",
+      "border": "2px solid #3b82f6",
+      "border_hover": "#2563eb",
+      "border_radius": "0.5rem",
+      "padding": "0.5rem 1rem",
+      "font_weight": 600,
+      "box_shadow": "0 2px 4px rgba(59, 130, 246, 0.15)",
+      "box_shadow_hover": "0 6px 10px rgba(59, 130, 246, 0.3)",
+      "transform_hover": "translateY(-2px)",
+      "transition": "all 0.2s ease"
+    },
+    
+    "secondary": {
+      "description": "Bouton secondaire gris avec bordure solide",
+      "background": "#f9fafb",
+      "background_hover": "#f3f4f6",
+      "color": "#374151",
+      "border": "2px solid #9ca3af",
+      "border_hover": "#6b7280",
+      "border_radius": "0.5rem",
+      "padding": "0.5rem 1rem",
+      "font_weight": 600,
+      "box_shadow": "0 2px 4px rgba(156, 163, 175, 0.15)",
+      "box_shadow_hover": "0 6px 10px rgba(156, 163, 175, 0.3)",
+      "transform_hover": "translateY(-2px)",
+      "transition": "all 0.2s ease"
+    },
+    
+    "sizes": {
+      "sm": "0.375rem 0.75rem",
+      "md": "0.5rem 1rem",
+      "lg": "0.75rem 1.5rem",
+      "xl": "1rem 2rem"
+    }
+  },
+  
+  "inputs": {
+    "_comment": "Champs de saisie professionnels",
+    
+    "default": {
+      "padding": "0.5rem 0.75rem",
+      "border": "1px solid #d1d5db",
+      "border_radius": "0.25rem",
+      "background": "#ffffff",
+      "color": "#1f2937"
+    },
+    
+    "focus": {
+      "border_color": "#2563eb",
+      "outline": "none",
+      "ring": "1px solid #2563eb",
+      "box_shadow": "0 0 0 1px #2563eb"
+    },
+    
+    "placeholder": {
+      "color": "#9ca3af"
+    }
+  },
+  
+  "dotted_sections": {
+    "_comment": "Sections avec bordures pointillées - Signature MOA",
+    "_description": "Chaque section a un fond léger, une bordure pointillée de 3px, un border-radius de 1rem et une ombre douce",
+    
+    "border_style": "3px dotted",
+    "border_radius": "1rem",
+    "hover_transform": "translateY(-2px)",
+    "hover_shadow": "0 8px 12px rgba(0, 0, 0, 0.15)",
+    "transition": "all 0.3s ease",
+    
+    "variants": {
+      "blue": {
+        "background": "rgba(59, 130, 246, 0.05)",
+        "border_color": "#3b82f6",
+        "box_shadow": "0 4px 6px rgba(59, 130, 246, 0.1)"
+      },
+      "green": {
+        "background": "rgba(34, 197, 94, 0.05)",
+        "border_color": "#22c55e",
+        "box_shadow": "0 4px 6px rgba(34, 197, 94, 0.1)"
+      },
+      "red": {
+        "background": "rgba(239, 68, 68, 0.05)",
+        "border_color": "#ef4444",
+        "box_shadow": "0 4px 6px rgba(239, 68, 68, 0.1)"
+      },
+      "purple": {
+        "background": "rgba(168, 85, 247, 0.05)",
+        "border_color": "#a855f7",
+        "box_shadow": "0 4px 6px rgba(168, 85, 247, 0.1)"
+      },
+      "violet": {
+        "background": "rgba(139, 92, 246, 0.08)",
+        "border_color": "#8b5cf6",
+        "box_shadow": "0 4px 6px rgba(139, 92, 246, 0.15)"
+      },
+      "orange": {
+        "background": "rgba(249, 115, 22, 0.05)",
+        "border_color": "#f97316",
+        "box_shadow": "0 4px 6px rgba(249, 115, 22, 0.1)"
+      },
+      "cyan": {
+        "background": "rgba(6, 182, 212, 0.05)",
+        "border_color": "#06b6d4",
+        "box_shadow": "0 4px 6px rgba(6, 182, 212, 0.1)"
+      },
+      "pink": {
+        "background": "rgba(236, 72, 153, 0.05)",
+        "border_color": "#ec4899",
+        "box_shadow": "0 4px 6px rgba(236, 72, 153, 0.1)"
+      },
+      "yellow": {
+        "background": "rgba(234, 179, 8, 0.05)",
+        "border_color": "#eab308",
+        "box_shadow": "0 4px 6px rgba(234, 179, 8, 0.1)"
+      },
+      "indigo": {
+        "background": "rgba(99, 102, 241, 0.05)",
+        "border_color": "#6366f1",
+        "box_shadow": "0 4px 6px rgba(99, 102, 241, 0.1)"
+      },
+      "emerald": {
+        "background": "rgba(16, 185, 129, 0.05)",
+        "border_color": "#10b981",
+        "box_shadow": "0 4px 6px rgba(16, 185, 129, 0.1)"
+      }
+    },
+    
+    "css_classes": {
+      "_comment": "Classes CSS prêtes à l'emploi",
+      "blue": "section-blue",
+      "green": "section-green",
+      "red": "section-red",
+      "purple": "section-purple",
+      "violet": "section-violet",
+      "orange": "section-orange",
+      "cyan": "section-cyan",
+      "pink": "section-pink",
+      "yellow": "section-yellow",
+      "indigo": "section-indigo",
+      "emerald": "section-emerald",
+      "base": "dotted-section"
+    }
+  },
+  
+  "badges": {
+    "_comment": "Badges pour afficher les statuts et tags",
+    
+    "common_properties": {
+      "padding": "0.5rem 1rem",
+      "border_radius": "9999px",
+      "font_weight": 600,
+      "border_width": "2px",
+      "display": "inline-block"
+    },
+    
+    "variants": {
+      "green": {
+        "background": "#dcfce7",
+        "color": "#166534",
+        "border_color": "#22c55e"
+      },
+      "cyan": {
+        "background": "#cffafe",
+        "color": "#0e7490",
+        "border_color": "#06b6d4"
+      },
+      "yellow": {
+        "background": "#fef9c3",
+        "color": "#854d0e",
+        "border_color": "#eab308"
+      },
+      "pink": {
+        "background": "#fce7f3",
+        "color": "#9f1239",
+        "border_color": "#ec4899"
+      }
+    },
+    
+    "css_classes": {
+      "green": "badge-green",
+      "cyan": "badge-cyan",
+      "yellow": "badge-yellow",
+      "pink": "badge-pink"
+    }
+  },
+  
+  "navigation": {
+    "_comment": "Styles de navigation",
+    
+    "navbar": {
+      "background": "#ffffff",
+      "border": "border-b-3 border-dotted border-blue-300",
+      "shadow": "0 1px 3px 0 rgb(0 0 0 / 0.1)",
+      "height": "4rem",
+      "padding": "0 1rem"
+    },
+    
+    "nav_links": {
+      "padding": "0.5rem 1rem",
+      "font_weight": 600,
+      "font_size": "0.875rem",
+      "border_radius": "0.5rem",
+      "transition": "all 0.2s ease",
+      
+      "hover_variants": {
+        "blue": {
+          "color": "#2563eb",
+          "background": "#eff6ff"
+        },
+        "purple": {
+          "color": "#a855f7",
+          "background": "#fae8ff"
+        },
+        "teal": {
+          "color": "#14b8a6",
+          "background": "#ccfbf1"
+        },
+        "orange": {
+          "color": "#f97316",
+          "background": "#ffedd5"
+        },
+        "green": {
+          "color": "#22c55e",
+          "background": "#dcfce7"
+        },
+        "indigo": {
+          "color": "#6366f1",
+          "background": "#e0e7ff"
+        }
+      }
+    },
+    
+    "mobile_menu": {
+      "button_padding": "0.5rem",
+      "border_radius": "0.5rem",
+      "hover_background": "#f3f4f6"
+    }
+  },
+  
+  "animations": {
+    "_comment": "Animations et transitions",
+    
+    "transitions": {
+      "fast": "all 0.1s ease",
+      "default": "all 0.2s ease",
+      "slow": "all 0.3s ease"
+    },
+    
+    "transforms": {
+      "button_hover": "translateY(-2px)",
+      "section_hover": "translateY(-2px)",
+      "scale_hover": "scale(1.02)"
+    },
+    
+    "hover_effects": {
+      "_comment": "Effets au survol",
+      "button": {
+        "transform": "translateY(-2px)",
+        "shadow_increase": true
+      },
+      "section": {
+        "transform": "translateY(-2px)",
+        "shadow": "0 8px 12px rgba(0, 0, 0, 0.15)"
+      },
+      "dotted_section": {
+        "transform": "scale(1.02)"
+      }
+    }
+  },
+  
+  "layout": {
+    "_comment": "Configurations de mise en page",
+    
+    "container": {
+      "max_width": "80rem",
+      "padding": "0 1rem"
+    },
+    
+    "card": {
+      "background": "#ffffff",
+      "border_radius": "0.75rem",
+      "padding": "1.5rem",
+      "shadow": "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+    },
+    
+    "grid": {
+      "gap": "1rem",
+      "columns": {
+        "sm": "repeat(1, minmax(0, 1fr))",
+        "md": "repeat(2, minmax(0, 1fr))",
+        "lg": "repeat(3, minmax(0, 1fr))",
+        "xl": "repeat(4, minmax(0, 1fr))"
+      }
+    }
+  },
+  
+  "breakpoints": {
+    "_comment": "Points de rupture responsifs (Tailwind CSS)",
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px"
+  },
+  
+  "usage_examples": {
+    "_comment": "Exemples d'utilisation du design system",
+    
+    "button_primary_html": "<button class=\"btn-primary\">Valider</button>",
+    
+    "button_secondary_html": "<button class=\"btn-secondary\">Annuler</button>",
+    
+    "dotted_section_blue_html": "<div class=\"section-blue p-6\">Contenu de la section</div>",
+    
+    "badge_green_html": "<span class=\"badge-green\">Actif</span>",
+    
+    "input_field_html": "<input type=\"text\" class=\"input-field\" placeholder=\"Votre texte\">",
+    
+    "css_import": "<link rel=\"stylesheet\" href=\"/static/css/corporate.css\">",
+    
+    "tailwind_cdn": "<script src=\"https://cdn.tailwindcss.com\"></script>"
+  },
+  
+  "design_principles": {
+    "_comment": "Principes de design MOA",
+    "philosophy": [
+      "Design compact et professionnel",
+      "Couleurs légères avec bordures solides",
+      "Sections pointillées colorées pour la hiérarchie visuelle",
+      "Ombres douces pour la profondeur",
+      "Transitions fluides pour l'interactivité",
+      "Typographie réduite pour la lisibilité",
+      "Badges colorés pour les statuts",
+      "Responsive design mobile-first"
+    ],
+    
+    "color_usage": {
+      "blue": "Actions primaires, liens importants",
+      "green": "Succès, validation, actif",
+      "red": "Erreurs, suppressions, alertes",
+      "orange": "Avertissements, actions modérées",
+      "purple": "Talents, créativité",
+      "cyan": "Informations, détails",
+      "yellow": "Attention, en attente",
+      "gray": "Neutre, secondaire"
+    }
+  },
+  
+  "accessibility": {
+    "_comment": "Recommandations d'accessibilité",
+    "contrast_ratios": {
+      "text_normal": "4.5:1 minimum",
+      "text_large": "3:1 minimum",
+      "ui_components": "3:1 minimum"
+    },
+    "focus_states": {
+      "outline": "2px solid #2563eb",
+      "outline_offset": "2px"
+    },
+    "touch_targets": {
+      "minimum_size": "44px x 44px"
+    }
+  }
+}

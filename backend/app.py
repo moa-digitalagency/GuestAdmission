@@ -7,6 +7,7 @@ from .routes.clients import clients_bp
 from .routes.auth import auth_bp
 from .routes.reservations import reservations_bp
 from .routes.parametres import parametres_bp
+from .routes.countries import countries_bp
 from .models.user import User
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,6 +30,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(clients_bp)
 app.register_blueprint(reservations_bp)
 app.register_blueprint(parametres_bp)
+app.register_blueprint(countries_bp)
 
 @app.route('/')
 @login_required

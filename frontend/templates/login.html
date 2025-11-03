@@ -6,32 +6,183 @@
     <title>Connexion - Maison d'Hôte</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
         .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            overflow: hidden;
         }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
         .login-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 3rem;
-            border-radius: 1rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(139, 92, 246, 0.2);
+            max-width: 420px;
             width: 100%;
+            position: relative;
+            z-index: 1;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            animation: fadeIn 0.6s ease-out;
         }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         .login-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
+        
         .login-header h1 {
             color: #1d4ed8;
             margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+        
         .login-header p {
             color: #6b7280;
-            font-size: 0.875rem;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.6);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .default-credentials {
+            margin-top: 2rem;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 0.75rem;
+            border: 2px dotted #8b5cf6;
+        }
+        
+        .default-credentials strong {
+            color: #1d4ed8;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .default-credentials code {
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            color: #8b5cf6;
+            font-weight: 600;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #991b1b;
+            border: 2px solid #ef4444;
         }
     </style>
 </head>
@@ -48,22 +199,22 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">Nom d'utilisateur</label>
-                    <input type="text" id="username" name="username" required autofocus>
+                    <input type="text" id="username" name="username" required autofocus autocomplete="username">
                 </div>
 
                 <div class="form-group">
                     <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                <button type="submit" class="btn-primary">
                     Se connecter
                 </button>
 
-                <p style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: #6b7280;">
-                    <strong>Identifiants par défaut:</strong><br>
+                <div class="default-credentials">
+                    <strong>Identifiants par défaut:</strong>
                     Utilisateur: <code>admin</code> | Mot de passe: <code>admin123</code>
-                </p>
+                </div>
             </form>
         </div>
     </div>
