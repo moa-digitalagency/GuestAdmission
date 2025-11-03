@@ -420,23 +420,25 @@ tr:hover {
 
 .sidebar-nav {
     flex: 1;
-    padding: 1.5rem 0;
+    padding: 1.5rem 1rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
 }
 
 .sidebar-link {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.875rem 1.5rem;
+    padding: 0.75rem 1rem;
     color: #374151;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.2s ease;
-    border-left: 3px solid transparent;
+    border-radius: 0.75rem;
+    margin: 0;
 }
 
 .sidebar-link span {
@@ -447,12 +449,12 @@ tr:hover {
 .sidebar-link.active {
     background: #eff6ff;
     color: #2563eb;
-    border-left-color: #2563eb;
     font-weight: 600;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.15);
 }
 
 .sidebar-footer {
-    padding: 1.5rem 0;
+    padding: 0 1rem 1.5rem 1rem;
     border-top: 2px solid #f3f4f6;
 }
 
@@ -463,7 +465,7 @@ tr:hover {
 .logout-link:hover {
     background: #fee2e2;
     color: #991b1b;
-    border-left-color: #dc2626;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.15);
 }
 
 .main-content {

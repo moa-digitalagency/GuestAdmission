@@ -79,6 +79,7 @@ def init_db():
             taux_charge_plateforme DECIMAL(5, 2),
             nombre_chambres INTEGER,
             prix_chambres JSONB,
+            responsables JSONB DEFAULT '[]'::jsonb,
             responsable_nom VARCHAR(100),
             responsable_prenom VARCHAR(100),
             responsable_email VARCHAR(150),

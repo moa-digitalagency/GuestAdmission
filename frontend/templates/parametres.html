@@ -51,34 +51,34 @@
             
             <div class="form-group">
                 <label for="devise">Devise *</label>
-                <input type="text" id="devise" name="devise" required placeholder="MAD, EUR, USD...">
+                <select id="devise" name="devise" required>
+                    <option value="">Sélectionner une devise...</option>
+                    <option value="MAD">MAD - Dirham marocain</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="USD">USD - Dollar américain</option>
+                    <option value="GBP">GBP - Livre sterling</option>
+                    <option value="CHF">CHF - Franc suisse</option>
+                    <option value="CAD">CAD - Dollar canadien</option>
+                    <option value="AED">AED - Dirham des EAU</option>
+                    <option value="SAR">SAR - Riyal saoudien</option>
+                    <option value="TND">TND - Dinar tunisien</option>
+                    <option value="DZD">DZD - Dinar algérien</option>
+                    <option value="JPY">JPY - Yen japonais</option>
+                    <option value="CNY">CNY - Yuan chinois</option>
+                </select>
             </div>
         </div>
     </div>
 
     <div class="dotted-section section-green">
-        <h2>👤 Responsable de l'établissement</h2>
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="responsable_prenom">Prénom du responsable</label>
-                <input type="text" id="responsable_prenom" name="responsable_prenom">
-            </div>
-            
-            <div class="form-group">
-                <label for="responsable_nom">Nom du responsable</label>
-                <input type="text" id="responsable_nom" name="responsable_nom">
-            </div>
-            
-            <div class="form-group">
-                <label for="responsable_email">Email du responsable</label>
-                <input type="email" id="responsable_email" name="responsable_email">
-            </div>
-            
-            <div class="form-group">
-                <label for="responsable_telephone">Téléphone du responsable</label>
-                <input type="tel" id="responsable_telephone" name="responsable_telephone">
-            </div>
-        </div>
+        <h2>👥 Responsables de l'établissement</h2>
+        <p style="color: #6b7280; margin-bottom: 1.5rem;">Ajoutez les responsables de votre établissement.</p>
+        
+        <div id="responsables-container"></div>
+        
+        <button type="button" id="add-responsable-btn" class="btn btn-primary btn-small" style="margin-top: 1rem;">
+            ➕ Ajouter un responsable
+        </button>
     </div>
 
     <div class="dotted-section section-purple">
@@ -170,6 +170,79 @@
 <script>
     let currentParams = {};
     let countriesData = [];
+    let responsables = [];
+    
+    function renderResponsables() {
+        const container = document.getElementById('responsables-container');
+        container.innerHTML = '';
+        
+        responsables.forEach((resp, index) => {
+            const card = document.createElement('div');
+            card.className = 'person-card' + (index === 0 ? ' principal' : '');
+            card.innerHTML = `
+                <div class="person-header">
+                    ${index === 0 ? '<span class="person-badge">Principal</span>' : ''}
+                    ${responsables.length > 1 ? `<button type="button" class="person-remove" onclick="removeResponsable(${index})">✕ Supprimer</button>` : ''}
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" class="responsable-prenom" data-index="${index}" value="${resp.prenom || ''}" placeholder="Prénom">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" class="responsable-nom" data-index="${index}" value="${resp.nom || ''}" placeholder="Nom">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="responsable-email" data-index="${index}" value="${resp.email || ''}" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" class="responsable-telephone" data-index="${index}" value="${resp.telephone || ''}" placeholder="+212 XXX XXX XXX">
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    function addResponsable() {
+        responsables.push({
+            prenom: '',
+            nom: '',
+            email: '',
+            telephone: ''
+        });
+        renderResponsables();
+    }
+    
+    function removeResponsable(index) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce responsable?')) {
+            responsables.splice(index, 1);
+            renderResponsables();
+        }
+    }
+    
+    function collectResponsablesData() {
+        const prenoms = document.querySelectorAll('.responsable-prenom');
+        const noms = document.querySelectorAll('.responsable-nom');
+        const emails = document.querySelectorAll('.responsable-email');
+        const telephones = document.querySelectorAll('.responsable-telephone');
+        
+        const collected = [];
+        for (let i = 0; i < prenoms.length; i++) {
+            collected.push({
+                prenom: prenoms[i].value,
+                nom: noms[i].value,
+                email: emails[i].value,
+                telephone: telephones[i].value
+            });
+        }
+        return collected;
+    }
+    
+    document.getElementById('add-responsable-btn').addEventListener('click', addResponsable);
     
     async function loadCountries() {
         try {
@@ -249,12 +322,24 @@
             document.getElementById('taux_tva').value = currentParams.taux_tva || 0;
             document.getElementById('nombre_chambres').value = currentParams.nombre_chambres || 1;
             
-            document.getElementById('responsable_prenom').value = currentParams.responsable_prenom || '';
-            document.getElementById('responsable_nom').value = currentParams.responsable_nom || '';
-            document.getElementById('responsable_email').value = currentParams.responsable_email || '';
-            document.getElementById('responsable_telephone').value = currentParams.responsable_telephone || '';
+            responsables = typeof currentParams.responsables === 'string' 
+                ? JSON.parse(currentParams.responsables || '[]')
+                : (currentParams.responsables || []);
             
-            const prixChambres = currentParams.prix_chambres || [];
+            if (responsables.length === 0) {
+                responsables.push({
+                    prenom: currentParams.responsable_prenom || '',
+                    nom: currentParams.responsable_nom || '',
+                    email: currentParams.responsable_email || '',
+                    telephone: currentParams.responsable_telephone || ''
+                });
+            }
+            renderResponsables();
+            
+            const prixChambres = typeof currentParams.prix_chambres === 'string' 
+                ? JSON.parse(currentParams.prix_chambres || '[]')
+                : (currentParams.prix_chambres || []);
+            
             if (prixChambres.length > 0) {
                 const allSame = prixChambres.every(prix => prix === prixChambres[0]);
                 if (allSame) {
@@ -343,10 +428,11 @@
                 taux_charge_plateforme: currentParams.taux_charge_plateforme || 0,
                 nombre_chambres: nombreChambres,
                 prix_chambres: prixChambres,
-                responsable_prenom: document.getElementById('responsable_prenom').value,
-                responsable_nom: document.getElementById('responsable_nom').value,
-                responsable_email: document.getElementById('responsable_email').value,
-                responsable_telephone: document.getElementById('responsable_telephone').value
+                responsables: collectResponsablesData(),
+                responsable_prenom: collectResponsablesData()[0]?.prenom || '',
+                responsable_nom: collectResponsablesData()[0]?.nom || '',
+                responsable_email: collectResponsablesData()[0]?.email || '',
+                responsable_telephone: collectResponsablesData()[0]?.telephone || ''
             };
             
             const response = await fetch('/api/parametres', {
