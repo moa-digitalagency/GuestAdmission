@@ -935,6 +935,247 @@ async function resetAllData() {
     }
 }
 
+async function loadMailConfigs() {
+    try {
+        const response = await fetch('/api/mail-configs');
+        const configs = await response.json();
+        
+        const container = document.getElementById('mail-configs-container');
+        if (!container) return;
+        
+        if (configs.length === 0) {
+            container.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 2rem;">Aucune configuration mail. Cliquez sur "Ajouter" pour commencer.</p>';
+            return;
+        }
+        
+        container.innerHTML = configs.map(config => `
+            <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; border: 2px solid #e5e7eb; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; color: #111827;">
+                        ${config.actif ? '✅' : '⭕'} ${config.nom_config}
+                    </h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="editMailConfig(${config.id})" class="btn btn-primary btn-sm">
+                            ✏️ Modifier
+                        </button>
+                        <button onclick="deleteMailConfig(${config.id})" class="btn btn-danger btn-sm">
+                            🗑️ Supprimer
+                        </button>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
+                    <div>
+                        <strong>Email:</strong> ${config.email_address}
+                    </div>
+                    <div>
+                        <strong>SMTP:</strong> ${config.smtp_host}:${config.smtp_port}
+                    </div>
+                    ${config.pop_host ? `
+                        <div>
+                            <strong>POP:</strong> ${config.pop_host}:${config.pop_port}
+                        </div>
+                    ` : ''}
+                    <div>
+                        <strong>Statut:</strong> ${config.actif ? '<span style="color: #059669;">Actif</span>' : '<span style="color: #dc2626;">Inactif</span>'}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Erreur chargement configs mail:', error);
+        showAlert('❌ Erreur lors du chargement des configurations mail', 'error');
+    }
+}
+
+function addMailConfig() {
+    const modalHTML = `
+        <div id="mail-config-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+            <div style="background: white; border-radius: 0.75rem; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 2px solid #e5e7eb;">
+                    <h3 style="margin: 0;">📧 Nouvelle Configuration Mail</h3>
+                    <button onclick="closeMailConfigModal()" style="background: none; border: none; font-size: 2rem; cursor: pointer; color: #6b7280;">&times;</button>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <form id="mail-config-form" onsubmit="saveMailConfig(event)">
+                        <div class="form-group">
+                            <label>Nom de la configuration</label>
+                            <input type="text" id="mail-nom-config" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Adresse email</label>
+                            <input type="email" id="mail-email-address" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Établissement</label>
+                            <select id="mail-etablissement" class="form-control" required>
+                                <option value="">Sélectionner...</option>
+                                ${etablissements.map(e => `<option value="${e.id}">${e.nom}</option>`).join('')}
+                            </select>
+                        </div>
+                        
+                        <h4 style="margin: 1.5rem 0 1rem 0; color: #3b82f6;">Paramètres SMTP (Envoi)</h4>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Hôte SMTP</label>
+                                <input type="text" id="mail-smtp-host" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Port SMTP</label>
+                                <input type="number" id="mail-smtp-port" class="form-control" value="587" required>
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Nom d'utilisateur SMTP</label>
+                                <input type="text" id="mail-smtp-username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mot de passe SMTP</label>
+                                <input type="password" id="mail-smtp-password" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="mail-smtp-tls" checked>
+                                Utiliser TLS
+                            </label>
+                        </div>
+                        
+                        <h4 style="margin: 1.5rem 0 1rem 0; color: #22c55e;">Paramètres POP3 (Réception)</h4>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Hôte POP3</label>
+                                <input type="text" id="mail-pop-host" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Port POP3</label>
+                                <input type="number" id="mail-pop-port" class="form-control" value="995">
+                            </div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Nom d'utilisateur POP3</label>
+                                <input type="text" id="mail-pop-username" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Mot de passe POP3</label>
+                                <input type="password" id="mail-pop-password" class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="mail-pop-ssl" checked>
+                                Utiliser SSL
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="mail-actif" checked>
+                                Configuration active
+                            </label>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                            <button type="button" onclick="closeMailConfigModal()" class="btn btn-secondary">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                💾 Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+async function saveMailConfig(event) {
+    event.preventDefault();
+    
+    const formData = {
+        nom_config: document.getElementById('mail-nom-config').value,
+        email_address: document.getElementById('mail-email-address').value,
+        etablissement_id: parseInt(document.getElementById('mail-etablissement').value),
+        smtp_host: document.getElementById('mail-smtp-host').value,
+        smtp_port: parseInt(document.getElementById('mail-smtp-port').value),
+        smtp_username: document.getElementById('mail-smtp-username').value,
+        smtp_password: document.getElementById('mail-smtp-password').value,
+        smtp_use_tls: document.getElementById('mail-smtp-tls').checked,
+        pop_host: document.getElementById('mail-pop-host').value || null,
+        pop_port: parseInt(document.getElementById('mail-pop-port').value) || 995,
+        pop_username: document.getElementById('mail-pop-username').value || null,
+        pop_password: document.getElementById('mail-pop-password').value || null,
+        pop_use_ssl: document.getElementById('mail-pop-ssl').checked,
+        actif: document.getElementById('mail-actif').checked
+    };
+    
+    try {
+        const response = await fetch('/api/mail-configs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+            showAlert('✅ Configuration mail créée avec succès!', 'success');
+            closeMailConfigModal();
+            await loadMailConfigs();
+        } else {
+            const data = await response.json();
+            showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('❌ Erreur lors de l\'enregistrement', 'error');
+    }
+}
+
+async function deleteMailConfig(configId) {
+    if (!confirm('Voulez-vous vraiment supprimer cette configuration mail ?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/mail-configs/${configId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            showAlert('✅ Configuration supprimée avec succès!', 'success');
+            await loadMailConfigs();
+        } else {
+            const data = await response.json();
+            showAlert('❌ Erreur: ' + (data.error || 'Erreur inconnue'), 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('❌ Erreur lors de la suppression', 'error');
+    }
+}
+
+function editMailConfig(configId) {
+    showAlert('⚠️ Fonctionnalité de modification en cours de développement', 'info');
+}
+
+function closeMailConfigModal() {
+    const modal = document.getElementById('mail-config-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
 (async function() {
     console.log('🚀 Initialisation de la page paramètres...');
     try {
@@ -953,6 +1194,10 @@ async function resetAllData() {
         console.log('👥 Chargement des personnels...');
         await loadPersonnels();
         console.log('✅ Personnels chargés');
+        
+        console.log('📧 Chargement des configs mail...');
+        await loadMailConfigs();
+        console.log('✅ Configs mail chargées');
         
         console.log('✨ Initialisation terminée avec succès');
     } catch (error) {

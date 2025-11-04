@@ -1,0 +1,311 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Messagerie{% endblock %}
+{% block page_title %}Messagerie{% endblock %}
+
+{% block content %}
+<div id="alert-container"></div>
+
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 1.5rem; height: calc(100vh - 180px);">
+    <div class="content-block" style="background: rgba(59, 130, 246, 0.05); border-color: #3b82f6; height: fit-content;">
+        <div class="content-block-header">
+            <div class="content-block-title">
+                📧 Comptes Mail
+            </div>
+            <div class="content-block-actions">
+                <button type="button" onclick="composeNewEmail()" class="btn btn-success btn-sm">
+                    ✉️ Nouveau
+                </button>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; color: #374151; font-weight: 500;">
+                Configuration active
+            </label>
+            <select id="mail-config-select" onchange="loadFolders()" class="form-control">
+                <option value="">Choisir un compte...</option>
+            </select>
+        </div>
+        
+        <div id="folders-container">
+            <button type="button" onclick="selectFolder('inbox')" class="folder-btn active" data-folder="inbox">
+                📥 Boîte de réception
+                <span class="unread-count" id="unread-inbox">0</span>
+            </button>
+            <button type="button" onclick="selectFolder('sent')" class="folder-btn" data-folder="sent">
+                📤 Envoyés
+            </button>
+            <button type="button" onclick="selectFolder('draft')" class="folder-btn" data-folder="draft">
+                📝 Brouillons
+            </button>
+            <button type="button" onclick="selectFolder('trash')" class="folder-btn" data-folder="trash">
+                🗑️ Corbeille
+            </button>
+        </div>
+        
+        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px dotted #3b82f6;">
+            <button type="button" onclick="fetchNewEmails()" class="btn btn-primary" style="width: 100%;">
+                🔄 Récupérer les emails
+            </button>
+        </div>
+    </div>
+    
+    <div class="content-block" style="background: rgba(34, 197, 94, 0.05); border-color: #22c55e; display: flex; flex-direction: column;">
+        <div class="content-block-header">
+            <div class="content-block-title">
+                <span id="folder-title">📥 Boîte de réception</span>
+            </div>
+            <div class="content-block-actions">
+                <input type="text" id="search-emails" placeholder="Rechercher..." class="form-control" style="width: 250px;">
+            </div>
+        </div>
+        
+        <div id="emails-list-container" style="flex: 1; overflow-y: auto;">
+            <div style="text-align: center; padding: 3rem; color: #9ca3af;">
+                <p style="font-size: 1.125rem;">Sélectionnez un compte mail pour commencer</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="compose-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3 style="margin: 0;">✉️ Nouveau message</h3>
+            <button type="button" onclick="closeComposeModal()" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="compose-form" onsubmit="sendEmail(event)">
+                <div class="form-group">
+                    <label>Destinataire</label>
+                    <input type="email" id="to-email" class="form-control" required>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>CC (Copie)</label>
+                        <input type="text" id="cc-email" class="form-control" placeholder="emails@exemple.com, ...">
+                    </div>
+                    <div class="form-group">
+                        <label>CCI (Copie cachée)</label>
+                        <input type="text" id="bcc-email" class="form-control" placeholder="emails@exemple.com, ...">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Objet</label>
+                    <input type="text" id="subject" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="email-body" class="form-control" rows="12" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="index-client-checkbox">
+                        Indexer avec un contact client
+                    </label>
+                    <input type="text" id="client-email-index" class="form-control" placeholder="Email du client" style="margin-top: 0.5rem; display: none;">
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" onclick="closeComposeModal()" class="btn btn-secondary">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        📤 Envoyer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="email-detail-modal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h3 style="margin: 0;" id="email-detail-subject">Email</h3>
+            <button type="button" onclick="closeEmailDetailModal()" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div style="background: #f9fafb; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 100px 1fr; gap: 0.5rem; font-size: 0.875rem;">
+                    <strong>De:</strong>
+                    <span id="email-detail-from"></span>
+                    
+                    <strong>À:</strong>
+                    <span id="email-detail-to"></span>
+                    
+                    <strong>Date:</strong>
+                    <span id="email-detail-date"></span>
+                </div>
+            </div>
+            
+            <div id="email-detail-body" style="padding: 1rem; border: 2px dotted #e5e7eb; border-radius: 0.5rem; min-height: 200px; background: white;">
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #e5e7eb;">
+                <button type="button" onclick="replyToEmail()" class="btn btn-primary">
+                    ↩️ Répondre
+                </button>
+                <button type="button" onclick="moveEmailToTrash()" class="btn btn-danger">
+                    🗑️ Supprimer
+                </button>
+                <button type="button" onclick="closeEmailDetailModal()" class="btn btn-secondary">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.folder-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #374151;
+    transition: all 0.2s;
+}
+
+.folder-btn:hover {
+    background: #f9fafb;
+    border-color: #3b82f6;
+}
+
+.folder-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.unread-count {
+    background: #ef4444;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.email-item {
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.email-item:hover {
+    border-color: #22c55e;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.email-item.unread {
+    background: #f0fdf4;
+    font-weight: 600;
+}
+
+.email-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.email-item-subject {
+    font-size: 1rem;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.email-item-from {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.email-item-date {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.email-item-preview {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 0.75rem;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close:hover {
+    color: #111827;
+}
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/messagerie.js') }}"></script>
+{% endblock %}
