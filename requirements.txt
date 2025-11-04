@@ -103,3 +103,16 @@ typing-extensions
 urllib3
 werkzeug
 reportlab
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
+email-validator
+flask
+flask-cors
+flask-login
+flask-sqlalchemy
+gunicorn
+openpyxl
+psycopg2-binary
