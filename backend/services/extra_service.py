@@ -39,7 +39,7 @@ class ExtraService:
         cur.execute('''
             INSERT INTO extras (
                 etablissement_id, nom, description, prix_unitaire, 
-                unite_mesure, actif
+                unite, actif
             ) VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
@@ -47,7 +47,7 @@ class ExtraService:
             data.get('nom'),
             data.get('description', ''),
             data.get('prix_unitaire', 0),
-            data.get('unite_mesure', 'unité'),
+            data.get('unite', 'unité'),
             data.get('actif', True)
         ))
         
@@ -112,14 +112,14 @@ class ExtraService:
         cur.execute('''
             UPDATE extras SET
                 nom = %s, description = %s, prix_unitaire = %s,
-                unite_mesure = %s, actif = %s,
+                unite = %s, actif = %s,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = %s
         ''', (
             data.get('nom'),
             data.get('description'),
             data.get('prix_unitaire'),
-            data.get('unite_mesure'),
+            data.get('unite'),
             data.get('actif'),
             extra_id
         ))
@@ -294,7 +294,7 @@ class ExtraService:
         query = '''
             SELECT 
                 e.nom as extra_nom,
-                e.unite_mesure,
+                e.unite,
                 e.prix_unitaire,
                 COUNT(se.id) as nombre_utilisations,
                 SUM(se.quantite) as quantite_totale,
@@ -315,7 +315,7 @@ class ExtraService:
             params.append(date_fin)
         
         query += '''
-            GROUP BY e.id, e.nom, e.unite_mesure, e.prix_unitaire
+            GROUP BY e.id, e.nom, e.unite, e.prix_unitaire
             ORDER BY montant_total DESC NULLS LAST
         '''
         

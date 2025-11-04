@@ -1,0 +1,253 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Calendriers iCal{% endblock %}
+{% block page_title %}📅 Calendriers iCal (Airbnb, Booking.com){% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Section: Liste des calendriers -->
+    <div class="content-block">
+        <div class="content-block-header">
+            <div class="content-block-title">
+                📋 Calendriers configurés
+            </div>
+            <div class="content-block-actions">
+                <select id="filterEtablissement" style="min-width: 200px;">
+                    <option value="">Tous les établissements</option>
+                </select>
+                <button class="btn btn-success" onclick="showAddCalendarModal()">
+                    ➕ Ajouter un calendrier
+                </button>
+            </div>
+        </div>
+        <div id="calendarsTable" class="table-container">
+            <p style="text-align: center; color: #666;">Chargement...</p>
+        </div>
+    </div>
+
+    <!-- Section: Réservations importées -->
+    <div class="content-block">
+        <div class="content-block-header">
+            <div class="content-block-title">
+                📅 Réservations importées
+            </div>
+        </div>
+        <div id="reservationsTable" class="table-container">
+            <p style="text-align: center; color: #666;">Sélectionnez un établissement et synchronisez un calendrier</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Ajouter/Modifier Calendrier -->
+<div id="calendarModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Ajouter un Calendrier</h2>
+            <span class="close" onclick="closeCalendarModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="calendarForm">
+                <input type="hidden" id="calendarId">
+                
+                <div class="form-group">
+                    <label for="calendarEtablissement">Établissement *</label>
+                    <select id="calendarEtablissement" required>
+                        <option value="">Sélectionner un établissement</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="calendarNom">Nom du calendrier *</label>
+                    <input type="text" id="calendarNom" required placeholder="Ex: Airbnb - Chambre 1">
+                </div>
+
+                <div class="form-group">
+                    <label for="calendarPlateforme">Plateforme *</label>
+                    <select id="calendarPlateforme" required>
+                        <option value="airbnb">Airbnb</option>
+                        <option value="booking">Booking.com</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="calendarUrl">URL du calendrier iCal *</label>
+                    <input type="url" id="calendarUrl" required placeholder="https://...">
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">
+                        💡 Copiez le lien iCal depuis votre plateforme (Airbnb, Booking.com, etc.)
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="calendarActif" checked>
+                        Calendrier actif
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeCalendarModal()">Annuler</button>
+                    <button type="submit" class="btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container th,
+.table-container td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-container th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.table-container tr:hover {
+    background-color: #f9fafb;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.badge-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-airbnb {
+    background-color: #fce7f3;
+    color: #9f1239;
+}
+
+.badge-booking {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-autre {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.btn-icon:hover {
+    opacity: 0.7;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+}
+
+.close:hover {
+    color: #374151;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+</style>
+
+<script src="{{ url_for('static', filename='js/calendriers.js') }}"></script>
+{% endblock %}

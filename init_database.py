@@ -283,6 +283,40 @@ def init_database():
             )
         ''')
         
+        # Créer la table calendriers_ical pour la synchronisation
+        print("  📋 Création de la table 'calendriers_ical'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS calendriers_ical (
+                id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                nom VARCHAR(200) NOT NULL,
+                plateforme VARCHAR(50) NOT NULL,
+                ical_url TEXT NOT NULL,
+                derniere_synchronisation TIMESTAMP,
+                statut_derniere_synchro VARCHAR(50) DEFAULT 'jamais',
+                message_erreur TEXT,
+                actif BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table reservations_ical
+        print("  📋 Création de la table 'reservations_ical'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS reservations_ical (
+                id SERIAL PRIMARY KEY,
+                calendrier_id INTEGER REFERENCES calendriers_ical(id) ON DELETE CASCADE,
+                uid_ical VARCHAR(500) UNIQUE NOT NULL,
+                titre VARCHAR(300),
+                date_debut DATE NOT NULL,
+                date_fin DATE NOT NULL,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
         # Ajouter la colonne closed_at dans reservations si elle n'existe pas
         print("  📋 Ajout de la colonne 'closed_at' dans reservations...")
         cur.execute('''

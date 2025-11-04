@@ -45,3 +45,4 @@ psycopg2-binary
 reportlab
 requests
 werkzeug
+icalendar

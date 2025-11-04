@@ -2,7 +2,7 @@
 Service pour la génération de factures PDF
 """
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
@@ -37,7 +37,7 @@ class InvoiceService:
         buffer = BytesIO()
         doc = SimpleDocTemplate(
             buffer,
-            pagesize=A4,
+            pagesize=landscape(A4),
             rightMargin=20*mm,
             leftMargin=20*mm,
             topMargin=20*mm,
@@ -208,7 +208,7 @@ class InvoiceService:
             montant = float(extra.get('montant_total', 0) or 0)
             total_extras += montant
             data.append([
-                f"{extra.get('nom', 'Extra')} ({extra.get('unite_mesure', 'unité')})",
+                f"{extra.get('nom', 'Extra')} ({extra.get('unite', 'unité')})",
                 str(extra.get('quantite', 1)),
                 f"{float(extra.get('prix_unitaire', 0)):.2f} {etablissement.get('devise', 'MAD')}",
                 f"{montant:.2f} {etablissement.get('devise', 'MAD')}"
@@ -312,7 +312,7 @@ class InvoiceService:
         cur = conn.cursor()
         
         cur.execute('''
-            SELECT e.nom, e.prix_unitaire, e.unite_mesure, 
+            SELECT e.nom, e.prix_unitaire, e.unite, 
                    se.quantite, se.montant_total
             FROM sejours_extras se
             JOIN extras e ON se.extra_id = e.id

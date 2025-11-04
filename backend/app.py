@@ -14,6 +14,7 @@ from .routes.personnels import personnels_bp
 from .routes.extras import extras_bp
 from .routes.statistics import statistics_bp
 from .routes.mail import mail_bp
+from .routes.calendars import calendars_bp
 from .models.user import User
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,6 +47,7 @@ app.register_blueprint(personnels_bp)
 app.register_blueprint(extras_bp)
 app.register_blueprint(statistics_bp)
 app.register_blueprint(mail_bp)
+app.register_blueprint(calendars_bp)
 
 @app.route('/')
 @login_required
@@ -101,6 +103,11 @@ def sejour_detail(sejour_id):
 @login_required
 def messagerie():
     return render_template('messagerie.html')
+
+@app.route('/calendriers')
+@login_required
+def calendriers():
+    return render_template('calendriers.html')
 
 @app.route('/favicon.ico')
 def favicon():

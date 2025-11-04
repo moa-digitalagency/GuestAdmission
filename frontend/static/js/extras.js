@@ -80,7 +80,7 @@ function displayExtras(extras) {
                         </td>
                         <td>${extra.nom_etablissement || 'N/A'}</td>
                         <td>${parseFloat(extra.prix_unitaire).toFixed(2)} MAD</td>
-                        <td>${extra.unite_mesure}</td>
+                        <td>${extra.unite || 'unité'}</td>
                         <td>
                             <span class="badge ${extra.actif ? 'badge-active' : 'badge-inactive'}">
                                 ${extra.actif ? 'Actif' : 'Inactif'}
@@ -129,7 +129,7 @@ async function editExtra(extraId) {
         document.getElementById('extraNom').value = extra.nom;
         document.getElementById('extraDescription').value = extra.description || '';
         document.getElementById('extraPrix').value = extra.prix_unitaire;
-        document.getElementById('extraUnite').value = extra.unite_mesure;
+        document.getElementById('extraUnite').value = extra.unite || 'unité';
         document.getElementById('extraActif').checked = extra.actif;
         
         document.getElementById('extraModal').style.display = 'flex';
@@ -169,7 +169,7 @@ document.getElementById('extraForm').addEventListener('submit', async function(e
         nom: document.getElementById('extraNom').value,
         description: document.getElementById('extraDescription').value,
         prix_unitaire: parseFloat(document.getElementById('extraPrix').value),
-        unite_mesure: document.getElementById('extraUnite').value,
+        unite: document.getElementById('extraUnite').value,
         actif: document.getElementById('extraActif').checked
     };
     
@@ -250,7 +250,7 @@ function displaySummary(summary) {
                     totalGeneral += montant;
                     return `
                         <tr>
-                            <td>${item.extra_nom} <small>(${item.unite_mesure})</small></td>
+                            <td>${item.extra_nom} <small>(${item.unite || 'unité'})</small></td>
                             <td>${item.nombre_utilisations || 0}</td>
                             <td>${item.quantite_totale || 0}</td>
                             <td>${parseFloat(item.prix_unitaire || 0).toFixed(2)} MAD</td>
