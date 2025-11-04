@@ -13,6 +13,7 @@ from .routes.data_management import data_bp
 from .routes.personnels import personnels_bp
 from .routes.extras import extras_bp
 from .routes.statistics import statistics_bp
+from .routes.mail import mail_bp
 from .models.user import User
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,6 +45,7 @@ app.register_blueprint(data_bp)
 app.register_blueprint(personnels_bp)
 app.register_blueprint(extras_bp)
 app.register_blueprint(statistics_bp)
+app.register_blueprint(mail_bp)
 
 @app.route('/')
 @login_required
@@ -94,6 +96,11 @@ def pos_extras():
 @login_required
 def sejour_detail(sejour_id):
     return render_template('sejour_detail.html', sejour_id=sejour_id)
+
+@app.route('/messagerie')
+@login_required
+def messagerie():
+    return render_template('messagerie.html')
 
 @app.route('/favicon.ico')
 def favicon():
