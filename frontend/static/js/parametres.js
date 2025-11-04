@@ -936,9 +936,21 @@ async function resetAllData() {
 }
 
 async function loadMailConfigs() {
+    if (etablissements.length === 0) {
+        return;
+    }
+    
     try {
-        const response = await fetch('/api/mail-configs');
-        const configs = await response.json();
+        const allConfigs = [];
+        for (const etab of etablissements) {
+            const response = await fetch(`/api/mail-configs?etablissement_id=${etab.id}`);
+            const configs = await response.json();
+            if (Array.isArray(configs)) {
+                allConfigs.push(...configs);
+            }
+        }
+        
+        const configs = allConfigs;
         
         const container = document.getElementById('mail-configs-container');
         if (!container) return;

@@ -2,9 +2,11 @@ let currentConfigId = null;
 let currentFolder = 'inbox';
 let currentEmailId = null;
 let allEmails = [];
+let currentEtablissementId = null;
+let etablissements = [];
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadMailConfigs();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadEtablissements();
     
     document.getElementById('index-client-checkbox').addEventListener('change', (e) => {
         document.getElementById('client-email-index').style.display = e.target.checked ? 'block' : 'none';
@@ -15,9 +17,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-async function loadMailConfigs() {
+async function loadEtablissements() {
     try {
-        const response = await fetch('/api/mail-configs');
+        const response = await fetch('/api/etablissements?actif_only=true');
+        etablissements = await response.json();
+        
+        if (etablissements.length > 0) {
+            currentEtablissementId = etablissements[0].id;
+            await loadMailConfigs();
+        }
+    } catch (error) {
+        showAlert('Erreur lors du chargement des établissements', 'danger');
+        console.error(error);
+    }
+}
+
+async function loadMailConfigs() {
+    if (!currentEtablissementId) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/mail-configs?etablissement_id=${currentEtablissementId}`);
         const configs = await response.json();
         
         const select = document.getElementById('mail-config-select');
@@ -82,8 +103,8 @@ async function loadEmails() {
         return;
     }
     
-    try {
-        const response = await fetch(`/api/mail/emails/${currentConfigId}?folder=${currentFolder}&limit=100`);
+    try:
+        const response = await fetch(`/api/mail/emails/${currentConfigId}?folder=${currentFolder}&limit=100&etablissement_id=${currentEtablissementId}`);
         allEmails = await response.json();
         
         displayEmails(allEmails);
@@ -135,7 +156,7 @@ function filterEmails(searchTerm) {
 
 async function openEmail(emailId) {
     try {
-        const response = await fetch(`/api/mail/email/${emailId}`);
+        const response = await fetch(`/api/mail/email/${emailId}?etablissement_id=${currentEtablissementId}`);
         const email = await response.json();
         
         currentEmailId = emailId;
@@ -191,6 +212,7 @@ async function sendEmail(event) {
     
     const formData = {
         config_id: currentConfigId,
+        etablissement_id: currentEtablissementId,
         to_email: document.getElementById('to-email').value,
         cc_email: document.getElementById('cc-email').value || null,
         bcc_email: document.getElementById('bcc-email').value || null,
@@ -233,7 +255,7 @@ async function fetchNewEmails() {
     try {
         showAlert('Récupération des emails en cours...', 'info');
         
-        const response = await fetch(`/api/mail/fetch/${currentConfigId}`, {
+        const response = await fetch(`/api/mail/fetch/${currentConfigId}?etablissement_id=${currentEtablissementId}`, {
             method: 'POST'
         });
         
@@ -282,11 +304,14 @@ async function moveEmailToTrash() {
         return;
     }
     
-    try {
+    try:
         const response = await fetch(`/api/mail/email/${currentEmailId}/move`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ folder: 'trash' })
+            body: JSON.stringify({ 
+                folder: 'trash',
+                etablissement_id: currentEtablissementId
+            })
         });
         
         if (response.ok) {
