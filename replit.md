@@ -3,7 +3,35 @@
 ## Vue d'ensemble
 Application Flask de gestion de maison d'hôte avec gestion complète des établissements, réservations, et clients.
 
-## État du projet - 3 novembre 2025
+## État du projet - 4 novembre 2025
+
+### ✅ Dernières mises à jour (4 nov 2025 - 09:30)
+- **🎨 Refonte complète du système de style (MAJEURE)**:
+  - **CSS Global amélioré** (`frontend/static/css/styles.css`):
+    - Nouvelles classes `.filter-section` avec bordures dotted bleues pour les sections de filtres
+    - Nouvelles classes `.content-block` avec bordures dotted grises pour les blocs de contenu
+    - Inputs, select et textarea unifiés avec bordures de 2px et effets de focus cohérents
+    - Boutons avec bordures et ombres cohérentes (btn-primary, btn-secondary, btn-danger, btn-success)
+  
+  - **Pages mises à jour avec le nouveau style**:
+    - `sejours.html`: Filtres avec bloc dotted bleu, liste avec bloc dotted gris
+    - `extras.html`: Bloc de liste et section sommaire avec bordures dotted
+    - `clients_list.html`: Bloc de contenu avec bordure dotted
+    - `parametres.html`: Tous les blocs avec bordures dotted colorées (bleu, vert, violet, orange)
+    - `nouveau_sejour.html`: Blocs d'informations et personnes avec bordures dotted colorées
+    - `pos_extras.html`: Toutes les sections avec bordures dotted, cartes améliorées
+  
+  - **Améliorations visuelles**:
+    - Bordures dotted de 3px pour tous les blocs principaux
+    - Bordures solides de 2px pour tous les inputs/select/textarea
+    - Effets de focus avec ombre bleue pour meilleure UX
+    - Effets hover avec transformation et ombres sur les boutons
+    - Style cohérent et professionnel sur toutes les pages
+  
+  - **Validation complète**:
+    - Tous les changements validés par l'architecte
+    - Aucun style inline conflictuel restant
+    - Code CSS propre et maintenable
 
 ### ✅ Dernières mises à jour (3 nov 2025 - 22:15)
 - **✨ Refactorisation Architecture - Services & Utilitaires**:
