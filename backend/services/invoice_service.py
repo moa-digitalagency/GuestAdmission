@@ -24,6 +24,10 @@ class InvoiceService:
         if not sejour_data:
             raise ValueError(f"Séjour {sejour_id} non trouvé")
         
+        # Vérifier que le séjour est clôturé
+        if sejour_data.get('statut') != 'closed' and not sejour_data.get('closed_at'):
+            raise ValueError("La facture ne peut être générée que pour un séjour clôturé")
+        
         etablissement = InvoiceService._get_etablissement_data(sejour_data['etablissement_id'])
         extras = InvoiceService._get_sejour_extras(sejour_id)
         personnes = InvoiceService._get_sejour_personnes(sejour_id)
@@ -287,7 +291,7 @@ class InvoiceService:
                    se.quantite, se.montant_total
             FROM sejours_extras se
             JOIN extras e ON se.extra_id = e.id
-            WHERE se.sejour_id = %s
+            WHERE se.reservation_id = %s
             ORDER BY se.date_ajout
         ''', (sejour_id,))
         

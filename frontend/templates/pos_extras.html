@@ -8,7 +8,7 @@
     <!-- Section gauche: Sélection séjour et extras -->
     <div class="pos-left">
         <!-- Sélection du séjour -->
-        <section class="pos-section">
+        <section class="pos-section-blue">
             <div class="section-header">
                 <h3>🏨 Sélectionner un Séjour</h3>
             </div>
@@ -24,7 +24,7 @@
         </section>
 
         <!-- Liste des extras disponibles -->
-        <section class="pos-section">
+        <section class="pos-section-green">
             <div class="section-header">
                 <h3>📋 Extras Disponibles</h3>
                 <select id="filterEtablissementPOS" onchange="loadExtrasPOS()">
@@ -43,8 +43,8 @@
     <div class="pos-right">
         <div class="pos-sticky">
             <!-- Info séjour sélectionné -->
-            <section class="pos-section selected-sejour-info" id="sejourInfoCard" style="display: none;">
-                <div class="section-header" style="background-color: #3b82f6; color: white; padding: 1rem; border-radius: 8px 8px 0 0;">
+            <section class="pos-section-blue selected-sejour-info" id="sejourInfoCard" style="display: none;">
+                <div class="section-header" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.95)); color: white; padding: 1rem; border-bottom: none;">
                     <h3 style="margin: 0; color: white;">✓ Séjour Sélectionné</h3>
                 </div>
                 <div class="section-content" style="padding: 1rem;">
@@ -53,7 +53,7 @@
             </section>
 
             <!-- Panier -->
-            <section class="pos-section cart-section">
+            <section class="pos-section-purple cart-section">
                 <div class="section-header">
                     <h3>🛒 Panier</h3>
                     <button class="btn-secondary btn-sm" onclick="clearCart()">Vider</button>
@@ -79,6 +79,9 @@
             <section class="pos-actions">
                 <button class="btn-primary btn-lg" onclick="saveConsommations()" disabled id="btnSaveCart">
                     💾 Enregistrer les consommations
+                </button>
+                <button class="btn-warning btn-lg" onclick="closeSejour()" disabled id="btnCloseSejour">
+                    🔒 Clôturer le séjour
                 </button>
                 <button class="btn-success btn-lg" onclick="generateInvoice()" disabled id="btnGenerateInvoice">
                     📄 Générer la Facture PDF
@@ -116,18 +119,52 @@
     gap: 1rem;
 }
 
-.pos-section {
-    background: white;
-    border: 3px dotted #d1d5db;
+.pos-section-blue {
+    background: rgba(59, 130, 246, 0.05);
+    border: 3px dotted #3b82f6;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
     border-radius: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
     overflow: hidden;
+}
+
+.pos-section-blue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(59, 130, 246, 0.15);
+}
+
+.pos-section-green {
+    background: rgba(34, 197, 94, 0.05);
+    border: 3px dotted #22c55e;
+    box-shadow: 0 4px 6px rgba(34, 197, 94, 0.1);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.pos-section-green:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(34, 197, 94, 0.15);
+}
+
+.pos-section-purple {
+    background: rgba(168, 85, 247, 0.05);
+    border: 3px dotted #a855f7;
+    box-shadow: 0 4px 6px rgba(168, 85, 247, 0.1);
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.pos-section-purple:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px rgba(168, 85, 247, 0.15);
 }
 
 .section-header {
     padding: 1rem 1.5rem;
-    background-color: #ffffff;
-    border-bottom: 2px solid #e5e7eb;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-bottom: 2px dotted #e5e7eb;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -337,24 +374,43 @@
 .btn-primary {
     background-color: #3b82f6;
     color: white;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
 }
 
 .btn-primary:hover:not(:disabled) {
     background-color: #2563eb;
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
 }
 
 .btn-success {
     background-color: #10b981;
     color: white;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
 
 .btn-success:hover:not(:disabled) {
     background-color: #059669;
+    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-warning {
+    background-color: #f59e0b;
+    color: white;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.btn-warning:hover:not(:disabled) {
+    background-color: #d97706;
+    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
     background-color: #6b7280;
     color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .btn-sm {

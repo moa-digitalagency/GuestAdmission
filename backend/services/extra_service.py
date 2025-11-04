@@ -10,6 +10,27 @@ class ExtraService:
     """Service pour gérer les extras (suppléments facturables)"""
     
     @staticmethod
+    def is_sejour_closed(sejour_id: int) -> bool:
+        """Vérifier si un séjour est clôturé"""
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('''
+            SELECT statut, closed_at 
+            FROM reservations 
+            WHERE id = %s
+        ''', (sejour_id,))
+        
+        sejour = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        if not sejour:
+            return False
+        
+        return sejour['statut'] == 'closed' or sejour['closed_at'] is not None
+    
+    @staticmethod
     def create_extra(data: Dict) -> Optional[int]:
         """Créer un nouvel extra"""
         conn = get_db_connection()
@@ -143,7 +164,7 @@ class ExtraService:
         # Vérifier si cet extra existe déjà pour ce séjour
         cur.execute('''
             SELECT id, quantite FROM sejours_extras 
-            WHERE sejour_id = %s AND extra_id = %s
+            WHERE reservation_id = %s AND extra_id = %s
         ''', (sejour_id, extra_id))
         existing = cur.fetchone()
         
@@ -164,10 +185,10 @@ class ExtraService:
             montant_total = prix_unitaire * quantite
             
             cur.execute('''
-                INSERT INTO sejours_extras (sejour_id, extra_id, quantite, montant_total)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO sejours_extras (reservation_id, extra_id, quantite, prix_unitaire, montant_total)
+                VALUES (%s, %s, %s, %s, %s)
                 RETURNING id
-            ''', (sejour_id, extra_id, quantite, montant_total))
+            ''', (sejour_id, extra_id, quantite, prix_unitaire, montant_total))
             result = cur.fetchone()
         
         conn.commit()
@@ -186,7 +207,7 @@ class ExtraService:
             SELECT e.*, se.quantite, se.montant_total, se.date_ajout, se.id as sejour_extra_id
             FROM extras e
             JOIN sejours_extras se ON e.id = se.extra_id
-            WHERE se.sejour_id = %s
+            WHERE se.reservation_id = %s
             ORDER BY se.date_ajout DESC
         ''', (sejour_id,))
         
@@ -196,6 +217,59 @@ class ExtraService:
         conn.close()
         
         return serialize_rows(extras)
+    
+    @staticmethod
+    def get_sejour_id_from_extra(sejour_extra_id: int) -> Optional[int]:
+        """Récupérer l'ID du séjour à partir d'un sejour_extra_id"""
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('''
+            SELECT reservation_id 
+            FROM sejours_extras 
+            WHERE id = %s
+        ''', (sejour_extra_id,))
+        
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        return result['reservation_id'] if result else None
+    
+    @staticmethod
+    def update_sejour_extra(sejour_extra_id: int, quantite: int) -> bool:
+        """Mettre à jour la quantité d'un extra dans un séjour"""
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Récupérer le prix unitaire de l'extra
+        cur.execute('''
+            SELECT e.prix_unitaire 
+            FROM sejours_extras se
+            JOIN extras e ON se.extra_id = e.id
+            WHERE se.id = %s
+        ''', (sejour_extra_id,))
+        
+        result = cur.fetchone()
+        if not result:
+            cur.close()
+            conn.close()
+            return False
+        
+        prix_unitaire = float(result['prix_unitaire'])
+        montant_total = prix_unitaire * quantite
+        
+        cur.execute('''
+            UPDATE sejours_extras 
+            SET quantite = %s, montant_total = %s
+            WHERE id = %s
+        ''', (quantite, montant_total, sejour_extra_id))
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return True
     
     @staticmethod
     def remove_extra_from_sejour(sejour_extra_id: int) -> bool:
@@ -227,7 +301,7 @@ class ExtraService:
                 SUM(se.montant_total) as montant_total
             FROM extras e
             LEFT JOIN sejours_extras se ON e.id = se.extra_id
-            LEFT JOIN reservations r ON se.sejour_id = r.id
+            LEFT JOIN reservations r ON se.reservation_id = r.id
             WHERE e.etablissement_id = %s
         '''
         params = [etablissement_id]

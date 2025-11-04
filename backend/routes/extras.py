@@ -76,6 +76,10 @@ def get_sejour_extras(sejour_id):
 @login_required
 def add_extra_to_sejour(sejour_id):
     """Ajouter un extra à un séjour"""
+    # Vérifier que le séjour n'est pas clôturé
+    if ExtraService.is_sejour_closed(sejour_id):
+        return jsonify({'error': 'Ce séjour est clôturé, impossible d\'ajouter des extras'}), 403
+    
     data = request.get_json()
     extra_id = data.get('extra_id')
     quantite = data.get('quantite', 1)
@@ -95,10 +99,31 @@ def add_extra_to_sejour(sejour_id):
     return jsonify({'error': 'Erreur lors de l\'ajout'}), 500
 
 
+@extras_bp.route('/api/sejours/extras/<int:sejour_extra_id>', methods=['PUT'])
+@login_required
+def update_sejour_extra(sejour_extra_id):
+    """Mettre à jour la quantité d'un extra dans un séjour"""
+    # Vérifier que le séjour n'est pas clôturé
+    sejour_id = ExtraService.get_sejour_id_from_extra(sejour_extra_id)
+    if sejour_id and ExtraService.is_sejour_closed(sejour_id):
+        return jsonify({'error': 'Ce séjour est clôturé, impossible de modifier les extras'}), 403
+    
+    data = request.get_json()
+    quantite = data.get('quantite', 1)
+    
+    ExtraService.update_sejour_extra(sejour_extra_id, quantite)
+    return jsonify({'success': True, 'message': 'Extra mis à jour avec succès'})
+
+
 @extras_bp.route('/api/sejours/extras/<int:sejour_extra_id>', methods=['DELETE'])
 @login_required
 def remove_extra_from_sejour(sejour_extra_id):
     """Retirer un extra d'un séjour"""
+    # Vérifier que le séjour n'est pas clôturé
+    sejour_id = ExtraService.get_sejour_id_from_extra(sejour_extra_id)
+    if sejour_id and ExtraService.is_sejour_closed(sejour_id):
+        return jsonify({'error': 'Ce séjour est clôturé, impossible de supprimer les extras'}), 403
+    
     ExtraService.remove_extra_from_sejour(sejour_extra_id)
     return jsonify({'success': True, 'message': 'Extra retiré du séjour'})
 
@@ -130,6 +155,12 @@ def generate_invoice(sejour_id):
             download_name=f'facture_sejour_{sejour_id}.pdf'
         )
     except ValueError as e:
-        return jsonify({'error': str(e)}), 404
+        error_msg = str(e)
+        # Distinguer entre séjour non trouvé et séjour non clôturé
+        if 'non trouvé' in error_msg or 'not found' in error_msg.lower():
+            return jsonify({'error': error_msg}), 404
+        else:
+            # Séjour existe mais pas clôturé = violation de règle métier
+            return jsonify({'error': error_msg}), 403
     except Exception as e:
         return jsonify({'error': f'Erreur lors de la génération de la facture: {str(e)}'}), 500

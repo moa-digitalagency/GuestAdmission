@@ -152,3 +152,46 @@ def delete_personne(personne_id):
 def get_all_personnes():
     personnes = Personne.get_all()
     return jsonify(serialize_rows(personnes))
+
+@sejours_bp.route('/api/sejours/<int:sejour_id>/close', methods=['POST'])
+@login_required
+def close_sejour(sejour_id):
+    """Clôturer un séjour (empêche les modifications ultérieures)"""
+    from flask_login import current_user
+    from ..config.database import get_db_connection
+    
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Vérifier que le séjour existe et n'est pas déjà clôturé
+        cur.execute('SELECT statut, closed_at FROM reservations WHERE id = %s', (sejour_id,))
+        sejour = cur.fetchone()
+        
+        if not sejour:
+            return jsonify({'error': 'Séjour non trouvé'}), 404
+        
+        if sejour['statut'] == 'closed' or sejour['closed_at']:
+            return jsonify({'error': 'Ce séjour est déjà clôturé'}), 400
+        
+        # Clôturer le séjour
+        user_id = current_user.id if hasattr(current_user, 'id') else None
+        cur.execute('''
+            UPDATE reservations 
+            SET statut = 'closed', closed_at = CURRENT_TIMESTAMP, closed_by = %s
+            WHERE id = %s
+        ''', (user_id, sejour_id))
+        
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Séjour clôturé avec succès'
+        })
+        
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        cur.close()
+        conn.close()
