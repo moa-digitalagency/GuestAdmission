@@ -146,6 +146,62 @@ def init_database():
             )
         ''')
         
+        # Créer la table extras
+        print("  📋 Création de la table 'extras'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS extras (
+                id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                nom VARCHAR(200) NOT NULL,
+                description TEXT,
+                prix_unitaire DECIMAL(10, 2) NOT NULL,
+                unite VARCHAR(50) DEFAULT 'unité',
+                actif BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table sejours_extras (relation many-to-many)
+        print("  📋 Création de la table 'sejours_extras'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS sejours_extras (
+                id SERIAL PRIMARY KEY,
+                reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
+                extra_id INTEGER REFERENCES extras(id) ON DELETE CASCADE,
+                quantite DECIMAL(10, 2) NOT NULL DEFAULT 1,
+                prix_unitaire DECIMAL(10, 2) NOT NULL,
+                montant_total DECIMAL(10, 2) NOT NULL,
+                date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                notes TEXT
+            )
+        ''')
+        
+        # Créer la table personnels
+        print("  📋 Création de la table 'personnels'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS personnels (
+                id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                nom VARCHAR(100) NOT NULL,
+                prenom VARCHAR(100) NOT NULL,
+                email VARCHAR(150),
+                telephone VARCHAR(50),
+                poste VARCHAR(100),
+                salaire DECIMAL(10, 2),
+                date_embauche DATE,
+                acces_dashboard BOOLEAN DEFAULT FALSE,
+                acces_sejours BOOLEAN DEFAULT FALSE,
+                acces_clients BOOLEAN DEFAULT FALSE,
+                acces_extras BOOLEAN DEFAULT FALSE,
+                acces_statistiques BOOLEAN DEFAULT FALSE,
+                acces_parametres BOOLEAN DEFAULT FALSE,
+                actif BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
         # Créer la table parametres_systeme (pour compatibilité, mais déprécié)
         print("  📋 Création de la table 'parametres_systeme'...")
         cur.execute('''

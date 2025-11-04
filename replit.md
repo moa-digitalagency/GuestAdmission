@@ -5,6 +5,25 @@ Application Flask de gestion de maison d'hôte avec gestion complète des établ
 
 ## État du projet - 4 novembre 2025
 
+### ✅ Dernières mises à jour (4 nov 2025 - 09:45)
+- **🔧 CORRECTION CRITIQUE: Initialisation Base de Données (RÉSOLU DÉFINITIVEMENT)**:
+  - **Problème**: Base de données non initialisée au démarrage, erreur "relation users does not exist"
+  - **Solution permanente**:
+    - Ajout des tables manquantes dans `init_database.py`: `extras`, `sejours_extras`, `personnels`
+    - Script `start.sh` modifié pour exécuter `init_database.py` AVANT gunicorn
+    - Workflow configuré pour utiliser `bash start.sh` au lieu de gunicorn directement
+    - Initialisation automatique à chaque démarrage garantie
+  - **Résultat**: 
+    - ✅ Toutes les 10 tables créées automatiquement
+    - ✅ Utilisateur admin créé (username: admin, password: admin123)
+    - ✅ Établissement par défaut créé
+    - ✅ Application fonctionnelle immédiatement après démarrage
+  - **Tables créées**:
+    - users, etablissements, chambres, reservations
+    - personnes, reservations_chambres
+    - extras, sejours_extras, personnels
+    - parametres_systeme
+
 ### ✅ Dernières mises à jour (4 nov 2025 - 09:30)
 - **🎨 Refonte complète du système de style (MAJEURE)**:
   - **CSS Global amélioré** (`frontend/static/css/styles.css`):
