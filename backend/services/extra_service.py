@@ -125,7 +125,7 @@ class ExtraService:
     
     @staticmethod
     def add_extra_to_sejour(sejour_id: int, extra_id: int, quantite: int) -> Optional[int]:
-        """Ajouter un extra à un séjour"""
+        """Ajouter un extra à un séjour (cumule si l'extra existe déjà)"""
         conn = get_db_connection()
         cur = conn.cursor()
         
@@ -138,16 +138,38 @@ class ExtraService:
             conn.close()
             return None
         
-        montant_total = float(extra['prix_unitaire']) * quantite
+        prix_unitaire = float(extra['prix_unitaire'])
         
-        # Ajouter l'extra au séjour
+        # Vérifier si cet extra existe déjà pour ce séjour
         cur.execute('''
-            INSERT INTO sejours_extras (sejour_id, extra_id, quantite, montant_total)
-            VALUES (%s, %s, %s, %s)
-            RETURNING id
-        ''', (sejour_id, extra_id, quantite, montant_total))
+            SELECT id, quantite FROM sejours_extras 
+            WHERE sejour_id = %s AND extra_id = %s
+        ''', (sejour_id, extra_id))
+        existing = cur.fetchone()
         
-        result = cur.fetchone()
+        if existing:
+            # Cumuler la quantité existante
+            nouvelle_quantite = existing['quantite'] + quantite
+            montant_total = prix_unitaire * nouvelle_quantite
+            
+            cur.execute('''
+                UPDATE sejours_extras 
+                SET quantite = %s, montant_total = %s
+                WHERE id = %s
+                RETURNING id
+            ''', (nouvelle_quantite, montant_total, existing['id']))
+            result = cur.fetchone()
+        else:
+            # Créer une nouvelle entrée
+            montant_total = prix_unitaire * quantite
+            
+            cur.execute('''
+                INSERT INTO sejours_extras (sejour_id, extra_id, quantite, montant_total)
+                VALUES (%s, %s, %s, %s)
+                RETURNING id
+            ''', (sejour_id, extra_id, quantite, montant_total))
+            result = cur.fetchone()
+        
         conn.commit()
         cur.close()
         conn.close()

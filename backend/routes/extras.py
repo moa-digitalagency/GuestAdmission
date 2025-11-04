@@ -1,9 +1,10 @@
 """
 Routes pour la gestion des extras
 """
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
 from flask_login import login_required
 from ..services.extra_service import ExtraService
+from ..services.invoice_service import InvoiceService
 
 extras_bp = Blueprint('extras', __name__)
 
@@ -113,3 +114,22 @@ def get_extras_summary(etablissement_id):
         etablissement_id, date_debut, date_fin
     )
     return jsonify(summary)
+
+
+@extras_bp.route('/api/sejours/<int:sejour_id>/facture', methods=['POST'])
+@login_required
+def generate_invoice(sejour_id):
+    """Générer une facture PDF pour un séjour"""
+    try:
+        pdf_buffer = InvoiceService.generate_sejour_invoice(sejour_id)
+        
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'facture_sejour_{sejour_id}.pdf'
+        )
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': f'Erreur lors de la génération de la facture: {str(e)}'}), 500

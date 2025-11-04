@@ -1,0 +1,379 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}POS - Point de Vente Extras{% endblock %}
+{% block page_title %}💳 Point de Vente - Extras{% endblock %}
+
+{% block content %}
+<div class="pos-container">
+    <!-- Section gauche: Sélection séjour et extras -->
+    <div class="pos-left">
+        <!-- Sélection du séjour -->
+        <section class="pos-section">
+            <div class="section-header">
+                <h3>🏨 Sélectionner un Séjour</h3>
+            </div>
+            <div class="section-content">
+                <div class="search-group">
+                    <input type="text" id="sejourSearch" placeholder="Rechercher par N° séjour, nom client..." 
+                           oninput="searchSejours()">
+                </div>
+                <div id="sejoursListPOS" class="sejours-list">
+                    <p style="text-align: center; color: #666;">Chargement des séjours actifs...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Liste des extras disponibles -->
+        <section class="pos-section">
+            <div class="section-header">
+                <h3>📋 Extras Disponibles</h3>
+                <select id="filterEtablissementPOS" onchange="loadExtrasPOS()" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                    <option value="">Tous les établissements</option>
+                </select>
+            </div>
+            <div class="section-content">
+                <div id="extrasListPOS" class="extras-grid">
+                    <p style="text-align: center; color: #666;">Sélectionnez un séjour pour voir les extras</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Section droite: Panier et facturation -->
+    <div class="pos-right">
+        <div class="pos-sticky">
+            <!-- Info séjour sélectionné -->
+            <section class="pos-section selected-sejour-info" id="sejourInfoCard" style="display: none;">
+                <div class="section-header" style="background-color: #3b82f6; color: white; padding: 1rem; border-radius: 8px 8px 0 0;">
+                    <h3 style="margin: 0; color: white;">✓ Séjour Sélectionné</h3>
+                </div>
+                <div class="section-content" style="padding: 1rem;">
+                    <div id="sejourInfo"></div>
+                </div>
+            </section>
+
+            <!-- Panier -->
+            <section class="pos-section cart-section">
+                <div class="section-header">
+                    <h3>🛒 Panier</h3>
+                    <button class="btn-secondary btn-sm" onclick="clearCart()">Vider</button>
+                </div>
+                <div class="section-content">
+                    <div id="cartItems" class="cart-items">
+                        <p style="text-align: center; color: #666; padding: 2rem;">Le panier est vide</p>
+                    </div>
+                    <div class="cart-totals">
+                        <div class="total-row">
+                            <span>Sous-total:</span>
+                            <span id="subtotal">0.00 MAD</span>
+                        </div>
+                        <div class="total-row total-final">
+                            <strong>Total:</strong>
+                            <strong id="totalAmount">0.00 MAD</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Actions -->
+            <section class="pos-actions">
+                <button class="btn-primary btn-lg" onclick="saveConsommations()" disabled id="btnSaveCart">
+                    💾 Enregistrer les consommations
+                </button>
+                <button class="btn-success btn-lg" onclick="generateInvoice()" disabled id="btnGenerateInvoice">
+                    📄 Générer la Facture PDF
+                </button>
+            </section>
+        </div>
+    </div>
+</div>
+
+<style>
+.pos-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 1.5rem;
+    padding: 1rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.pos-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.pos-right {
+    position: relative;
+}
+
+.pos-sticky {
+    position: sticky;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.pos-section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.section-header {
+    padding: 1rem 1.5rem;
+    background-color: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #111827;
+}
+
+.section-content {
+    padding: 1rem;
+}
+
+.search-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.sejours-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.sejour-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sejour-item:hover {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+}
+
+.sejour-item.selected {
+    border-color: #3b82f6;
+    background-color: #dbeafe;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.extras-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.extra-card {
+    border: 2px dashed #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #f9fafb;
+}
+
+.extra-card:hover {
+    border-color: #10b981;
+    background-color: #d1fae5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.extra-card h4 {
+    margin: 0 0 0.5rem 0;
+    color: #111827;
+    font-size: 1rem;
+}
+
+.extra-card .price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #10b981;
+    margin: 0.5rem 0;
+}
+
+.extra-card .unit {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.cart-items {
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background-color: #f9fafb;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.cart-item-price {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.qty-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.qty-btn:hover {
+    background-color: #f3f4f6;
+}
+
+.qty-display {
+    min-width: 40px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.cart-totals {
+    border-top: 2px solid #e5e7eb;
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+}
+
+.total-final {
+    font-size: 1.25rem;
+    color: #10b981;
+    border-top: 2px solid #10b981;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+}
+
+.pos-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.btn-lg {
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-lg:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #2563eb;
+}
+
+.btn-success {
+    background-color: #10b981;
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: #059669;
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-remove {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.btn-remove:hover {
+    background-color: #dc2626;
+}
+
+@media (max-width: 1024px) {
+    .pos-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .pos-sticky {
+        position: relative;
+    }
+}
+</style>
+
+<script src="{{ url_for('static', filename='js/pos_extras.js') }}"></script>
+{% endblock %}

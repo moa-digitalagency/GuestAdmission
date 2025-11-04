@@ -83,6 +83,11 @@ def statistiques():
 def extras_page():
     return render_template('extras.html')
 
+@app.route('/pos-extras')
+@login_required
+def pos_extras():
+    return render_template('pos_extras.html')
+
 @app.route('/sejour/<int:sejour_id>')
 @login_required
 def sejour_detail(sejour_id):

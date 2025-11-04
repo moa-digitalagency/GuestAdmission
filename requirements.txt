@@ -102,3 +102,4 @@ sqlalchemy
 typing-extensions
 urllib3
 werkzeug
+reportlab
