@@ -1,4 +1,4 @@
-modules = ["python-3.11", "nodejs-20", "web"]
+modules = ["python-3.11", "nodejs-20", "web", "postgresql-16"]
 [agent]
 expertMode = true
 
@@ -35,7 +35,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 33949
+localPort = 36191
 externalPort = 3000
 
 [deployment]

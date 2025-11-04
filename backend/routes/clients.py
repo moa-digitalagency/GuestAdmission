@@ -1,5 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_file
+from flask_login import login_required
 from ..models.client import Client
+from ..models.personne import Personne
 from ..utils import serialize_rows, serialize_row
 
 clients_bp = Blueprint('clients', __name__)
@@ -32,3 +34,30 @@ def update_client(client_id):
 def delete_client(client_id):
     Client.delete(client_id)
     return jsonify({'message': 'Client supprimé avec succès'})
+
+
+@clients_bp.route('/api/clients/export-pdf', methods=['GET'])
+@login_required
+def export_clients_pdf():
+    """Exporter la liste des clients en PDF"""
+    from ..services.clients_export_service import ClientsExportService
+    
+    search = request.args.get('search', '')
+    pays = request.args.get('pays', '')
+    type_piece = request.args.get('type_piece', '')
+    
+    try:
+        pdf_buffer = ClientsExportService.generate_clients_pdf(
+            search_filter=search,
+            pays_filter=pays,
+            type_piece_filter=type_piece
+        )
+        
+        return send_file(
+            pdf_buffer,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=f'clients_export.pdf'
+        )
+    except Exception as e:
+        return jsonify({'error': f'Erreur lors de la génération du PDF: {str(e)}'}), 500

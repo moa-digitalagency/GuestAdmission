@@ -9,8 +9,46 @@
         <div class="content-block-title">
             👥 Liste des Clients
         </div>
+        <div class="header-actions">
+            <button class="btn btn-success" onclick="exportClientsPDF()">
+                📄 Exporter en PDF
+            </button>
+        </div>
     </div>
+    
+    <div class="filters-section">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label>🔍 Recherche:</label>
+                <input type="text" id="searchFilter" placeholder="Nom, prénom, email..." oninput="applyFilters()">
+            </div>
+            <div class="filter-group">
+                <label>🌍 Pays:</label>
+                <select id="paysFilter" onchange="applyFilters()">
+                    <option value="">Tous les pays</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>📄 Type pièce:</label>
+                <select id="typePieceFilter" onchange="applyFilters()">
+                    <option value="">Tous les types</option>
+                    <option value="Passeport">Passeport</option>
+                    <option value="CNI">CNI</option>
+                    <option value="Carte de séjour">Carte de séjour</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <button class="btn btn-secondary" onclick="resetFilters()">
+                    🔄 Réinitialiser
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <div class="table-container">
+        <div class="results-info">
+            <span id="resultsCount">0 clients trouvés</span>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -32,6 +70,106 @@
         </table>
     </div>
 </div>
+
+<style>
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filters-section {
+    padding: 1.5rem;
+    background: #f9fafb;
+    border: 2px dotted #d1d5db;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.6rem 0.875rem;
+    border: 2px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.results-info {
+    padding: 0.75rem 1rem;
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    color: #1e40af;
+}
+
+.btn {
+    padding: 0.6rem 1.25rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+    margin-top: auto;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+}
+</style>
+
 {% endblock %}
 
 {% block scripts %}
