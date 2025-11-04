@@ -41,3 +41,4 @@ externalPort = 3000
 [deployment]
 deploymentTarget = "autoscale"
 run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+build = ["python", "init_database.py"]
