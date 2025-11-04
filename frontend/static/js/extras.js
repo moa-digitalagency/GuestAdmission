@@ -109,11 +109,11 @@ function showAddExtraModal() {
     document.getElementById('extraForm').reset();
     document.getElementById('extraId').value = '';
     document.getElementById('extraActif').checked = true;
-    document.getElementById('extraModal').style.display = 'flex';
+    document.getElementById('extraModal').classList.add('active');
 }
 
 function closeExtraModal() {
-    document.getElementById('extraModal').style.display = 'none';
+    document.getElementById('extraModal').classList.remove('active');
     editingExtraId = null;
 }
 
@@ -132,7 +132,7 @@ async function editExtra(extraId) {
         document.getElementById('extraUnite').value = extra.unite || 'unité';
         document.getElementById('extraActif').checked = extra.actif;
         
-        document.getElementById('extraModal').style.display = 'flex';
+        document.getElementById('extraModal').classList.add('active');
     } catch (error) {
         console.error('Erreur lors du chargement de l\'extra:', error);
         alert('Erreur lors du chargement de l\'extra');

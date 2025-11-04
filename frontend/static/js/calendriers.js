@@ -136,11 +136,11 @@ function showAddCalendarModal() {
     document.getElementById('calendarForm').reset();
     document.getElementById('calendarId').value = '';
     document.getElementById('calendarActif').checked = true;
-    document.getElementById('calendarModal').style.display = 'flex';
+    document.getElementById('calendarModal').classList.add('active');
 }
 
 function closeCalendarModal() {
-    document.getElementById('calendarModal').style.display = 'none';
+    document.getElementById('calendarModal').classList.remove('active');
     editingCalendarId = null;
 }
 
@@ -158,7 +158,7 @@ async function editCalendar(calendarId) {
         document.getElementById('calendarUrl').value = calendar.ical_url;
         document.getElementById('calendarActif').checked = calendar.actif;
         
-        document.getElementById('calendarModal').style.display = 'flex';
+        document.getElementById('calendarModal').classList.add('active');
     } catch (error) {
         console.error('Erreur lors du chargement du calendrier:', error);
         alert('Erreur lors du chargement du calendrier');
