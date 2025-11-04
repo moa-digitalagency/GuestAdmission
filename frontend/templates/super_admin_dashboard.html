@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .stat-card {
+            border-left: 4px solid #0d6efd;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .etablissement-card {
+            transition: box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .etablissement-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .badge-actif {
+            background-color: #28a745;
+        }
+        .badge-inactif {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-building"></i> Super Admin Dashboard
+            </a>
+            <div class="d-flex">
+                <span class="navbar-text text-white me-3" id="userInfo"></span>
+                <a href="/logout" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Établissements Actifs</h6>
+                        <h2 class="card-title" id="statEtablissementsActifs">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Établissements</h6>
+                        <h2 class="card-title" id="statTotalEtablissements">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Administrateurs</h6>
+                        <h2 class="card-title" id="statTotalAdmins">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Total Réservations</h6>
+                        <h2 class="card-title" id="statTotalReservations">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 mb-3">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEtablissementModal">
+                    <i class="bi bi-plus-circle"></i> Créer un nouvel établissement
+                </button>
+            </div>
+        </div>
+
+        <div class="row" id="etablissementsList"></div>
+    </div>
+
+    <div class="modal fade" id="createEtablissementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Créer un nouvel établissement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createEtablissementForm">
+                        <h6 class="mb-3">Informations de l'établissement</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom de l'établissement *</label>
+                                <input type="text" class="form-control" name="nom_etablissement" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Numéro d'identification</label>
+                                <input type="text" class="form-control" name="numero_identification">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Pays</label>
+                                <input type="text" class="form-control" name="pays">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ville</label>
+                                <input type="text" class="form-control" name="ville">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Adresse</label>
+                            <textarea class="form-control" name="adresse" rows="2"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Téléphone</label>
+                                <input type="text" class="form-control" name="telephone">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Devise</label>
+                                <input type="text" class="form-control" name="devise" value="MAD">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Taux taxe séjour (%)</label>
+                                <input type="number" step="0.01" class="form-control" name="taux_taxe_sejour" value="2.5">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Taux TVA (%)</label>
+                                <input type="number" step="0.01" class="form-control" name="taux_tva" value="20">
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h6 class="mb-3">Administrateur principal</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom d'utilisateur *</label>
+                                <input type="text" class="form-control" name="admin_username" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mot de passe *</label>
+                                <input type="password" class="form-control" name="admin_password" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom</label>
+                                <input type="text" class="form-control" name="admin_nom">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" class="form-control" name="admin_prenom">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email de l'admin</label>
+                            <input type="email" class="form-control" name="admin_email">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="createEtablissement()">Créer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="manageUsersModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gérer les utilisateurs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-sm btn-success mb-3" onclick="showAddUserForm()">
+                        <i class="bi bi-plus"></i> Ajouter un utilisateur
+                    </button>
+                    <div id="addUserForm" style="display: none;" class="mb-3 p-3 border rounded">
+                        <h6>Nouvel utilisateur</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="text" class="form-control" id="newUserUsername" placeholder="Nom d'utilisateur">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <input type="password" class="form-control" id="newUserPassword" placeholder="Mot de passe">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="text" class="form-control" id="newUserNom" placeholder="Nom">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <input type="text" class="form-control" id="newUserPrenom" placeholder="Prénom">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <input type="email" class="form-control" id="newUserEmail" placeholder="Email">
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="addUserToEtablissement()">Créer</button>
+                        <button class="btn btn-sm btn-secondary" onclick="hideAddUserForm()">Annuler</button>
+                    </div>
+                    <div id="usersList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="manageChambresModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gérer les chambres</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-sm btn-success mb-3" onclick="showAddChambreForm()">
+                        <i class="bi bi-plus"></i> Ajouter une chambre
+                    </button>
+                    <div id="addChambreForm" style="display: none;" class="mb-3 p-3 border rounded">
+                        <h6>Nouvelle chambre</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="text" class="form-control" id="newChambreNom" placeholder="Nom de la chambre">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <input type="number" class="form-control" id="newChambreCapacite" placeholder="Capacité" value="2">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="number" step="0.01" class="form-control" id="newChambrePrix" placeholder="Prix par nuit">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <select class="form-control" id="newChambreStatut">
+                                    <option value="disponible">Disponible</option>
+                                    <option value="occupee">Occupée</option>
+                                    <option value="maintenance">Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <textarea class="form-control" id="newChambreDescription" placeholder="Description" rows="2"></textarea>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="addChambreToEtablissement()">Créer</button>
+                        <button class="btn btn-sm btn-secondary" onclick="hideAddChambreForm()">Annuler</button>
+                    </div>
+                    <div id="chambresList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/super_admin_dashboard.js"></script>
+</body>
+</html>

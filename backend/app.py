@@ -55,6 +55,9 @@ app.register_blueprint(calendars_bp)
 from .routes.activity_logs import activity_logs_bp
 app.register_blueprint(activity_logs_bp)
 
+from .routes.super_admin import super_admin_bp
+app.register_blueprint(super_admin_bp)
+
 @app.route('/')
 @login_required
 def index():
@@ -114,6 +117,13 @@ def messagerie():
 @login_required
 def calendriers():
     return render_template('calendriers.html')
+
+@app.route('/super-admin')
+@login_required
+def super_admin_dashboard():
+    if not current_user.is_super_admin():
+        return redirect(url_for('dashboard'))
+    return render_template('super_admin_dashboard.html')
 
 @app.route('/favicon.ico')
 def favicon():
