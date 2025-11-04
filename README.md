@@ -119,35 +119,133 @@ workspace/
 - **Validation** : email-validator
 - **Import/Export** : openpyxl
 
-## 📊 Fonctionnalités
+## 📊 Fonctionnalités Complètes
 
-### 🔐 Authentification
+### 🔐 Authentification et Sécurité
 - Système de connexion sécurisé avec Flask-Login
 - Gestion des sessions utilisateur
 - Hashage des mots de passe avec Werkzeug
+- Suivi automatique de toutes les activités utilisateur
+- Middleware de logging des actions
 
-### 📅 Gestion des réservations
-- Création de nouvelles réservations
-- Gestion multi-personnes par réservation
-- Calcul automatique des taxes et charges
-- Suivi des séjours et facturations
+### 🏢 Gestion Multi-Établissements
+- Support de plusieurs établissements simultanément
+- Configuration individuelle par établissement (devise, taxes, etc.)
+- Logo personnalisé par établissement
+- Activation/désactivation des établissements
+- Numérotation automatique des réservations par établissement
 
-### 👥 Base clients
-- Enregistrement complet des informations clients
-- Gestion des pièces d'identité
-- Historique des réservations par client
-- Export des données
+### 📅 Gestion des Séjours (Réservations)
+- Création et modification de séjours
+- Numérotation automatique et personnalisable (format: RES-{YYYY}{MM}{DD}-{NUM})
+- Attribution de chambres multiples
+- Gestion multi-clients par séjour
+- Calcul automatique des taxes, TVA et charges plateforme
+- Suivi des statuts (actif, fermé)
+- Page de détail complète avec résumé financier
+- Clôture de séjours avec tracking de date
 
-### ⚙️ Paramètres système
-- Configuration de l'établissement
-- Gestion des prix par chambre
-- Définition des taux de taxes
-- Paramètres de devise et pays
+### 🛏️ Gestion des Chambres
+- CRUD complet des chambres
+- Association aux établissements
+- Définition de la capacité et du prix par nuit
+- Gestion des statuts (disponible, occupée, maintenance, hors service)
+- Description détaillée
 
-### 📈 Tableau de bord
-- Statistiques en temps réel
-- Visualisation des données
-- Cartes colorées avec design MOA
+### 👥 Gestion des Clients
+- Base de données complète des clients
+- Informations personnelles (nom, prénom, email, téléphone)
+- Gestion des pièces d'identité (type et numéro)
+- Date de naissance et informations de contact
+- Association aux séjours
+- Export Excel des listes clients
+- Définition du contact principal par séjour
+
+### 👔 Gestion du Personnel
+- CRUD complet du personnel
+- Informations professionnelles (poste, salaire, date d'embauche)
+- Gestion granulaire des accès par section:
+  - Accès dashboard
+  - Accès séjours
+  - Accès clients
+  - Accès extras
+  - Accès statistiques
+  - Accès paramètres
+- Activation/désactivation des comptes
+- Association aux établissements
+
+### 💰 Gestion des Extras
+- Création d'extras personnalisés (services additionnels)
+- Définition du prix unitaire et de l'unité
+- Association aux séjours
+- Calcul automatique des montants totaux
+- Suivi des quantités
+- Facturation intégrée aux séjours
+- Gestion par établissement
+
+### 📊 Statistiques Avancées
+- Vue d'ensemble des séjours (total, actifs, fermés)
+- Métriques clients (total, clients uniques)
+- Performance par établissement
+- Taux d'occupation des chambres
+- Graphiques et visualisations en temps réel
+- Tableaux de bord colorés avec design MOA
+
+### 📝 Historique des Activités
+- Suivi automatique de toutes les actions utilisateur
+- Filtres avancés (type d'action, date, utilisateur)
+- Affichage détaillé (route, méthode HTTP, IP, user agent)
+- Export CSV des logs
+- Pagination performante
+- Détails JSON pour chaque action
+- Interface moderne avec filtres organisés
+
+### 📅 Calendriers iCal (Synchronisation)
+- Support Airbnb, Booking.com et autres plateformes
+- Synchronisation automatique des réservations externes
+- Gestion multi-calendriers par établissement
+- **Affichage double vue:**
+  - Vue Liste: Tableau détaillé des réservations
+  - Vue Calendrier: Calendrier visuel mensuel avec réservations
+- Bouton de basculement entre les vues
+- Statut de synchronisation en temps réel
+- Import automatique des réservations externes
+
+### 📧 Messagerie (Mail)
+- Configuration de comptes email (SMTP/POP)
+- Envoi et réception d'emails
+- Gestion des dossiers (inbox, envoyé, etc.)
+- Marquage des messages (lu/non-lu, favoris)
+- Recherche par email client
+- Support des pièces jointes
+
+### ⚙️ Paramètres Système Complets
+- **Informations Établissement:**
+  - Nom, adresse, contact
+  - Numéro d'identification
+  - Logo personnalisé
+  - Devise (MAD, EUR, USD, etc.)
+- **Configuration Financière:**
+  - Taux de taxe de séjour
+  - Taux de TVA
+  - Taux de charge plateforme
+- **Gestion des Chambres:**
+  - Nombre de chambres
+  - Prix par chambre
+- **Gestion des Utilisateurs:**
+  - Création et modification de comptes
+  - Gestion des rôles
+- **Utilitaires:**
+  - Export de données
+  - Importation de données
+  - Réinitialisation
+
+### 📁 Export et Gestion des Données
+- Export Excel des listes clients
+- Export CSV des logs d'activité
+- Export des statistiques
+- Gestion des sauvegardes
+- Import de données depuis Excel
 
 ## 🎨 Guide de style MOA
 
