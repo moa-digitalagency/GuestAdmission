@@ -1,0 +1,182 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Tableau de bord Tenant{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <div class="stat-label">Établissements</div>
+        <div class="stat-value" id="statsEtablissements">0</div>
+    </div>
+    
+    <div class="stat-card green">
+        <div class="stat-label">Chambres</div>
+        <div class="stat-value" id="statsChambres">0</div>
+    </div>
+    
+    <div class="stat-card purple">
+        <div class="stat-label">Réservations</div>
+        <div class="stat-value" id="statsReservations">0</div>
+    </div>
+    
+    <div class="stat-card orange">
+        <div class="stat-label">Utilisateurs</div>
+        <div class="stat-value" id="statsUsers">0</div>
+    </div>
+</div>
+
+<div class="dotted-section section-blue">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Mes établissements</h2>
+        <div>
+            <button class="btn btn-sm btn-success" onclick="showAddEtablissementModal()">
+                <i class="bi bi-plus-circle"></i> Ajouter un établissement
+            </button>
+            <button class="btn btn-sm btn-primary ms-2" onclick="showManageUsersModal()">
+                <i class="bi bi-people"></i> Gérer les utilisateurs
+            </button>
+        </div>
+    </div>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Établissement</th>
+                    <th>Ville</th>
+                    <th>Pays</th>
+                    <th>Chambres</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="etablissementsBody">
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem;">Chargement...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Etablissement Modal -->
+<div class="modal fade" id="addEtablissementModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ajouter un établissement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addEtablissementForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nom de l'établissement *</label>
+                            <input type="text" class="form-control" name="nom_etablissement" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ville</label>
+                            <input type="text" class="form-control" name="ville">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Pays</label>
+                            <input type="text" class="form-control" name="pays">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Adresse</label>
+                        <textarea class="form-control" name="adresse" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Téléphone</label>
+                            <input type="text" class="form-control" name="telephone">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Devise</label>
+                            <input type="text" class="form-control" name="devise" value="MAD">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="addEtablissement()">Ajouter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Manage Users Modal -->
+<div class="modal fade" id="manageUsersModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gérer les utilisateurs</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-sm btn-success mb-3" onclick="showAddUserForm()">
+                    <i class="bi bi-plus"></i> Ajouter un utilisateur
+                </button>
+                <div id="addUserFormContainer" style="display: none;" class="mb-3 p-3 border rounded">
+                    <h6>Nouvel utilisateur</h6>
+                    <form id="addUserForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="text" class="form-control" name="username" placeholder="Nom d'utilisateur" required>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <input type="text" class="form-control" name="nom" placeholder="Nom">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <input type="text" class="form-control" name="prenom" placeholder="Prénom">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <input type="email" class="form-control" name="email" placeholder="Email">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Établissements (maintenir Ctrl pour sélection multiple)</label>
+                            <select class="form-select" name="etablissement_ids" multiple required id="userEtablissementSelect">
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="addUser()">Ajouter</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="hideAddUserForm()">Annuler</button>
+                    </form>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Nom complet</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Établissements</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersListBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tenant_dashboard.js') }}"></script>
+{% endblock %}

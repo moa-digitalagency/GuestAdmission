@@ -7,9 +7,13 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/login', methods=['GET'])
 def login_page():
     if current_user.is_authenticated:
-        if current_user.is_super_admin():
-            return redirect(url_for('super_admin_dashboard'))
-        return redirect(url_for('dashboard'))
+        if current_user.is_platform_admin():
+            return redirect(url_for('platform_admin_dashboard'))
+        elif current_user.is_admin():
+            return redirect(url_for('tenant_dashboard'))
+        else:
+            # Utilisateurs réguliers vont au dashboard normal
+            return redirect(url_for('dashboard'))
     return render_template('login.html')
 
 @auth_bp.route('/login', methods=['POST'])
@@ -35,7 +39,7 @@ def logout():
 @auth_bp.route('/api/current-user')
 @login_required
 def current_user_info():
-    etablissements = current_user.get_etablissements() if not current_user.is_super_admin() else []
+    etablissements = current_user.get_etablissements() if not current_user.is_platform_admin() else []
     return jsonify({
         'id': current_user.id,
         'username': current_user.username,
@@ -44,7 +48,9 @@ def current_user_info():
         'email': current_user.email,
         'role': current_user.role,
         'etablissement_id': current_user.etablissement_id,
-        'is_super_admin': current_user.is_super_admin(),
+        'is_platform_admin': current_user.is_platform_admin(),
+        'is_super_admin': current_user.is_super_admin(),  # Garde la compatibilité
+        'is_admin': current_user.is_admin(),
         'etablissements': [{'id': e['id'], 'nom_etablissement': e['nom_etablissement']} for e in etablissements]
     })
 
@@ -58,8 +64,8 @@ def change_etablissement():
     if not etablissement_id:
         return jsonify({'error': 'ID établissement requis'}), 400
     
-    if current_user.is_super_admin():
-        return jsonify({'error': 'Super admin n\'a pas besoin de changer d\'établissement'}), 400
+    if current_user.is_platform_admin():
+        return jsonify({'error': 'Platform admin n\'a pas besoin de changer d\'établissement'}), 400
     
     if not current_user.has_access_to_etablissement(etablissement_id):
         return jsonify({'error': 'Vous n\'avez pas accès à cet établissement'}), 403

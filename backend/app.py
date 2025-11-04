@@ -58,6 +58,12 @@ app.register_blueprint(activity_logs_bp)
 from .routes.super_admin import super_admin_bp
 app.register_blueprint(super_admin_bp)
 
+from .routes.platform_admin import platform_admin_bp
+app.register_blueprint(platform_admin_bp)
+
+from .routes.tenant_admin import tenant_admin_bp
+app.register_blueprint(tenant_admin_bp)
+
 @app.route('/')
 @login_required
 def index():
@@ -66,6 +72,13 @@ def index():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    """Route de compatibilité - redirige selon le rôle"""
+    if current_user.is_platform_admin():
+        return redirect(url_for('platform_admin_dashboard'))
+    elif current_user.is_admin():
+        # Les tenant admins sont redirigés vers leur dashboard tenant
+        return redirect(url_for('tenant_dashboard'))
+    # Utilisateurs réguliers restent ici
     return render_template('dashboard.html')
 
 @app.route('/nouveau-sejour')
@@ -121,9 +134,31 @@ def calendriers():
 @app.route('/super-admin')
 @login_required
 def super_admin_dashboard():
+    """Route de compatibilité - redirige vers platform-admin"""
     if not current_user.is_super_admin():
+        return redirect(url_for('tenant_dashboard'))
+    return redirect(url_for('platform_admin_dashboard'))
+
+@app.route('/platform-admin')
+@login_required
+def platform_admin_dashboard():
+    """Dashboard pour les PLATFORM_ADMIN"""
+    if not current_user.is_platform_admin():
+        return redirect(url_for('tenant_dashboard'))
+    return render_template('platform_admin_dashboard.html')
+
+@app.route('/tenant')
+@login_required
+def tenant_dashboard():
+    """Dashboard pour les tenant admins"""
+    if current_user.is_platform_admin():
+        return redirect(url_for('platform_admin_dashboard'))
+    
+    # Vérifier que l'utilisateur est bien un admin (tenant admin)
+    if not current_user.is_admin():
         return redirect(url_for('dashboard'))
-    return render_template('super_admin_dashboard.html')
+    
+    return render_template('tenant_dashboard.html')
 
 @app.route('/favicon.ico')
 def favicon():

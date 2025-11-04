@@ -12,17 +12,22 @@ class User(UserMixin):
         self.role = role
         self.etablissement_id = etablissement_id
     
+    def is_platform_admin(self):
+        """Vérifier si l'utilisateur est un admin de la plateforme (niveau le plus élevé)"""
+        return self.role == 'PLATFORM_ADMIN'
+    
     def is_super_admin(self):
-        """Vérifier si l'utilisateur est un super admin"""
-        return self.role == 'SUPER_ADMIN'
+        """Vérifier si l'utilisateur est un super admin (ancien rôle, maintenant PLATFORM_ADMIN)"""
+        # Garde la compatibilité avec l'ancien code
+        return self.role == 'PLATFORM_ADMIN' or self.role == 'SUPER_ADMIN'
     
     def is_admin(self):
-        """Vérifier si l'utilisateur est un admin (pas super admin)"""
+        """Vérifier si l'utilisateur est un admin d'établissement (tenant admin)"""
         return self.role == 'admin'
     
     def can_manage_etablissement(self, etablissement_id):
         """Vérifier si l'utilisateur peut gérer un établissement"""
-        if self.is_super_admin():
+        if self.is_platform_admin():
             return True
         return self.has_access_to_etablissement(etablissement_id)
     
@@ -47,9 +52,11 @@ class User(UserMixin):
         conn = get_db_connection()
         cur = conn.cursor()
         
-        if self.is_super_admin():
+        if self.is_platform_admin():
+            # Platform admin voit tous les établissements
             cur.execute('SELECT * FROM etablissements ORDER BY nom_etablissement')
         else:
+            # Tenant admin voit seulement ses établissements
             cur.execute('''
                 SELECT e.* FROM etablissements e
                 INNER JOIN user_etablissements ue ON e.id = ue.etablissement_id
@@ -62,6 +69,29 @@ class User(UserMixin):
         conn.close()
         
         return etablissements
+    
+    def get_tenant_account_id(self):
+        """Obtenir l'ID du compte tenant de l'utilisateur (pour les admins)"""
+        if self.is_platform_admin():
+            return None
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        # Récupérer le tenant_account_id du premier établissement de l'utilisateur
+        cur.execute('''
+            SELECT DISTINCT e.tenant_account_id 
+            FROM etablissements e
+            INNER JOIN user_etablissements ue ON e.id = ue.etablissement_id
+            WHERE ue.user_id = %s AND e.tenant_account_id IS NOT NULL
+            LIMIT 1
+        ''', (self.id,))
+        
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+        
+        return result['tenant_account_id'] if result else None
     
     @staticmethod
     def get_by_id(user_id):

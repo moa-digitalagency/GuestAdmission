@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .stat-card {
+            border-left: 4px solid #0d6efd;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .tenant-card {
+            transition: box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .tenant-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .badge-actif {
+            background-color: #28a745;
+        }
+        .badge-inactif {
+            background-color: #dc3545;
+        }
+        .sidebar {
+            background-color: #fff;
+            min-height: 100vh;
+            border-right: 1px solid #ddd;
+        }
+        .sidebar-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .sidebar-item:hover {
+            background-color: #f8f9fa;
+        }
+        .sidebar-item.active {
+            background-color: #e7f3ff;
+            border-left: 4px solid #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/platform-admin">
+                <i class="bi bi-globe"></i> Platform Admin Dashboard
+            </a>
+            <div class="d-flex">
+                <span class="navbar-text text-white me-3" id="userInfo"></span>
+                <a href="/logout" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Déconnexion
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-0">
+                <div class="sidebar-item active" data-section="dashboard">
+                    <i class="bi bi-speedometer2"></i> Tableau de bord
+                </div>
+                <div class="sidebar-item" data-section="tenants">
+                    <i class="bi bi-people"></i> Comptes clients
+                </div>
+                <div class="sidebar-item" data-section="etablissements">
+                    <i class="bi bi-building"></i> Établissements
+                </div>
+                <div class="sidebar-item" data-section="users">
+                    <i class="bi bi-person"></i> Utilisateurs
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <div class="col-md-10 p-4">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section">
+                    <h2 class="mb-4">Statistiques globales</h2>
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Comptes Tenants</h6>
+                                    <h2 class="card-title" id="statTenantsActifs">0</h2>
+                                    <small class="text-muted">actifs</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Établissements</h6>
+                                    <h2 class="card-title" id="statEtablissementsActifs">0</h2>
+                                    <small class="text-muted">actifs</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Admins</h6>
+                                    <h2 class="card-title" id="statTotalAdmins">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stat-card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Réservations</h6>
+                                    <h2 class="card-title" id="statTotalReservations">0</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tenants Section -->
+                <div id="tenantsSection" class="content-section" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Comptes clients (Tenants)</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTenantModal">
+                            <i class="bi bi-plus-circle"></i> Créer un compte client
+                        </button>
+                    </div>
+                    <div class="row" id="tenantsList"></div>
+                </div>
+
+                <!-- Etablissements Section -->
+                <div id="etablissementsSection" class="content-section" style="display: none;">
+                    <h2 class="mb-4">Tous les établissements</h2>
+                    <div class="row" id="etablissementsList"></div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="usersSection" class="content-section" style="display: none;">
+                    <h2 class="mb-4">Tous les utilisateurs</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Email</th>
+                                    <th>Username</th>
+                                    <th>Établissements</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Tenant Modal -->
+    <div class="modal fade" id="createTenantModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Créer un nouveau compte client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createTenantForm">
+                        <h6 class="mb-3">Informations du compte</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Nom du compte *</label>
+                            <input type="text" class="form-control" name="nom_compte" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" name="notes" rows="2"></textarea>
+                        </div>
+
+                        <hr>
+                        <h6 class="mb-3">Premier établissement</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom de l'établissement *</label>
+                                <input type="text" class="form-control" name="nom_etablissement" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ville</label>
+                                <input type="text" class="form-control" name="ville">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Pays</label>
+                                <input type="text" class="form-control" name="pays">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email">
+                            </div>
+                        </div>
+
+                        <hr>
+                        <h6 class="mb-3">Admin principal du compte</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom d'utilisateur *</label>
+                                <input type="text" class="form-control" name="admin_username" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mot de passe *</label>
+                                <input type="password" class="form-control" name="admin_password" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nom</label>
+                                <input type="text" class="form-control" name="admin_nom">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" class="form-control" name="admin_prenom">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email de l'admin</label>
+                            <input type="email" class="form-control" name="admin_email">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" onclick="createTenant()">Créer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/platform_admin.js') }}"></script>
+</body>
+</html>
