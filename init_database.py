@@ -234,6 +234,62 @@ def init_database():
             )
         ''')
         
+        # Créer la table mail_configs pour la messagerie
+        print("  📋 Création de la table 'mail_configs'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS mail_configs (
+                id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                nom_config VARCHAR(255) NOT NULL,
+                email_address VARCHAR(255) NOT NULL,
+                smtp_host VARCHAR(255) NOT NULL,
+                smtp_port INTEGER NOT NULL DEFAULT 587,
+                smtp_username VARCHAR(255) NOT NULL,
+                smtp_password VARCHAR(255) NOT NULL,
+                smtp_use_tls BOOLEAN DEFAULT TRUE,
+                pop_host VARCHAR(255),
+                pop_port INTEGER DEFAULT 995,
+                pop_username VARCHAR(255),
+                pop_password VARCHAR(255),
+                pop_use_ssl BOOLEAN DEFAULT TRUE,
+                actif BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table emails pour stocker les messages
+        print("  📋 Création de la table 'emails'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS emails (
+                id SERIAL PRIMARY KEY,
+                mail_config_id INTEGER REFERENCES mail_configs(id) ON DELETE CASCADE,
+                message_id VARCHAR(255) UNIQUE,
+                subject TEXT,
+                from_email VARCHAR(255),
+                to_email TEXT,
+                cc_email TEXT,
+                bcc_email TEXT,
+                body_text TEXT,
+                body_html TEXT,
+                folder VARCHAR(50) DEFAULT 'inbox',
+                is_read BOOLEAN DEFAULT FALSE,
+                is_starred BOOLEAN DEFAULT FALSE,
+                has_attachments BOOLEAN DEFAULT FALSE,
+                date_sent TIMESTAMP,
+                date_received TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                client_email_indexed VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Ajouter la colonne closed_at dans reservations si elle n'existe pas
+        print("  📋 Ajout de la colonne 'closed_at' dans reservations...")
+        cur.execute('''
+            ALTER TABLE reservations 
+            ADD COLUMN IF NOT EXISTS closed_at TIMESTAMP
+        ''')
+        
         # Vérifier et créer l'utilisateur admin par défaut
         print("  👤 Vérification de l'utilisateur admin...")
         cur.execute("SELECT COUNT(*) as count FROM users")
