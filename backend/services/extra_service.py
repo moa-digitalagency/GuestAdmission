@@ -65,7 +65,7 @@ class ExtraService:
         cur = conn.cursor()
         
         query = '''
-            SELECT e.*, et.nom_etablissement
+            SELECT e.*, e.unite as unite_mesure, et.nom_etablissement
             FROM extras e
             LEFT JOIN etablissements et ON e.etablissement_id = et.id
             WHERE 1=1
@@ -95,7 +95,7 @@ class ExtraService:
         conn = get_db_connection()
         cur = conn.cursor()
         
-        cur.execute('SELECT * FROM extras WHERE id = %s', (extra_id,))
+        cur.execute('SELECT *, unite as unite_mesure FROM extras WHERE id = %s', (extra_id,))
         extra = cur.fetchone()
         
         cur.close()
@@ -204,7 +204,7 @@ class ExtraService:
         cur = conn.cursor()
         
         cur.execute('''
-            SELECT e.*, se.quantite, se.montant_total, se.date_ajout, se.id as sejour_extra_id
+            SELECT e.*, e.unite as unite_mesure, se.quantite, se.montant_total, se.date_ajout, se.id as sejour_extra_id
             FROM extras e
             JOIN sejours_extras se ON e.id = se.extra_id
             WHERE se.reservation_id = %s
