@@ -6,41 +6,47 @@
 {% block content %}
 <div class="dashboard-container">
     <!-- Section: Liste des extras -->
-    <section class="dashboard-section">
-        <div class="section-header">
-            <h2>📋 Liste des Extras</h2>
-            <div style="display: flex; gap: 1rem; align-items: center;">
-                <select id="filterEtablissement" class="filter-select" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+    <div class="content-block">
+        <div class="content-block-header">
+            <div class="content-block-title">
+                📋 Liste des Extras
+            </div>
+            <div class="content-block-actions">
+                <select id="filterEtablissement" style="min-width: 200px;">
                     <option value="">Tous les établissements</option>
                 </select>
-                <button class="btn-primary" onclick="showAddExtraModal()">
+                <button class="btn btn-success" onclick="showAddExtraModal()">
                     ➕ Ajouter un extra
                 </button>
             </div>
         </div>
-        <div class="section-content">
-            <div id="extrasTable" class="table-container">
-                <p style="text-align: center; color: #666;">Chargement des extras...</p>
-            </div>
+        <div id="extrasTable" class="table-container">
+            <p style="text-align: center; color: #666;">Chargement des extras...</p>
         </div>
-    </section>
+    </div>
 
-    <!-- Section: Sommaire par établissement -->
-    <section class="dashboard-section">
-        <div class="section-header">
-            <h2>📊 Sommaire des Extras</h2>
-            <div style="display: flex; gap: 0.5rem;">
-                <input type="date" id="summaryDateDebut" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
-                <input type="date" id="summaryDateFin" style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
-                <button class="btn-secondary" onclick="loadExtrasSummary()">Afficher</button>
+    <!-- Section: Sommaire des Extras -->
+    <div class="filter-section">
+        <div class="filter-header">
+            📊 Sommaire des Extras
+        </div>
+        <div class="filter-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="input-group">
+                <label for="summaryDateDebut">▸ Date de début</label>
+                <input type="date" id="summaryDateDebut">
+            </div>
+            <div class="input-group">
+                <label for="summaryDateFin">▸ Date de fin</label>
+                <input type="date" id="summaryDateFin">
             </div>
         </div>
-        <div class="section-content">
-            <div id="extrasSummary">
-                <p style="text-align: center; color: #666;">Sélectionnez un établissement et une période</p>
-            </div>
+        <div class="filter-actions">
+            <button class="btn btn-primary" onclick="loadExtrasSummary()">Afficher</button>
         </div>
-    </section>
+        <div id="extrasSummary" style="margin-top: 1rem;">
+            <p style="text-align: center; color: #666;">Sélectionnez un établissement et une période</p>
+        </div>
+    </div>
 </div>
 
 <!-- Modal: Ajouter/Modifier Extra -->

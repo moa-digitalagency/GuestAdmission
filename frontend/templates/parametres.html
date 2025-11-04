@@ -6,44 +6,60 @@
 {% block content %}
 <div id="alert-container"></div>
 
-<div class="dotted-section section-blue" style="margin-bottom: 2rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 style="margin: 0;">🏢 Mes Établissements</h2>
-        <button type="button" onclick="addEtablissement()" class="btn btn-primary">
-            ➕ Ajouter un établissement
-        </button>
+<div class="content-block" style="background: rgba(59, 130, 246, 0.05); border-color: #3b82f6; margin-bottom: 2rem;">
+    <div class="content-block-header">
+        <div class="content-block-title">
+            🏢 Mes Établissements
+        </div>
+        <div class="content-block-actions">
+            <button type="button" onclick="addEtablissement()" class="btn btn-success">
+                ➕ Ajouter un établissement
+            </button>
+        </div>
     </div>
     <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez tous vos établissements. Vous pouvez en ajouter autant que nécessaire.</p>
     
     <div id="etablissements-container"></div>
 </div>
 
-<div class="dotted-section section-green" style="margin-bottom: 2rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 style="margin: 0;">🏠 Chambres</h2>
-        <button type="button" onclick="addChambre()" class="btn btn-primary">
-            ➕ Ajouter une chambre
-        </button>
+<div class="content-block" style="background: rgba(34, 197, 94, 0.05); border-color: #22c55e; margin-bottom: 2rem;">
+    <div class="content-block-header">
+        <div class="content-block-title">
+            🏠 Chambres
+        </div>
+        <div class="content-block-actions">
+            <button type="button" onclick="addChambre()" class="btn btn-success">
+                ➕ Ajouter une chambre
+            </button>
+        </div>
     </div>
     <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez les chambres de vos établissements.</p>
     
     <div id="chambres-container"></div>
 </div>
 
-<div class="dotted-section section-purple" style="margin-bottom: 2rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h2 style="margin: 0;">👥 Personnels</h2>
-        <button type="button" onclick="addPersonnel()" class="btn btn-primary">
-            ➕ Ajouter un personnel
-        </button>
+<div class="content-block" style="background: rgba(168, 85, 247, 0.05); border-color: #a855f7; margin-bottom: 2rem;">
+    <div class="content-block-header">
+        <div class="content-block-title">
+            👥 Personnels
+        </div>
+        <div class="content-block-actions">
+            <button type="button" onclick="addPersonnel()" class="btn btn-success">
+                ➕ Ajouter un personnel
+            </button>
+        </div>
     </div>
     <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez les membres du personnel et définissez les pages auxquelles ils ont accès.</p>
     
     <div id="personnels-container"></div>
 </div>
 
-<div class="dotted-section section-orange" style="background: rgba(249, 115, 22, 0.05); border: 3px dotted #f97316; box-shadow: 0 4px 6px rgba(249, 115, 22, 0.1);">
-    <h2>🛠️ Gestion des données</h2>
+<div class="content-block" style="background: rgba(249, 115, 22, 0.05); border-color: #f97316;">
+    <div class="content-block-header">
+        <div class="content-block-title">
+            🛠️ Gestion des données
+        </div>
+    </div>
     <p style="color: #6b7280; margin-bottom: 1.5rem;">Gérez les données de votre système : chargement de données de démonstration ou réinitialisation.</p>
     
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">

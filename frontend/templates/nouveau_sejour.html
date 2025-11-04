@@ -7,8 +7,12 @@
 <div id="alert-container"></div>
 
 <form id="reservationForm">
-    <div class="dotted-section section-green">
-        <h2>📅 Informations du séjour</h2>
+    <div class="content-block" style="background: rgba(34, 197, 94, 0.05); border-color: #22c55e;">
+        <div class="content-block-header">
+            <div class="content-block-title">
+                📅 Informations du séjour
+            </div>
+        </div>
         <div class="form-grid">
             <div class="form-group">
                 <label for="etablissement">🏢 Sélection de l'établissement *</label>
@@ -42,12 +46,16 @@
         </div>
     </div>
 
-    <div class="dotted-section section-blue">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-            <h2 style="margin: 0;">👥 Personnes (Voyageurs)</h2>
-            <button type="button" onclick="addPersonne()" class="btn btn-primary btn-small">
-                + Ajouter une personne
-            </button>
+    <div class="content-block" style="background: rgba(59, 130, 246, 0.05); border-color: #3b82f6;">
+        <div class="content-block-header">
+            <div class="content-block-title">
+                👥 Personnes (Voyageurs)
+            </div>
+            <div class="content-block-actions">
+                <button type="button" onclick="addPersonne()" class="btn btn-success btn-small">
+                    + Ajouter une personne
+                </button>
+            </div>
         </div>
         
         <div id="personnesContainer"></div>
