@@ -68,17 +68,23 @@ class InvoiceService:
         if etablissement.get('logo_url'):
             try:
                 logo_path = etablissement['logo_url']
+                img = None
+                
                 if logo_path.startswith('http://') or logo_path.startswith('https://'):
-                    logo_temp = BytesIO(requests.get(logo_path).content)
-                    img = Image(logo_temp, width=60*mm, height=30*mm, kind='proportional')
+                    response = requests.get(logo_path, timeout=5)
+                    if response.status_code == 200:
+                        logo_temp = BytesIO(response.content)
+                        img = Image(logo_temp, width=60*mm, height=30*mm, kind='proportional')
                 else:
                     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
                     full_logo_path = os.path.join(base_dir, logo_path.lstrip('/'))
                     if os.path.exists(full_logo_path):
                         img = Image(full_logo_path, width=60*mm, height=30*mm, kind='proportional')
-                        img.hAlign = 'CENTER'
-                        story.append(img)
-                        story.append(Spacer(1, 5*mm))
+                
+                if img:
+                    img.hAlign = 'CENTER'
+                    story.append(img)
+                    story.append(Spacer(1, 5*mm))
             except Exception as e:
                 print(f"Erreur lors du chargement du logo: {e}")
         
