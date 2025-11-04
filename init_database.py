@@ -324,6 +324,36 @@ def init_database():
             ADD COLUMN IF NOT EXISTS closed_at TIMESTAMP
         ''')
         
+        # Créer la table activity_logs pour le suivi des activités
+        print("  📋 Création de la table 'activity_logs'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS activity_logs (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                username VARCHAR(100),
+                action VARCHAR(100) NOT NULL,
+                route VARCHAR(500) NOT NULL,
+                method VARCHAR(10) NOT NULL,
+                ip_address VARCHAR(45),
+                user_agent TEXT,
+                status_code INTEGER,
+                details JSONB,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer des index pour améliorer les performances des requêtes
+        print("  📋 Création des index sur 'activity_logs'...")
+        cur.execute('''
+            CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id)
+        ''')
+        cur.execute('''
+            CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at ON activity_logs(created_at DESC)
+        ''')
+        cur.execute('''
+            CREATE INDEX IF NOT EXISTS idx_activity_logs_action ON activity_logs(action)
+        ''')
+        
         # Vérifier et créer l'utilisateur admin par défaut
         print("  👤 Vérification de l'utilisateur admin...")
         cur.execute("SELECT COUNT(*) as count FROM users")

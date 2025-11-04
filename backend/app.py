@@ -16,6 +16,7 @@ from .routes.statistics import statistics_bp
 from .routes.mail import mail_bp
 from .routes.calendars import calendars_bp
 from .models.user import User
+from .services.activity_logger import ActivityLoggerMiddleware
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,6 +27,8 @@ app.secret_key = os.environ.get("SESSION_SECRET")
 app.config['UPLOAD_FOLDER'] = os.path.join(base_dir, 'frontend', 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 CORS(app)
+
+ActivityLoggerMiddleware(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -48,6 +51,9 @@ app.register_blueprint(extras_bp)
 app.register_blueprint(statistics_bp)
 app.register_blueprint(mail_bp)
 app.register_blueprint(calendars_bp)
+
+from .routes.activity_logs import activity_logs_bp
+app.register_blueprint(activity_logs_bp)
 
 @app.route('/')
 @login_required
