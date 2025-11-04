@@ -1,7 +1,14 @@
-# Maison d'Hôte - Système de Gestion
+# Maison d'Hôte - Système de Gestion SaaS Multi-Tenant
 
 ## Overview
-This project is a comprehensive Flask application designed for managing guest houses. It provides full management capabilities for establishments, bookings (referred to as "séjours"), and clients. The application aims to streamline operations with features like multi-establishment support, detailed séjour management, personnel administration, and financial tracking for extras.
+This project is a comprehensive Flask SaaS application designed for managing multiple guest houses in a multi-tenant architecture. It provides full management capabilities for establishments, bookings (referred to as "séjours"), and clients. The application has been transformed into a SaaS platform with complete tenant isolation, allowing a SUPER_ADMIN to create and manage multiple establishments, assign administrators, and control access per establishment.
+
+## Recent Changes (November 2025)
+- **SaaS Multi-Tenant Architecture**: Complete transformation to support multiple independent establishments with full tenant isolation.
+- **SUPER_ADMIN Role**: New role with capabilities to create establishments, assign administrators, manage rooms, and control user access.
+- **Tenant Isolation**: Implemented database structure with `user_etablissements` table and `etablissement_id` column to ensure complete data segregation.
+- **Multi-Establishment Support**: Users can be associated with multiple establishments and switch between them.
+- **Super Admin Interface**: Dedicated dashboard for SUPER_ADMIN to manage all establishments, users, and rooms.
 
 ## User Preferences
 - I prefer simple language.
@@ -30,6 +37,12 @@ This project is a comprehensive Flask application designed for managing guest ho
 - **Environment**: Developed and deployed using Python 3.11.
 
 ### Feature Specifications
+- **SaaS Multi-Tenant Platform**: Complete multi-tenant architecture with:
+  - SUPER_ADMIN role for platform-wide management
+  - Establishment creation with automatic admin assignment
+  - User-to-establishment association system (`user_etablissements` table)
+  - Tenant isolation enforced at database and application levels
+  - Multi-establishment user support with establishment switching
 - **Multi-Establishment Management**: Supports the creation, modification, and deletion of multiple guest house establishments, each with its own logo and activation status.
 - **Séjour Management**: Comprehensive handling of bookings (séjours), including creation, room assignment, client management, and automatic numbering. Renamed from "Réservations" to "Séjours" across the application for consistency.
 - **Statistics Page**: A dedicated section for real-time statistics, including séjour overview, client metrics, establishment performance, and room occupancy.
@@ -42,10 +55,27 @@ This project is a comprehensive Flask application designed for managing guest ho
 - **iCal Calendar Integration**: Existing and functional iCal calendar support for platforms like Airbnb and Booking.com.
 
 ### System Design Choices
+- **Multi-Tenant Architecture**: 
+  - `user_etablissements` table for managing user-establishment associations with role-based access
+  - `etablissement_id` column in `users` table for tracking current active establishment
+  - SUPER_ADMIN role with unrestricted access across all establishments
+  - Access control decorators (`@super_admin_required`) for protecting sensitive routes
+  - User methods: `is_super_admin()`, `is_admin()`, `has_access_to_etablissement()`, `get_etablissements()`
 - **Service-Oriented Architecture**: Refactored backend into `backend/services/` for business logic (e.g., `SejourService`, `ExtraService`) and `backend/utils/` for common utilities (e.g., `serializers.py`, `formatters.py`). This promotes clear separation of concerns: Routes → Services → Models.
-- **Database Initialization**: The `init_database.py` script, executed via `start.sh` before Gunicorn, ensures automatic creation of all necessary tables (`users`, `etablissements`, `chambres`, `reservations`, `personnes`, `reservations_chambres`, `extras`, `sejours_extras`, `personnels`, `parametres_systeme`, `activity_logs`, `mail_configs`, `emails`, `calendriers_ical`, `reservations_ical`) and initial data (admin user, default establishment) upon application startup.
-- **API Endpoints**: Structured API routes for all major entities (establishments, rooms, séjours, extras, personnel, clients, countries) ensuring comprehensive CRUD capabilities.
-- **Frontend Templates**: Organized under `frontend/templates/` with a `base_dashboard.html` for consistent layout and navigation. Specific pages for login, dashboard, statistics, parameters, séjour creation, séjour listing, séjour detail, extras management, client lists, activity logs, and messaging.
+- **Database Initialization**: The `init_database.py` script, executed via `start.sh` before Gunicorn, ensures automatic creation of all necessary tables (`users`, `etablissements`, `chambres`, `reservations`, `personnes`, `reservations_chambres`, `extras`, `sejours_extras`, `personnels`, `parametres_systeme`, `activity_logs`, `mail_configs`, `emails`, `calendriers_ical`, `reservations_ical`, `user_etablissements`) and initial data (super admin user, default establishment) upon application startup.
+- **Database Migrations**: Sequential migrations for schema evolution:
+  - `001_initial_setup.py`: Initial database schema
+  - `002_add_multi_tenant_support.py`: Multi-tenant structure (user_etablissements, etablissement_id)
+  - `003_fix_user_etablissement_associations.py`: Cleanup migration ensuring proper tenant isolation
+- **API Endpoints**: Structured API routes for all major entities (establishments, rooms, séjours, extras, personnel, clients, countries) ensuring comprehensive CRUD capabilities. New super admin endpoints:
+  - `POST /api/super-admin/create-etablissement-with-admin`: Create establishment and assign administrator
+  - `GET /api/super-admin/all-users`: List all users across all establishments
+  - `POST /api/super-admin/assign-user-to-etablissement`: Assign user to establishment
+  - `DELETE /api/super-admin/remove-user-from-etablissement`: Remove user from establishment
+  - `GET /api/super-admin/etablissement/<id>/chambres`: Get rooms for an establishment
+  - `POST /api/super-admin/etablissement/<id>/chambres`: Create room for an establishment
+  - `POST /api/change-etablissement`: Switch active establishment for multi-establishment users
+- **Frontend Templates**: Organized under `frontend/templates/` with a `base_dashboard.html` for consistent layout and navigation. Specific pages for login, dashboard, statistics, parameters, séjour creation, séjour listing, séjour detail, extras management, client lists, activity logs, messaging, and **super admin dashboard** (`super_admin_dashboard.html`).
 - **Static Assets**: CSS and JavaScript files are managed in `frontend/static/` for maintainability, including enhanced styles (`styles.css`) and dedicated scripts for features like séjours and extras.
 
 ## External Dependencies
