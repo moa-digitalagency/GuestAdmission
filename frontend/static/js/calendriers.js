@@ -1,6 +1,8 @@
 let currentEtablissements = [];
 let currentCalendars = [];
 let editingCalendarId = null;
+let currentReservations = [];
+let viewMode = 'list';
 
 document.addEventListener('DOMContentLoaded', function() {
     loadEtablissements();
@@ -252,10 +254,35 @@ document.getElementById('calendarForm').addEventListener('submit', async functio
     }
 });
 
+function toggleView() {
+    viewMode = viewMode === 'list' ? 'calendar' : 'list';
+    const tableView = document.getElementById('reservationsTable');
+    const calendarView = document.getElementById('reservationsCalendar');
+    const viewIcon = document.getElementById('viewIcon');
+    const viewText = document.getElementById('viewText');
+    
+    if (viewMode === 'calendar') {
+        tableView.style.display = 'none';
+        calendarView.style.display = 'block';
+        viewIcon.textContent = '📋';
+        viewText.textContent = 'Vue Liste';
+    } else {
+        tableView.style.display = 'block';
+        calendarView.style.display = 'none';
+        viewIcon.textContent = '📅';
+        viewText.textContent = 'Vue Calendrier';
+    }
+    
+    displayReservations(currentReservations);
+}
+
 async function loadReservations() {
     const etablissementId = document.getElementById('filterEtablissement').value;
     if (!etablissementId) {
+        currentReservations = [];
         document.getElementById('reservationsTable').innerHTML = 
+            '<p style="text-align: center; color: #666;">Sélectionnez un établissement</p>';
+        document.getElementById('reservationsCalendar').innerHTML = 
             '<p style="text-align: center; color: #666;">Sélectionnez un établissement</p>';
         return;
     }
@@ -265,15 +292,27 @@ async function loadReservations() {
     try {
         const response = await fetch(url);
         const reservations = await response.json();
+        currentReservations = reservations;
         displayReservations(reservations);
     } catch (error) {
         console.error('Erreur lors du chargement des réservations:', error);
+        currentReservations = [];
         document.getElementById('reservationsTable').innerHTML = 
+            '<p style="color: red; text-align: center;">Erreur lors du chargement des réservations</p>';
+        document.getElementById('reservationsCalendar').innerHTML = 
             '<p style="color: red; text-align: center;">Erreur lors du chargement des réservations</p>';
     }
 }
 
 function displayReservations(reservations) {
+    if (viewMode === 'list') {
+        displayReservationsTable(reservations);
+    } else {
+        displayReservationsCalendar(reservations);
+    }
+}
+
+function displayReservationsTable(reservations) {
     const container = document.getElementById('reservationsTable');
     
     if (reservations.length === 0) {
@@ -315,4 +354,86 @@ function displayReservations(reservations) {
     `;
     
     container.innerHTML = table;
+}
+
+function displayReservationsCalendar(reservations) {
+    const container = document.getElementById('reservationsCalendar');
+    
+    if (reservations.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666;">Aucune réservation importée</p>';
+        return;
+    }
+    
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    
+    const monthStart = new Date(currentYear, currentMonth, 1);
+    const monthEnd = new Date(currentYear, currentMonth + 1, 0);
+    
+    const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+                        'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    
+    const firstDayOfWeek = monthStart.getDay();
+    const daysInMonth = monthEnd.getDate();
+    
+    let calendarHTML = `
+        <div style="background: #fff; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.3rem; font-weight: 600; color: #1f2937;">${monthNames[currentMonth]} ${currentYear}</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-bottom: 0.5rem;">
+                <div style="text-align: center; font-weight: 600; color: #6b7280; padding: 0.5rem;">Dim</div>
+                <div style="text-align: center; font-weight: 600; color: #6b7280; padding: 0.5rem;">Lun</div>
+                <div style="text-align: center; font-weight: 600; color: #6b7280; padding: 0.5rem;">Mar</div>
+                <div style="text-align: center; font-weight: 600; color: #6b7280; padding: 0.5rem;">Mer</div>
+                <div style="text-align: center; font-weight: 600; color: #6b7280; padding: 0.5rem;">Jeu</div>
+                <div style="text-align: center; font-weight: 600; color: #6b7280; padding: 0.5rem;">Ven</div>
+                <div style="text-align: center; font-weight: 600; color: #6b7280; padding: 0.5rem;">Sam</div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;">
+    `;
+    
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        calendarHTML += '<div style="padding: 1rem;"></div>';
+    }
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const currentDate = new Date(currentYear, currentMonth, day);
+        const dateStr = currentDate.toISOString().split('T')[0];
+        
+        const dayReservations = reservations.filter(res => {
+            const resStart = new Date(res.date_debut);
+            const resEnd = new Date(res.date_fin);
+            return currentDate >= resStart && currentDate < resEnd;
+        });
+        
+        const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+        
+        let dayStyle = 'padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; min-height: 80px; position: relative;';
+        if (isToday) {
+            dayStyle += ' background: #eff6ff; border-color: #3b82f6;';
+        } else if (dayReservations.length > 0) {
+            dayStyle += ' background: #fef3c7; border-color: #f59e0b;';
+        }
+        
+        calendarHTML += `
+            <div style="${dayStyle}">
+                <div style="font-weight: 600; color: #374151; margin-bottom: 0.25rem;">${day}</div>
+                ${dayReservations.slice(0, 2).map(res => `
+                    <div style="background: #fee2e2; color: #991b1b; padding: 0.25rem; border-radius: 0.25rem; font-size: 0.75rem; margin-bottom: 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${res.titre} - ${res.calendrier_nom}">
+                        ${res.plateforme === 'airbnb' ? '🏠' : res.plateforme === 'booking' ? '🏨' : '📅'} ${res.calendrier_nom}
+                    </div>
+                `).join('')}
+                ${dayReservations.length > 2 ? `<div style="font-size: 0.75rem; color: #6b7280;">+${dayReservations.length - 2} autre(s)</div>` : ''}
+            </div>
+        `;
+    }
+    
+    calendarHTML += `
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = calendarHTML;
 }
