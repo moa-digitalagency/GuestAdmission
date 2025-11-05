@@ -388,6 +388,51 @@ def init_database():
             CREATE INDEX IF NOT EXISTS idx_activity_logs_action ON activity_logs(action)
         ''')
         
+        # Créer la table newsletter_configs pour la configuration SendGrid
+        print("  📋 Création de la table 'newsletter_configs'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS newsletter_configs (
+                id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                sendgrid_api_key VARCHAR(500) NOT NULL,
+                from_email VARCHAR(255) NOT NULL,
+                from_name VARCHAR(255),
+                active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table newsletters pour stocker l'historique des envois
+        print("  📋 Création de la table 'newsletters'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS newsletters (
+                id SERIAL PRIMARY KEY,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                subject VARCHAR(500) NOT NULL,
+                content TEXT NOT NULL,
+                content_type VARCHAR(20) DEFAULT 'html',
+                recipient_emails JSONB NOT NULL,
+                sent_by_user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+                sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                status VARCHAR(50) DEFAULT 'pending',
+                error_message TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer des index pour les newsletters
+        print("  📋 Création des index sur 'newsletters'...")
+        cur.execute('''
+            CREATE INDEX IF NOT EXISTS idx_newsletters_etablissement_id ON newsletters(etablissement_id)
+        ''')
+        cur.execute('''
+            CREATE INDEX IF NOT EXISTS idx_newsletters_sent_at ON newsletters(sent_at DESC)
+        ''')
+        cur.execute('''
+            CREATE INDEX IF NOT EXISTS idx_newsletters_status ON newsletters(status)
+        ''')
+        
         # Vérifier et créer l'utilisateur admin par défaut
         print("  👤 Vérification de l'utilisateur admin...")
         cur.execute("SELECT COUNT(*) as count FROM users")

@@ -1,0 +1,184 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Newsletters{% endblock %}
+{% block page_title %}Newsletters{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+    <button class="btn btn-success" onclick="showTab('compose')">
+        ✉️ Composer une newsletter
+    </button>
+    <button class="btn btn-secondary" onclick="showTab('history')">
+        📋 Historique
+    </button>
+    <button class="btn btn-secondary" onclick="showTab('config')">
+        ⚙️ Configuration SendGrid
+    </button>
+</div>
+
+<!-- Tab: Composer une newsletter -->
+<div id="composeTab" class="newsletter-tab" style="display: block;">
+    <div class="dotted-section section-blue">
+        <h2 style="margin-bottom: 1.5rem;">Composer une newsletter</h2>
+        
+        <form id="newsletterForm">
+            <div class="form-group">
+                <label>Sujet *</label>
+                <input type="text" id="newsletterSubject" name="subject" required placeholder="Objet de votre newsletter">
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 1rem;">
+                    <span>Format du contenu:</span>
+                    <select id="contentType" name="content_type" onchange="updateEditorPlaceholder()" style="width: auto;">
+                        <option value="html">HTML</option>
+                        <option value="markdown">Markdown</option>
+                    </select>
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label>Contenu *</label>
+                <textarea id="newsletterContent" name="content" rows="15" required 
+                    placeholder="Contenu HTML ou Markdown de votre newsletter..."></textarea>
+                <small style="color: #6b7280;">
+                    <span id="editorHelp">Vous pouvez utiliser les balises HTML pour formater votre contenu.</span>
+                </small>
+            </div>
+            
+            <hr style="margin: 2rem 0; border: none; border-top: 2px dotted #3b82f6;">
+            
+            <h3 style="margin-bottom: 1rem;">Destinataires</h3>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    <input type="checkbox" id="selectAllClients" onchange="toggleSelectAllClients()">
+                    <strong>Sélectionner tous les clients</strong>
+                </label>
+            </div>
+            
+            <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">
+                                <input type="checkbox" id="headerCheckbox" onchange="toggleSelectAllClients()">
+                            </th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Pays</th>
+                            <th>Ville</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsList">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem;">Chargement des clients...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="selectedCount" style="margin-top: 1rem; padding: 1rem; background: #eff6ff; border-radius: 6px; color: #1e40af;">
+                <strong>0</strong> destinataire(s) sélectionné(s)
+            </div>
+            
+            <div class="button-group" style="justify-content: flex-end; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="resetNewsletterForm()">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="sendNewsletter()">📤 Envoyer la newsletter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tab: Historique -->
+<div id="historyTab" class="newsletter-tab" style="display: none;">
+    <div class="dotted-section section-purple">
+        <h2 style="margin-bottom: 1.5rem;">Historique des newsletters</h2>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Sujet</th>
+                        <th>Destinataires</th>
+                        <th>Statut</th>
+                        <th>Envoyé par</th>
+                    </tr>
+                </thead>
+                <tbody id="historyList">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 2rem;">Chargement...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Tab: Configuration SendGrid -->
+<div id="configTab" class="newsletter-tab" style="display: none;">
+    <div class="dotted-section section-green">
+        <h2 style="margin-bottom: 1.5rem;">Configuration SendGrid</h2>
+        
+        <div id="configStatus" style="margin-bottom: 1.5rem;"></div>
+        
+        <form id="sendgridConfigForm">
+            <div class="form-grid">
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Clé API SendGrid *</label>
+                    <input type="password" id="sendgridApiKey" name="sendgrid_api_key" required 
+                        placeholder="SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                    <small style="color: #6b7280;">
+                        Obtenez votre clé API sur <a href="https://app.sendgrid.com/settings/api_keys" target="_blank">SendGrid Dashboard</a>
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Email expéditeur *</label>
+                    <input type="email" id="fromEmail" name="from_email" required 
+                        placeholder="noreply@votre-domaine.com">
+                    <small style="color: #6b7280;">
+                        Doit être vérifié dans SendGrid
+                    </small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nom de l'expéditeur</label>
+                    <input type="text" id="fromName" name="from_name" 
+                        placeholder="Maison d'Hôte">
+                </div>
+            </div>
+            
+            <div class="button-group" style="justify-content: flex-end; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="loadSendGridConfig()">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="saveSendGridConfig()">💾 Enregistrer et tester</button>
+            </div>
+        </form>
+        
+        <hr style="margin: 2rem 0; border: none; border-top: 2px dotted #22c55e;">
+        
+        <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #22c55e;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #166534;">💡 Comment configurer SendGrid</h4>
+            <ol style="margin: 0.5rem 0; padding-left: 1.5rem; color: #166534;">
+                <li>Créez un compte sur <a href="https://sendgrid.com" target="_blank">SendGrid</a></li>
+                <li>Vérifiez votre email expéditeur dans SendGrid</li>
+                <li>Créez une clé API avec les permissions d'envoi d'emails</li>
+                <li>Copiez la clé API et configurez-la ci-dessus</li>
+                <li>Cliquez sur "Enregistrer et tester" pour vérifier la configuration</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<style>
+.newsletter-tab {
+    margin-top: 2rem;
+}
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/newsletters.js') }}"></script>
+{% endblock %}

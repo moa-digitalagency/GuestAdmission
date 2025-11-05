@@ -1,12 +1,13 @@
 // Platform Admin Dashboard JavaScript
 
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadStats();
     loadTenants();
     showSection('dashboard');
 });
 
-function showSection(sectionName) {
+window.showSection = function(sectionName) {
     // Hide all sections
     document.querySelectorAll('.content-section').forEach(section => {
         section.style.display = 'none';

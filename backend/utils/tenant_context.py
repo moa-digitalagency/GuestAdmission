@@ -46,6 +46,30 @@ def get_accessible_etablissement_ids(user=None):
     return [etab['id'] for etab in etablissements]
 
 
+def get_current_etablissement_id():
+    """
+    Obtenir l'ID de l'établissement courant de l'utilisateur connecté
+    Retourne le premier établissement accessible pour l'utilisateur
+    """
+    if not current_user.is_authenticated:
+        return None
+    
+    # Pour les PLATFORM_ADMIN, retourner None (ils doivent spécifier l'ID)
+    if current_user.is_platform_admin():
+        return None
+    
+    # Utiliser l'etablissement_id stocké dans l'user si disponible
+    if hasattr(current_user, 'etablissement_id') and current_user.etablissement_id:
+        return current_user.etablissement_id
+    
+    # Sinon, retourner le premier établissement accessible
+    etablissements = current_user.get_etablissements()
+    if etablissements and len(etablissements) > 0:
+        return etablissements[0]['id']
+    
+    return None
+
+
 def get_tenant_filtered_query(base_query, table_alias='e'):
     """
     Ajouter une clause WHERE pour filtrer par tenant sur une requête
