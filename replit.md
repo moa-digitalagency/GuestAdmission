@@ -3,12 +3,17 @@
 ## Overview
 This project is a comprehensive Flask SaaS application designed for managing multiple guest houses in a multi-tenant architecture. It provides full management capabilities for establishments, bookings (referred to as "séjours"), and clients. The application has been transformed into a SaaS platform with complete tenant isolation, allowing a SUPER_ADMIN to create and manage multiple establishments, assign administrators, and control access per establishment.
 
-## Recent Changes (November 2025)
-- **SaaS Multi-Tenant Architecture**: Complete transformation to support multiple independent establishments with full tenant isolation.
-- **SUPER_ADMIN Role**: New role with capabilities to create establishments, assign administrators, manage rooms, and control user access.
-- **Tenant Isolation**: Implemented database structure with `user_etablissements` table and `etablissement_id` column to ensure complete data segregation.
-- **Multi-Establishment Support**: Users can be associated with multiple establishments and switch between them.
-- **Super Admin Interface**: Dedicated dashboard for SUPER_ADMIN to manage all establishments, users, and rooms.
+## Recent Changes (November 5, 2025)
+- **Complete SaaS Transformation**: Full implementation of multi-tenant SaaS architecture with three-level role hierarchy
+- **PLATFORM_ADMIN Role**: Highest level admin (formerly SUPER_ADMIN) manages the entire SaaS platform, creates tenant accounts, and has global oversight
+- **Tenant Accounts System**: New `tenant_accounts` table to manage client accounts, each with multiple establishments
+- **Tenant Isolation**: Complete data segregation at database level using `tenant_account_id` in establishments
+- **Demo Tenants Created**: Two fully configured demo tenants ready for testing:
+  - **Riad Atlas**: 2 establishments (Marrakech, Fès), 9 rooms total, 2 users
+  - **Villa Ocean**: 1 establishment (Essaouira), 6 rooms, 1 user
+- **Database Auto-Initialization**: All tables and migrations automatically applied on startup via `start.sh`
+- **Migration 004**: Transformation from SUPER_ADMIN to PLATFORM_ADMIN with full tenant account support
+- **Dual Dashboards**: Separate interfaces for Platform Admin (`/platform-admin`) and Tenant Admins (`/tenant`)
 
 ## User Preferences
 - I prefer simple language.
