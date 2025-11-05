@@ -1,29 +1,9 @@
-{% extends "base_dashboard.html" %}
+{% extends "base_platform_admin.html" %}
 
 {% block title %}Platform Admin{% endblock %}
 {% block page_title %}Platform Admin Dashboard{% endblock %}
 
 {% block content %}
-<!-- Navigation tabs -->
-<div class="dotted-section section-blue" style="margin-bottom: 1.5rem; padding: 1rem;">
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <button class="btn btn-primary platform-tab active" data-section="dashboard" onclick="showSection('dashboard')">
-            📊 Tableau de bord
-        </button>
-        <button class="btn btn-secondary platform-tab" data-section="tenants" onclick="showSection('tenants')">
-            👥 Comptes clients
-        </button>
-        <button class="btn btn-secondary platform-tab" data-section="etablissements" onclick="showSection('etablissements')">
-            🏢 Établissements
-        </button>
-        <button class="btn btn-secondary platform-tab" data-section="users" onclick="showSection('users')">
-            👤 Utilisateurs
-        </button>
-        <button class="btn btn-secondary platform-tab" data-section="settings" onclick="showSection('settings')">
-            ⚙️ Paramètres
-        </button>
-    </div>
-</div>
 
 <!-- Dashboard Section -->
 <div id="dashboardSection" class="content-section">

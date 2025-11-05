@@ -12,7 +12,12 @@ function showSection(sectionName) {
         section.style.display = 'none';
     });
     
-    // Update tab buttons
+    // Update sidebar links active state
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Update tab buttons (if they exist - for backwards compatibility)
     document.querySelectorAll('.platform-tab').forEach(tab => {
         if (tab.dataset.section === sectionName) {
             tab.classList.remove('btn-secondary');
@@ -24,7 +29,16 @@ function showSection(sectionName) {
     });
     
     // Show selected section
-    const section = document.getElementById(sectionName + 'Section');
+    const sectionMap = {
+        'dashboard': 'dashboardSection',
+        'tenants': 'tenantsSection',
+        'etablissements': 'etablissementsSection',
+        'users': 'usersSection',
+        'settings': 'settingsSection'
+    };
+    
+    const sectionId = sectionMap[sectionName];
+    const section = document.getElementById(sectionId);
     if (section) {
         section.style.display = 'block';
     }
