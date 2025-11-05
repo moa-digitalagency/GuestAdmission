@@ -11,8 +11,8 @@ class Etablissement:
                 nom_etablissement, numero_identification, pays, ville, adresse,
                 telephone, whatsapp, email, devise, taux_taxe_sejour,
                 taux_tva, taux_charge_plateforme, logo_url,
-                format_numero_reservation, actif
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                format_numero_reservation, mode_tarification, prix_global_nuitee, actif
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
             data.get('nom_etablissement'), data.get('numero_identification'),
@@ -21,6 +21,7 @@ class Etablissement:
             data.get('devise', 'MAD'), data.get('taux_taxe_sejour'),
             data.get('taux_tva'), data.get('taux_charge_plateforme'),
             data.get('logo_url'), data.get('format_numero_reservation', 'RES-{YYYY}{MM}{DD}-{NUM}'),
+            data.get('mode_tarification', 'CHAMBRE'), data.get('prix_global_nuitee'),
             data.get('actif', True)
         ))
         
@@ -75,7 +76,8 @@ class Etablissement:
                 telephone = %s, whatsapp = %s, email = %s,
                 devise = %s, taux_taxe_sejour = %s, taux_tva = %s,
                 taux_charge_plateforme = %s, logo_url = %s,
-                format_numero_reservation = %s, actif = %s,
+                format_numero_reservation = %s, mode_tarification = %s,
+                prix_global_nuitee = %s, actif = %s,
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = %s
         ''', (
@@ -84,7 +86,8 @@ class Etablissement:
             data.get('telephone'), data.get('whatsapp'), data.get('email'),
             data.get('devise'), data.get('taux_taxe_sejour'), data.get('taux_tva'),
             data.get('taux_charge_plateforme'), data.get('logo_url'),
-            data.get('format_numero_reservation'), data.get('actif', True),
+            data.get('format_numero_reservation'), data.get('mode_tarification'),
+            data.get('prix_global_nuitee'), data.get('actif', True),
             etablissement_id
         ))
         

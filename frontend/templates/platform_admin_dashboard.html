@@ -154,101 +154,266 @@
     </form>
 </div>
 
-<!-- Create Tenant Modal -->
+<!-- Create Tenant Modal - Wizard Multi-étapes -->
 <div class="modal" id="createTenantModal">
-    <div class="modal-content" style="max-width: 800px;">
+    <div class="modal-content" style="max-width: 900px;">
         <div class="modal-header">
             <h3 style="margin: 0;">Créer un nouveau compte client</h3>
             <button class="modal-close" onclick="closeCreateTenantModal()">✕</button>
         </div>
+        
+        <!-- Progress Indicator -->
+        <div style="display: flex; justify-content: space-between; margin-bottom: 2rem; position: relative;">
+            <div style="position: absolute; top: 15px; left: 0; right: 0; height: 2px; background: #e5e7eb; z-index: 0;"></div>
+            <div class="wizard-step" data-step="1">
+                <div class="wizard-step-number active">1</div>
+                <div class="wizard-step-label">Établissement</div>
+            </div>
+            <div class="wizard-step" data-step="2">
+                <div class="wizard-step-number">2</div>
+                <div class="wizard-step-label">Administrateur</div>
+            </div>
+            <div class="wizard-step" data-step="3">
+                <div class="wizard-step-number">3</div>
+                <div class="wizard-step-label">Chambres</div>
+            </div>
+            <div class="wizard-step" data-step="4">
+                <div class="wizard-step-number">4</div>
+                <div class="wizard-step-label">Récapitulatif</div>
+            </div>
+        </div>
+        
         <form id="createTenantForm">
-            <h4 style="margin-bottom: 1rem;">Informations du compte</h4>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Nom du compte *</label>
-                    <input type="text" name="nom_compte" required>
-                </div>
-                <div class="form-group" style="grid-column: 1 / -1;">
-                    <label>Notes</label>
-                    <textarea name="notes" rows="2"></textarea>
-                </div>
-            </div>
-
-            <hr style="margin: 1.5rem 0; border: none; border-top: 2px dotted #d1d5db;">
-            <h4 style="margin-bottom: 1rem;">Premier établissement</h4>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Nom de l'établissement *</label>
-                    <input type="text" name="nom_etablissement" required>
-                </div>
-                <div class="form-group">
-                    <label>Ville</label>
-                    <input type="text" name="ville">
-                </div>
-                <div class="form-group">
-                    <label>Pays</label>
-                    <input type="text" name="pays">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email">
-                </div>
-            </div>
-
-            <hr style="margin: 1.5rem 0; border: none; border-top: 2px dotted #d1d5db;">
-            <h4 style="margin-bottom: 1rem;">Chambres initiales (optionnel)</h4>
-            <div id="chambresContainer">
-                <div class="form-grid chambre-row" data-chambre-index="0">
+            <!-- Étape 1: Informations Établissement -->
+            <div class="wizard-content" id="wizardStep1">
+                <h4 style="margin-bottom: 1.5rem; color: #6366f1;">Étape 1 : Informations de l'établissement</h4>
+                
+                <div class="form-grid">
                     <div class="form-group">
-                        <label>Nom de la chambre</label>
-                        <input type="text" name="chambre_nom_0" placeholder="ex: Chambre 101">
+                        <label>Nom du compte *</label>
+                        <input type="text" name="nom_compte" id="nom_compte" required>
                     </div>
                     <div class="form-group">
-                        <label>Capacité</label>
-                        <input type="number" name="chambre_capacite_0" min="1" value="2">
+                        <label>Nom de l'établissement *</label>
+                        <input type="text" name="nom_etablissement" id="nom_etablissement" required>
                     </div>
                     <div class="form-group">
-                        <label>Prix par nuit</label>
-                        <input type="number" name="chambre_prix_0" min="0" step="0.01" placeholder="0.00">
+                        <label>Numéro d'identification (ICE, SIRET, EIN, etc.)</label>
+                        <input type="text" name="numero_identification" id="numero_identification">
+                    </div>
+                    <div class="form-group">
+                        <label>Logo de l'établissement (URL)</label>
+                        <input type="text" name="logo_url" id="logo_url" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>Pays *</label>
+                        <select name="pays" id="pays" required onchange="loadVillesForPays()">
+                            <option value="">Sélectionnez un pays</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ville *</label>
+                        <select name="ville" id="ville" required>
+                            <option value="">Sélectionnez d'abord un pays</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Adresse complète</label>
+                        <textarea name="adresse" id="adresse" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" name="telephone" id="telephone">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp</label>
+                        <input type="tel" name="whatsapp" id="whatsapp">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email_etablissement" id="email_etablissement">
+                    </div>
+                    <div class="form-group">
+                        <label>Devise</label>
+                        <select name="devise" id="devise">
+                            <option value="MAD">MAD (Dirham marocain)</option>
+                            <option value="EUR">EUR (Euro)</option>
+                            <option value="USD">USD (Dollar)</option>
+                            <option value="GBP">GBP (Livre sterling)</option>
+                            <option value="TND">TND (Dinar tunisien)</option>
+                            <option value="DZD">DZD (Dinar algérien)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Taxe de séjour (%)</label>
+                        <input type="number" name="taux_taxe_sejour" id="taux_taxe_sejour" min="0" max="100" step="0.1" placeholder="2.5">
+                    </div>
+                    <div class="form-group">
+                        <label>TVA (%)</label>
+                        <input type="number" name="taux_tva" id="taux_tva" min="0" max="100" step="0.1" placeholder="20">
+                    </div>
+                    <div class="form-group">
+                        <label>Charge plateforme (%)</label>
+                        <input type="number" name="taux_charge_plateforme" id="taux_charge_plateforme" min="0" max="100" step="0.1" placeholder="15">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Format du numéro de séjour</label>
+                        <input type="text" name="format_numero_reservation" id="format_numero_reservation" value="RES-{YYYY}{MM}{DD}-{NUM}" placeholder="RES-{YYYY}{MM}{DD}-{NUM}">
+                        <small style="color: #6b7280;">Variables disponibles: {YYYY}, {MM}, {DD}, {NUM}</small>
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid #e5e7eb;">
+                        <h5 style="margin: 1rem 0;">Mode de tarification</h5>
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="mode_tarification" value="CHAMBRE" id="mode_tarif_chambre" checked onchange="togglePrixGlobal()">
+                            <span style="margin-left: 0.5rem;">Prix fixe par chambre (chaque chambre a son propre prix)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer; margin-top: 0.5rem;">
+                            <input type="radio" name="mode_tarification" value="ETABLISSEMENT" id="mode_tarif_etablissement" onchange="togglePrixGlobal()">
+                            <span style="margin-left: 0.5rem;">Prix global établissement (prix total identique quel que soit le nombre de chambres)</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group" id="prixGlobalGroup" style="display: none;">
+                        <label>Prix global par nuitée *</label>
+                        <input type="number" name="prix_global_nuitee" id="prix_global_nuitee" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Notes</label>
+                        <textarea name="notes" id="notes" rows="2"></textarea>
                     </div>
                 </div>
             </div>
-            <div style="margin-top: 1rem;">
-                <button type="button" class="btn btn-secondary btn-small" onclick="addChambreRow()">+ Ajouter une chambre</button>
+
+            <!-- Étape 2: Informations Administrateur -->
+            <div class="wizard-content" id="wizardStep2" style="display: none;">
+                <h4 style="margin-bottom: 1.5rem; color: #6366f1;">Étape 2 : Informations de la personne de base (Administrateur)</h4>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nom d'utilisateur (Username) *</label>
+                        <input type="text" name="admin_username" id="admin_username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="admin_email" id="admin_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mot de passe *</label>
+                        <input type="password" name="admin_password" id="admin_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmer le mot de passe *</label>
+                        <input type="password" name="admin_password_confirm" id="admin_password_confirm" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" name="admin_prenom" id="admin_prenom" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" name="admin_nom" id="admin_nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone</label>
+                        <input type="tel" name="admin_telephone" id="admin_telephone">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" name="admin_page_acces" id="admin_page_acces" checked>
+                            <span style="margin-left: 0.5rem;">Page d'accès (accès au tableau de bord)</span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
-            <hr style="margin: 1.5rem 0; border: none; border-top: 2px dotted #d1d5db;">
-            <h4 style="margin-bottom: 1rem;">Admin principal du compte</h4>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Nom d'utilisateur *</label>
-                    <input type="text" name="admin_username" required>
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe *</label>
-                    <input type="password" name="admin_password" required>
-                </div>
-                <div class="form-group">
-                    <label>Nom</label>
-                    <input type="text" name="admin_nom">
-                </div>
-                <div class="form-group">
-                    <label>Prénom</label>
-                    <input type="text" name="admin_prenom">
-                </div>
-                <div class="form-group" style="grid-column: 1 / -1;">
-                    <label>Email de l'admin</label>
-                    <input type="email" name="admin_email">
+            <!-- Étape 3: Configuration Chambres -->
+            <div class="wizard-content" id="wizardStep3" style="display: none;">
+                <h4 style="margin-bottom: 1.5rem; color: #6366f1;">Étape 3 : Configuration des chambres</h4>
+                
+                <p style="margin-bottom: 1rem; color: #6b7280;">Établissement: <strong id="recapEtablissement">-</strong></p>
+                <p style="margin-bottom: 1.5rem; color: #6b7280;" id="modeTarifInfo">Mode de tarification: <strong id="recapModeTarif">-</strong></p>
+                
+                <div id="chambresContainer"></div>
+                <div style="margin-top: 1rem;">
+                    <button type="button" class="btn btn-secondary btn-small" onclick="addChambreRow()">+ Ajouter une chambre</button>
                 </div>
             </div>
 
-            <div class="button-group" style="justify-content: flex-end;">
+            <!-- Étape 4: Récapitulatif -->
+            <div class="wizard-content" id="wizardStep4" style="display: none;">
+                <h4 style="margin-bottom: 1.5rem; color: #6366f1;">Étape 4 : Récapitulatif et validation</h4>
+                
+                <div class="dotted-section section-blue">
+                    <h5 style="margin-bottom: 1rem;">Informations de l'établissement</h5>
+                    <div id="recapEtablissementDetails"></div>
+                </div>
+                
+                <div class="dotted-section section-green" style="margin-top: 1.5rem;">
+                    <h5 style="margin-bottom: 1rem;">Administrateur</h5>
+                    <div id="recapAdminDetails"></div>
+                </div>
+                
+                <div class="dotted-section section-purple" style="margin-top: 1.5rem;">
+                    <h5 style="margin-bottom: 1rem;">Chambres</h5>
+                    <div id="recapChambresDetails"></div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="button-group" style="justify-content: space-between; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" id="btnPrevious" onclick="previousStep()" style="display: none;">← Précédent</button>
+                <div style="flex: 1;"></div>
                 <button type="button" class="btn btn-secondary" onclick="closeCreateTenantModal()">Annuler</button>
-                <button type="button" class="btn btn-primary" onclick="createTenant()">Créer</button>
+                <button type="button" class="btn btn-primary" id="btnNext" onclick="nextStep()">Suivant →</button>
+                <button type="button" class="btn btn-success" id="btnSubmit" onclick="createTenant()" style="display: none;">✓ Créer le compte</button>
             </div>
         </form>
     </div>
 </div>
+
+<style>
+.wizard-step {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    flex: 1;
+}
+.wizard-step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin: 0 auto 0.5rem;
+    transition: all 0.3s ease;
+}
+.wizard-step-number.active {
+    background: #6366f1;
+    color: white;
+}
+.wizard-step-number.completed {
+    background: #10b981;
+    color: white;
+}
+.wizard-step-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+.wizard-content {
+    min-height: 400px;
+}
+</style>
 
 {% endblock %}
 

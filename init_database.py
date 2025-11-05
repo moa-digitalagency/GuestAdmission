@@ -68,6 +68,8 @@ def init_database():
                 logo_url VARCHAR(500),
                 format_numero_reservation VARCHAR(100) DEFAULT 'RES-{YYYY}{MM}{DD}-{NUM}',
                 prochain_numero_sequence INTEGER DEFAULT 1,
+                mode_tarification VARCHAR(20) DEFAULT 'CHAMBRE' CHECK (mode_tarification IN ('CHAMBRE', 'ETABLISSEMENT')),
+                prix_global_nuitee DECIMAL(10, 2),
                 actif BOOLEAN DEFAULT TRUE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

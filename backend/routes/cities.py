@@ -1,76 +1,68 @@
 from flask import Blueprint, jsonify, request
-from flask_login import login_required
-import requests
+import json
+import os
 
 cities_bp = Blueprint('cities', __name__)
 
-CITIES_CACHE = {}
+def get_data_file_path(filename):
+    backend_dir = os.path.dirname(os.path.dirname(__file__))
+    return os.path.join(backend_dir, 'data', filename)
 
-def get_cities_for_country(country_code):
-    """
-    Récupère les villes pour un pays donné.
-    Note: Pour une implémentation complète, vous pouvez utiliser:
-    - GeoDB Cities API (freemium)
-    - Country State City API
-    - Ou une base de données locale de villes
-    
-    Pour l'instant, nous retournons les capitales depuis REST Countries API.
-    """
-    if country_code in CITIES_CACHE:
-        return CITIES_CACHE[country_code]
-    
+@cities_bp.route('/api/pays', methods=['GET'])
+def get_pays():
     try:
-        response = requests.get(f'https://restcountries.com/v3.1/alpha/{country_code}', timeout=10)
-        response.raise_for_status()
-        country_data = response.json()[0]
-        
-        cities = []
-        
-        if country_data.get('capital'):
-            for capital in country_data['capital']:
-                cities.append({
-                    'name': capital,
-                    'type': 'capital',
-                    'country_code': country_code,
-                    'country_name': country_data.get('name', {}).get('common', '')
-                })
-        
-        CITIES_CACHE[country_code] = cities
-        return cities
-    
+        with open(get_data_file_path('pays.json'), 'r', encoding='utf-8') as f:
+            pays = json.load(f)
+        return jsonify(pays)
     except Exception as e:
-        print(f"Erreur récupération villes pour {country_code}: {e}")
-        return []
+        print(f"Erreur lors de la lecture des pays: {e}")
+        return jsonify({'error': 'Erreur lors de la récupération des pays'}), 500
+
+@cities_bp.route('/api/villes/<pays_code>', methods=['GET'])
+def get_villes(pays_code):
+    try:
+        with open(get_data_file_path('villes.json'), 'r', encoding='utf-8') as f:
+            villes_data = json.load(f)
+        
+        villes = villes_data.get(pays_code, [])
+        return jsonify(villes)
+    except Exception as e:
+        print(f"Erreur lors de la lecture des villes: {e}")
+        return jsonify({'error': 'Erreur lors de la récupération des villes'}), 500
 
 @cities_bp.route('/api/cities/<country_code>', methods=['GET'])
-@login_required
 def get_cities(country_code):
-    """
-    Retourne les villes principales d'un pays.
-    Note: Actuellement retourne seulement les capitales.
-    Pour une liste complète, vous devrez intégrer une API de villes dédiée.
-    """
-    cities = get_cities_for_country(country_code.upper())
-    
-    return jsonify({
-        'country_code': country_code.upper(),
-        'cities': cities,
-        'note': 'Liste limitée aux capitales. Pour une liste complète, intégrez GeoDB Cities API ou Country State City API.'
-    })
+    try:
+        with open(get_data_file_path('villes.json'), 'r', encoding='utf-8') as f:
+            villes_data = json.load(f)
+        
+        cities = villes_data.get(country_code.upper(), [])
+        return jsonify({
+            'country_code': country_code.upper(),
+            'cities': cities
+        })
+    except Exception as e:
+        print(f"Erreur lors de la lecture des villes: {e}")
+        return jsonify({'error': 'Erreur lors de la récupération des villes'}), 500
 
 @cities_bp.route('/api/cities/search', methods=['GET'])
-@login_required
 def search_cities():
-    """
-    Recherche de villes par nom.
-    Note: Fonctionnalité limitée sans API de villes dédiée.
-    """
     query = request.args.get('q', '').lower()
     
-    all_cities = []
-    for country_code, cities in CITIES_CACHE.items():
-        for city in cities:
-            if query in city['name'].lower():
-                all_cities.append(city)
-    
-    return jsonify(all_cities[:50])
+    try:
+        with open(get_data_file_path('villes.json'), 'r', encoding='utf-8') as f:
+            villes_data = json.load(f)
+        
+        all_cities = []
+        for country_code, cities in villes_data.items():
+            for city in cities:
+                if query in city.lower():
+                    all_cities.append({
+                        'name': city,
+                        'country_code': country_code
+                    })
+        
+        return jsonify(all_cities[:50])
+    except Exception as e:
+        print(f"Erreur lors de la recherche des villes: {e}")
+        return jsonify({'error': 'Erreur lors de la recherche'}), 500
