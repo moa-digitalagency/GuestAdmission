@@ -1,19 +1,40 @@
 // Platform Admin Dashboard JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    loadUserInfo();
     loadStats();
     loadTenants();
-    setupSidebarNavigation();
+    showSection('dashboard');
 });
 
-function loadUserInfo() {
-    fetch('/api/current-user')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('userInfo').textContent = `${data.nom || ''} ${data.prenom || ''} (${data.role})`;
-        })
-        .catch(error => console.error('Error loading user info:', error));
+function showSection(sectionName) {
+    // Hide all sections
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Update tab buttons
+    document.querySelectorAll('.platform-tab').forEach(tab => {
+        if (tab.dataset.section === sectionName) {
+            tab.classList.remove('btn-secondary');
+            tab.classList.add('btn-primary', 'active');
+        } else {
+            tab.classList.remove('btn-primary', 'active');
+            tab.classList.add('btn-secondary');
+        }
+    });
+    
+    // Show selected section
+    const section = document.getElementById(sectionName + 'Section');
+    if (section) {
+        section.style.display = 'block';
+    }
+    
+    // Load data for the section
+    if (sectionName === 'etablissements') {
+        loadEtablissements();
+    } else if (sectionName === 'users') {
+        loadUsers();
+    }
 }
 
 function loadStats() {
@@ -34,45 +55,39 @@ function loadTenants() {
         .then(tenants => {
             const container = document.getElementById('tenantsList');
             if (tenants.length === 0) {
-                container.innerHTML = '<div class="col-12"><p class="text-center">Aucun compte client</p></div>';
+                container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6b7280;">Aucun compte client</div>';
                 return;
             }
             
             container.innerHTML = tenants.map(tenant => `
-                <div class="col-md-6 mb-3">
-                    <div class="card tenant-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h5 class="card-title">${tenant.nom_compte}</h5>
-                                    <p class="card-text">
-                                        <small class="text-muted">
-                                            Créé le ${new Date(tenant.date_creation).toLocaleDateString('fr-FR')}
-                                        </small>
-                                    </p>
-                                </div>
-                                <span class="badge ${tenant.actif ? 'badge-actif' : 'badge-inactif'}">
-                                    ${tenant.actif ? 'Actif' : 'Inactif'}
-                                </span>
-                            </div>
-                            <hr>
-                            <div class="row text-center">
-                                <div class="col-4">
-                                    <strong>${tenant.nb_etablissements || 0}</strong>
-                                    <br><small>Établissements</small>
-                                </div>
-                                <div class="col-4">
-                                    <strong>${tenant.nb_chambres || 0}</strong>
-                                    <br><small>Chambres</small>
-                                </div>
-                                <div class="col-4">
-                                    <strong>${tenant.nb_reservations || 0}</strong>
-                                    <br><small>Réservations</small>
-                                </div>
-                            </div>
-                            ${tenant.notes ? `<p class="mt-2 mb-0"><small>${tenant.notes}</small></p>` : ''}
+                <div class="dotted-section ${tenant.actif ? 'section-green' : 'section-orange'}" style="transition: transform 0.2s;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <h3 style="margin: 0 0 0.5rem 0; color: #1f2937;">${tenant.nom_compte}</h3>
+                            <small style="color: #6b7280;">
+                                Créé le ${new Date(tenant.date_creation).toLocaleDateString('fr-FR')}
+                            </small>
+                        </div>
+                        <span class="badge ${tenant.actif ? 'badge-green' : 'badge-yellow'}">
+                            ${tenant.actif ? '✓ Actif' : '⏸ Inactif'}
+                        </span>
+                    </div>
+                    <hr style="border: none; border-top: 2px dotted ${tenant.actif ? '#22c55e' : '#f97316'}; margin: 1rem 0;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">${tenant.nb_etablissements || 0}</div>
+                            <small style="color: #6b7280;">Établissements</small>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">${tenant.nb_chambres || 0}</div>
+                            <small style="color: #6b7280;">Chambres</small>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">${tenant.nb_reservations || 0}</div>
+                            <small style="color: #6b7280;">Réservations</small>
                         </div>
                     </div>
+                    ${tenant.notes ? `<p style="margin-top: 1rem; color: #6b7280; font-size: 0.875rem;">${tenant.notes}</p>` : ''}
                 </div>
             `).join('');
         })
@@ -85,23 +100,19 @@ function loadEtablissements() {
         .then(etablissements => {
             const container = document.getElementById('etablissementsList');
             if (etablissements.length === 0) {
-                container.innerHTML = '<div class="col-12"><p class="text-center">Aucun établissement</p></div>';
+                container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #6b7280;">Aucun établissement</div>';
                 return;
             }
             
             container.innerHTML = etablissements.map(etab => `
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">${etab.nom_etablissement}</h5>
-                            <p class="card-text">
-                                <small>${etab.ville || ''} ${etab.pays || ''}</small>
-                            </p>
-                            <span class="badge ${etab.actif ? 'badge-actif' : 'badge-inactif'}">
-                                ${etab.actif ? 'Actif' : 'Inactif'}
-                            </span>
-                        </div>
-                    </div>
+                <div class="dotted-section ${etab.actif ? 'section-blue' : 'section-orange'}">
+                    <h3 style="margin: 0 0 0.5rem 0;">${etab.nom_etablissement}</h3>
+                    <p style="color: #6b7280; margin: 0.5rem 0;">
+                        ${etab.ville || ''} ${etab.pays || ''}
+                    </p>
+                    <span class="badge ${etab.actif ? 'badge-green' : 'badge-yellow'}">
+                        ${etab.actif ? '✓ Actif' : '⏸ Inactif'}
+                    </span>
                 </div>
             `).join('');
         })
@@ -114,7 +125,7 @@ function loadUsers() {
         .then(users => {
             const tbody = document.getElementById('usersList');
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aucun utilisateur</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #6b7280;">Aucun utilisateur</td></tr>';
                 return;
             }
             
@@ -124,11 +135,15 @@ function loadUsers() {
                     <td>${user.prenom || '-'}</td>
                     <td>${user.email || '-'}</td>
                     <td>${user.username}</td>
-                    <td>${user.nb_etablissements || 0}</td>
                     <td>
-                        <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        ${user.etablissements && user.etablissements.length > 0 
+                            ? user.etablissements.map(e => e.nom_etablissement).join(', ') 
+                            : '-'}
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn btn-small btn-primary" onclick="editUser(${user.id})">✏️ Éditer</button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -136,29 +151,13 @@ function loadUsers() {
         .catch(error => console.error('Error loading users:', error));
 }
 
-function setupSidebarNavigation() {
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-        item.addEventListener('click', function() {
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            
-            const section = this.dataset.section;
-            document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
-            
-            if (section === 'dashboard') {
-                document.getElementById('dashboardSection').style.display = 'block';
-            } else if (section === 'tenants') {
-                document.getElementById('tenantsSection').style.display = 'block';
-                loadTenants();
-            } else if (section === 'etablissements') {
-                document.getElementById('etablissementsSection').style.display = 'block';
-                loadEtablissements();
-            } else if (section === 'users') {
-                document.getElementById('usersSection').style.display = 'block';
-                loadUsers();
-            }
-        });
-    });
+function openCreateTenantModal() {
+    document.getElementById('createTenantModal').classList.add('active');
+}
+
+function closeCreateTenantModal() {
+    document.getElementById('createTenantModal').classList.remove('active');
+    document.getElementById('createTenantForm').reset();
 }
 
 function createTenant() {
@@ -166,10 +165,8 @@ function createTenant() {
     const formData = new FormData(form);
     
     const data = {
-        tenant: {
-            nom_compte: formData.get('nom_compte'),
-            notes: formData.get('notes')
-        },
+        nom_compte: formData.get('nom_compte'),
+        notes: formData.get('notes'),
         etablissement: {
             nom_etablissement: formData.get('nom_etablissement'),
             ville: formData.get('ville'),
@@ -185,48 +182,38 @@ function createTenant() {
         }
     };
     
-    fetch('/api/platform-admin/tenants', {
+    fetch('/api/platform-admin/create-tenant', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
     })
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            alert('Compte client créé avec succès !');
-            bootstrap.Modal.getInstance(document.getElementById('createTenantModal')).hide();
-            form.reset();
+            alert('✓ Compte client créé avec succès!');
+            closeCreateTenantModal();
             loadTenants();
             loadStats();
         } else {
-            alert('Erreur: ' + (result.error || 'Erreur inconnue'));
+            alert('❌ Erreur: ' + (result.error || 'Erreur inconnue'));
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Erreur lors de la création du compte');
+        console.error('Error creating tenant:', error);
+        alert('❌ Erreur lors de la création du compte');
     });
 }
 
-function deleteUser(userId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-        return;
-    }
-    
-    fetch(`/api/platform-admin/users/${userId}`, {
-        method: 'DELETE'
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            alert('Utilisateur supprimé');
-            loadUsers();
-        } else {
-            alert('Erreur: ' + (result.error || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Erreur lors de la suppression');
-    });
+function editUser(userId) {
+    alert('Fonctionnalité d\'édition en développement pour l\'utilisateur #' + userId);
 }
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('createTenantModal');
+    if (event.target === modal) {
+        closeCreateTenantModal();
+    }
+});
