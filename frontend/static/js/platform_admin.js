@@ -179,6 +179,10 @@ function closeCreateTenantModal() {
                 <input type="text" name="chambre_nom_0" placeholder="ex: Chambre 101">
             </div>
             <div class="form-group">
+                <label>Type de chambre</label>
+                <input type="text" name="chambre_type_0" placeholder="ex: Standard, Suite, Deluxe">
+            </div>
+            <div class="form-group">
                 <label>Capacité</label>
                 <input type="number" name="chambre_capacite_0" min="1" value="2">
             </div>
@@ -203,6 +207,10 @@ function addChambreRow() {
             <input type="text" name="chambre_nom_${chambreCounter}" placeholder="ex: Chambre ${100 + chambreCounter}">
         </div>
         <div class="form-group">
+            <label>Type de chambre</label>
+            <input type="text" name="chambre_type_${chambreCounter}" placeholder="ex: Standard, Suite, Deluxe">
+        </div>
+        <div class="form-group">
             <label>Capacité</label>
             <input type="number" name="chambre_capacite_${chambreCounter}" min="1" value="2">
         </div>
@@ -224,12 +232,14 @@ function createTenant() {
     chambreRows.forEach(row => {
         const index = row.getAttribute('data-chambre-index');
         const nom = formData.get(`chambre_nom_${index}`);
+        const type_chambre = formData.get(`chambre_type_${index}`);
         const capacite = formData.get(`chambre_capacite_${index}`);
         const prix = formData.get(`chambre_prix_${index}`);
         
         if (nom && nom.trim()) {
             chambres.push({
                 nom: nom,
+                type_chambre: type_chambre || '',
                 capacite: parseInt(capacite) || 2,
                 prix_par_nuit: parseFloat(prix) || 0
             });
@@ -243,16 +253,29 @@ function createTenant() {
         },
         etablissement: {
             nom_etablissement: formData.get('nom_etablissement'),
-            ville: formData.get('ville'),
+            numero_identification: formData.get('numero_identification'),
+            logo_url: formData.get('logo_url'),
             pays: formData.get('pays'),
-            email: formData.get('email')
+            ville: formData.get('ville'),
+            adresse: formData.get('adresse'),
+            telephone: formData.get('telephone'),
+            whatsapp: formData.get('whatsapp'),
+            email: formData.get('email_etablissement'),
+            devise: formData.get('devise'),
+            taux_taxe_sejour: parseFloat(formData.get('taux_taxe_sejour')) || 0,
+            taux_tva: parseFloat(formData.get('taux_tva')) || 0,
+            taux_charge_plateforme: parseFloat(formData.get('taux_charge_plateforme')) || 0,
+            format_numero_reservation: formData.get('format_numero_reservation'),
+            mode_tarification: formData.get('mode_tarification'),
+            prix_global_nuitee: parseFloat(formData.get('prix_global_nuitee')) || null
         },
         admin: {
             username: formData.get('admin_username'),
             password: formData.get('admin_password'),
             nom: formData.get('admin_nom'),
             prenom: formData.get('admin_prenom'),
-            email: formData.get('admin_email')
+            email: formData.get('admin_email'),
+            telephone: formData.get('admin_telephone')
         },
         chambres: chambres
     };

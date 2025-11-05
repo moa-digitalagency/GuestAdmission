@@ -131,6 +131,7 @@ def create_tenant_with_etablissement():
             chambre_id = Chambre.create({
                 'etablissement_id': etablissement_id,
                 'nom': chambre_data.get('nom'),
+                'type_chambre': chambre_data.get('type_chambre', ''),
                 'capacite': chambre_data.get('capacite', 2),
                 'prix_par_nuit': chambre_data.get('prix_par_nuit', 0),
                 'description': chambre_data.get('description', ''),

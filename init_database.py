@@ -44,7 +44,22 @@ def init_database():
                 prenom VARCHAR(100),
                 email VARCHAR(150),
                 role VARCHAR(50) DEFAULT 'admin',
+                etablissement_id INTEGER,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Créer la table tenant_accounts (comptes clients)
+        print("  📋 Création de la table 'tenant_accounts'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS tenant_accounts (
+                id SERIAL PRIMARY KEY,
+                nom_compte VARCHAR(200) NOT NULL,
+                primary_admin_user_id INTEGER,
+                notes TEXT,
+                actif BOOLEAN DEFAULT TRUE,
+                date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
@@ -53,6 +68,7 @@ def init_database():
         cur.execute('''
             CREATE TABLE IF NOT EXISTS etablissements (
                 id SERIAL PRIMARY KEY,
+                tenant_account_id INTEGER REFERENCES tenant_accounts(id) ON DELETE CASCADE,
                 nom_etablissement VARCHAR(200) NOT NULL,
                 numero_identification VARCHAR(100),
                 pays VARCHAR(100),
@@ -83,6 +99,7 @@ def init_database():
                 id SERIAL PRIMARY KEY,
                 etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
                 nom VARCHAR(100) NOT NULL,
+                type_chambre VARCHAR(100),
                 description TEXT,
                 capacite INTEGER DEFAULT 2,
                 prix_par_nuit DECIMAL(10, 2),
@@ -326,6 +343,20 @@ def init_database():
             ADD COLUMN IF NOT EXISTS closed_at TIMESTAMP
         ''')
         
+        # Créer la table user_etablissements pour lier les utilisateurs aux établissements
+        print("  📋 Création de la table 'user_etablissements'...")
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS user_etablissements (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE CASCADE,
+                role VARCHAR(50) DEFAULT 'user',
+                is_primary_admin BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id, etablissement_id)
+            )
+        ''')
+        
         # Créer la table activity_logs pour le suivi des activités
         print("  📋 Création de la table 'activity_logs'...")
         cur.execute('''
@@ -340,6 +371,7 @@ def init_database():
                 user_agent TEXT,
                 status_code INTEGER,
                 details JSONB,
+                etablissement_id INTEGER REFERENCES etablissements(id) ON DELETE SET NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
@@ -363,13 +395,13 @@ def init_database():
         user_count = result['count'] if result else 0
         
         if user_count == 0:
-            print("  ➕ Création de l'utilisateur admin par défaut...")
+            print("  ➕ Création de l'utilisateur PLATFORM_ADMIN par défaut...")
             default_password = generate_password_hash('admin123')
             cur.execute('''
-                INSERT INTO users (username, password_hash, nom, prenom, role)
-                VALUES (%s, %s, %s, %s, %s)
-            ''', ('admin', default_password, 'Administrateur', 'Système', 'admin'))
-            print("  ✅ Utilisateur admin créé (username: admin, password: admin123)")
+                INSERT INTO users (username, password_hash, nom, prenom, role, email)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            ''', ('admin', default_password, 'Administrateur', 'Plateforme', 'PLATFORM_ADMIN', 'admin@platform.com'))
+            print("  ✅ Utilisateur PLATFORM_ADMIN créé (username: admin, password: admin123)")
         else:
             print(f"  ✅ {user_count} utilisateur(s) déjà présent(s)")
         
