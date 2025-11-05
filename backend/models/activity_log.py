@@ -9,7 +9,7 @@ class ActivityLog:
     """
     
     @staticmethod
-    def create(user_id, username, action, route, method, ip_address, user_agent, status_code=None, details=None):
+    def create(user_id, username, action, route, method, ip_address, user_agent, status_code=None, details=None, etablissement_id=None):
         """
         Créer un nouveau log d'activité
         
@@ -23,6 +23,7 @@ class ActivityLog:
             user_agent: User agent du navigateur
             status_code: Code de statut HTTP (optionnel)
             details: Informations supplémentaires au format JSON (optionnel)
+            etablissement_id: ID de l'établissement concerné (optionnel)
         """
         conn = get_db_connection()
         cur = conn.cursor()
@@ -33,9 +34,9 @@ class ActivityLog:
             cur.execute('''
                 INSERT INTO activity_logs (
                     user_id, username, action, route, method, 
-                    ip_address, user_agent, status_code, details, created_at
+                    ip_address, user_agent, status_code, details, created_at, etablissement_id
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
             ''', (
                 user_id,
@@ -47,7 +48,8 @@ class ActivityLog:
                 user_agent,
                 status_code,
                 details_json,
-                datetime.now()
+                datetime.now(),
+                etablissement_id
             ))
             
             log_id = cur.fetchone()['id']
@@ -63,7 +65,7 @@ class ActivityLog:
             conn.close()
     
     @staticmethod
-    def get_all(limit=100, offset=0, user_id=None, action=None, start_date=None, end_date=None):
+    def get_all(limit=100, offset=0, user_id=None, action=None, start_date=None, end_date=None, etablissement_ids=None):
         """
         Récupérer tous les logs d'activité avec filtres optionnels
         
@@ -74,6 +76,7 @@ class ActivityLog:
             action: Filtrer par type d'action (optionnel)
             start_date: Date de début (optionnel)
             end_date: Date de fin (optionnel)
+            etablissement_ids: Liste des IDs d'établissements accessibles (None = tous, [] = aucun)
         """
         conn = get_db_connection()
         cur = conn.cursor()
@@ -89,6 +92,13 @@ class ActivityLog:
                 WHERE 1=1
             '''
             params = []
+            
+            if etablissement_ids is not None:
+                if not etablissement_ids:
+                    return []
+                placeholders = ','.join(['%s'] * len(etablissement_ids))
+                query += f' AND (al.etablissement_id IN ({placeholders}) OR al.etablissement_id IS NULL)'
+                params.extend(etablissement_ids)
             
             if user_id:
                 query += ' AND al.user_id = %s'
@@ -121,9 +131,16 @@ class ActivityLog:
             conn.close()
     
     @staticmethod
-    def get_count(user_id=None, action=None, start_date=None, end_date=None):
+    def get_count(user_id=None, action=None, start_date=None, end_date=None, etablissement_ids=None):
         """
         Compter le nombre total de logs avec filtres optionnels
+        
+        Args:
+            user_id: Filtrer par utilisateur (optionnel)
+            action: Filtrer par type d'action (optionnel)
+            start_date: Date de début (optionnel)
+            end_date: Date de fin (optionnel)
+            etablissement_ids: Liste des IDs d'établissements accessibles (None = tous, [] = aucun)
         """
         conn = get_db_connection()
         cur = conn.cursor()
@@ -131,6 +148,13 @@ class ActivityLog:
         try:
             query = 'SELECT COUNT(*) as count FROM activity_logs WHERE 1=1'
             params = []
+            
+            if etablissement_ids is not None:
+                if not etablissement_ids:
+                    return 0
+                placeholders = ','.join(['%s'] * len(etablissement_ids))
+                query += f' AND (etablissement_id IN ({placeholders}) OR etablissement_id IS NULL)'
+                params.extend(etablissement_ids)
             
             if user_id:
                 query += ' AND user_id = %s'

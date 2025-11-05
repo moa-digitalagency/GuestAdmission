@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from flask_login import login_required, current_user
 from backend.models.activity_log import ActivityLog
+from backend.utils.tenant_context import get_accessible_etablissement_ids
 from datetime import datetime, timedelta
 
 activity_logs_bp = Blueprint('activity_logs', __name__)
@@ -20,6 +21,7 @@ def activity_logs_page():
 def get_activity_logs():
     """
     API pour récupérer les logs d'activité avec pagination et filtres
+    Filtre automatiquement par établissements accessibles pour la sécurité tenant
     """
     try:
         page = max(1, int(request.args.get('page', 1)))
@@ -45,20 +47,24 @@ def get_activity_logs():
         
         offset = (page - 1) * per_page
         
+        etablissement_ids = get_accessible_etablissement_ids()
+        
         logs = ActivityLog.get_all(
             limit=per_page,
             offset=offset,
             user_id=user_id,
             action=action,
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            etablissement_ids=etablissement_ids
         )
         
         total_count = ActivityLog.get_count(
             user_id=user_id,
             action=action,
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            etablissement_ids=etablissement_ids
         )
         
         logs_list = []
@@ -100,6 +106,7 @@ def get_activity_logs():
 def get_activity_log(log_id):
     """
     API pour récupérer un log spécifique
+    Vérifie l'accès selon les établissements autorisés
     """
     try:
         log = ActivityLog.get_by_id(log_id)
@@ -109,6 +116,14 @@ def get_activity_log(log_id):
                 'success': False,
                 'error': 'Log non trouvé'
             }), 404
+        
+        etablissement_ids = get_accessible_etablissement_ids()
+        if etablissement_ids is not None:
+            if log.get('etablissement_id') and log['etablissement_id'] not in etablissement_ids:
+                return jsonify({
+                    'success': False,
+                    'error': 'Accès refusé'
+                }), 403
         
         return jsonify({
             'success': True,
@@ -175,6 +190,7 @@ def get_user_activity_stats(user_id):
 def export_activity_logs():
     """
     API pour exporter les logs d'activité en CSV
+    Filtre automatiquement par établissements accessibles
     """
     try:
         from flask import Response
@@ -200,13 +216,16 @@ def export_activity_logs():
         if end_date:
             end_date = datetime.fromisoformat(end_date)
         
+        etablissement_ids = get_accessible_etablissement_ids()
+        
         logs = ActivityLog.get_all(
             limit=10000,
             offset=0,
             user_id=user_id,
             action=action,
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            etablissement_ids=etablissement_ids
         )
         
         si = StringIO()

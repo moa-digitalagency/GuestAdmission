@@ -90,10 +90,88 @@
 <!-- Settings Section -->
 <div id="settingsSection" class="content-section" style="display: none;">
     <h2 style="margin-bottom: 1.5rem;">Paramètres de la plateforme</h2>
-    <div class="dotted-section section-purple">
-        <h3 style="margin-bottom: 1rem;">Configuration générale</h3>
-        <p style="color: #6b7280;">Les paramètres de la plateforme seront disponibles ici prochainement.</p>
-    </div>
+    
+    <form id="platformSettingsForm" class="dotted-section section-purple">
+        <h3 style="margin-bottom: 1.5rem;">Configuration générale</h3>
+        
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nom de la plateforme *</label>
+                <input type="text" id="platform_name" name="platform_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label>URL du logo</label>
+                <input type="text" id="platform_logo_url" name="platform_logo_url" placeholder="https://...">
+            </div>
+            
+            <div class="form-group">
+                <label>Email de support</label>
+                <input type="email" id="support_email" name="support_email">
+            </div>
+            
+            <div class="form-group">
+                <label>Téléphone de support</label>
+                <input type="tel" id="support_phone" name="support_phone">
+            </div>
+            
+            <div class="form-group">
+                <label>Devise par défaut</label>
+                <select id="default_currency" name="default_currency">
+                    <option value="MAD">MAD (Dirham marocain)</option>
+                    <option value="EUR">EUR (Euro)</option>
+                    <option value="USD">USD (Dollar)</option>
+                    <option value="GBP">GBP (Livre sterling)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Langue par défaut</label>
+                <select id="default_language" name="default_language">
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                    <option value="ar">العربية</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>
+                    <input type="checkbox" id="maintenance_mode" name="maintenance_mode">
+                    Mode maintenance activé
+                </label>
+            </div>
+            
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Message de maintenance</label>
+                <textarea id="maintenance_message" name="maintenance_message" rows="2" placeholder="La plateforme est en maintenance..."></textarea>
+            </div>
+        </div>
+        
+        <hr style="margin: 1.5rem 0; border: none; border-top: 2px dotted #d1d5db;">
+        
+        <h3 style="margin-bottom: 1.5rem;">SEO et Meta</h3>
+        <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Titre Meta</label>
+                <input type="text" id="meta_title" name="meta_title">
+            </div>
+            
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Description Meta</label>
+                <textarea id="meta_description" name="meta_description" rows="2"></textarea>
+            </div>
+            
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Mots-clés Meta</label>
+                <input type="text" id="meta_keywords" name="meta_keywords" placeholder="mot1, mot2, mot3">
+            </div>
+        </div>
+        
+        <div class="button-group" style="justify-content: flex-end; margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary" onclick="loadPlatformSettings()">Annuler</button>
+            <button type="button" class="btn btn-success" onclick="savePlatformSettings()">💾 Enregistrer</button>
+        </div>
+    </form>
 </div>
 
 <!-- Create Tenant Modal -->

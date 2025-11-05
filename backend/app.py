@@ -64,6 +64,9 @@ app.register_blueprint(platform_admin_bp)
 from .routes.tenant_admin import tenant_admin_bp
 app.register_blueprint(tenant_admin_bp)
 
+from .routes.platform_settings import platform_settings_bp
+app.register_blueprint(platform_settings_bp)
+
 @app.route('/')
 @login_required
 def index():

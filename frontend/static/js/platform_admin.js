@@ -217,3 +217,106 @@ document.addEventListener('click', function(event) {
         closeCreateTenantModal();
     }
 });
+
+// Platform Settings Management
+function loadPlatformSettings() {
+    fetch('/api/platform-settings')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.settings) {
+                const settings = data.settings;
+                document.getElementById('platform_name').value = settings.platform_name || '';
+                document.getElementById('platform_logo_url').value = settings.platform_logo_url || '';
+                document.getElementById('support_email').value = settings.support_email || '';
+                document.getElementById('support_phone').value = settings.support_phone || '';
+                document.getElementById('default_currency').value = settings.default_currency || 'MAD';
+                document.getElementById('default_language').value = settings.default_language || 'fr';
+                document.getElementById('maintenance_mode').checked = settings.maintenance_mode || false;
+                document.getElementById('maintenance_message').value = settings.maintenance_message || '';
+                document.getElementById('meta_title').value = settings.meta_title || '';
+                document.getElementById('meta_description').value = settings.meta_description || '';
+                document.getElementById('meta_keywords').value = settings.meta_keywords || '';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading platform settings:', error);
+            showNotification('Erreur lors du chargement des paramètres', 'error');
+        });
+}
+
+function savePlatformSettings() {
+    const settings = {
+        platform_name: document.getElementById('platform_name').value,
+        platform_logo_url: document.getElementById('platform_logo_url').value,
+        support_email: document.getElementById('support_email').value,
+        support_phone: document.getElementById('support_phone').value,
+        default_currency: document.getElementById('default_currency').value,
+        default_language: document.getElementById('default_language').value,
+        maintenance_mode: document.getElementById('maintenance_mode').checked,
+        maintenance_message: document.getElementById('maintenance_message').value,
+        meta_title: document.getElementById('meta_title').value,
+        meta_description: document.getElementById('meta_description').value,
+        meta_keywords: document.getElementById('meta_keywords').value
+    };
+    
+    fetch('/api/platform-settings', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(settings)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('✅ Paramètres enregistrés avec succès', 'success');
+        } else {
+            showNotification('❌ Erreur: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error saving platform settings:', error);
+        showNotification('❌ Erreur lors de l\'enregistrement', 'error');
+    });
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${type === 'success' ? '#22c55e' : type === 'error' ? '#ef4444' : '#3b82f6'};
+        color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Add animation CSS
+if (!document.getElementById('notificationStyles')) {
+    const style = document.createElement('style');
+    style.id = 'notificationStyles';
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
