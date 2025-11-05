@@ -201,3 +201,8 @@ psycopg2-binary
 reportlab
 requests
 werkzeug
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
