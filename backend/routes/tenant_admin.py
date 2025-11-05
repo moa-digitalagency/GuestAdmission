@@ -246,6 +246,26 @@ def remove_user(user_id):
         conn.close()
         return jsonify({'error': 'Utilisateur non trouvé dans ce compte tenant'}), 404
     
+    # Vérifier que ce n'est pas le dernier administrateur du tenant
+    cur.execute('''
+        SELECT COUNT(DISTINCT u.id) as admin_count
+        FROM users u
+        INNER JOIN user_etablissements ue ON u.id = ue.user_id
+        INNER JOIN etablissements e ON ue.etablissement_id = e.id
+        WHERE e.tenant_account_id = %s AND u.role = 'admin'
+    ''', (tenant_account_id,))
+    
+    admin_result = cur.fetchone()
+    
+    # Vérifier si l'utilisateur à supprimer est un admin
+    cur.execute('SELECT role FROM users WHERE id = %s', (user_id,))
+    user_to_delete = cur.fetchone()
+    
+    if user_to_delete and user_to_delete['role'] == 'admin' and admin_result and admin_result['admin_count'] <= 1:
+        cur.close()
+        conn.close()
+        return jsonify({'error': 'Impossible de supprimer le dernier administrateur du compte tenant'}), 400
+    
     # Supprimer l'utilisateur
     cur.execute('DELETE FROM users WHERE id = %s', (user_id,))
     conn.commit()

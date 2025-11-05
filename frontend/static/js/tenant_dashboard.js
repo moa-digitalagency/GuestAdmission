@@ -86,9 +86,13 @@ function loadMyEtablissementsForSelect() {
         .catch(error => console.error('Error loading etablissements for select:', error));
 }
 
-function showAddEtablissementModal() {
-    const modal = new bootstrap.Modal(document.getElementById('addEtablissementModal'));
-    modal.show();
+function openAddEtablissementModal() {
+    document.getElementById('addEtablissementModal').classList.add('active');
+}
+
+function closeAddEtablissementModal() {
+    document.getElementById('addEtablissementModal').classList.remove('active');
+    document.getElementById('addEtablissementForm').reset();
 }
 
 function addEtablissement() {
@@ -114,8 +118,7 @@ function addEtablissement() {
     .then(result => {
         if (result.success) {
             alert('Établissement ajouté avec succès !');
-            bootstrap.Modal.getInstance(document.getElementById('addEtablissementModal')).hide();
-            form.reset();
+            closeAddEtablissementModal();
             loadMyEtablissements();
             loadTenantStats();
             loadMyEtablissementsForSelect();
@@ -129,10 +132,14 @@ function addEtablissement() {
     });
 }
 
-function showManageUsersModal() {
-    const modal = new bootstrap.Modal(document.getElementById('manageUsersModal'));
-    modal.show();
+function openManageUsersModal() {
+    document.getElementById('manageUsersModal').classList.add('active');
     loadMyUsers();
+}
+
+function closeManageUsersModal() {
+    document.getElementById('manageUsersModal').classList.remove('active');
+    hideAddUserForm();
 }
 
 function loadMyUsers() {

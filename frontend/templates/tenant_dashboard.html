@@ -27,14 +27,14 @@
 </div>
 
 <div class="dotted-section section-blue">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Mes établissements</h2>
-        <div>
-            <button class="btn btn-sm btn-success" onclick="showAddEtablissementModal()">
-                <i class="bi bi-plus-circle"></i> Ajouter un établissement
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <h2 style="margin: 0;">Mes établissements</h2>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <button class="btn btn-success btn-small" onclick="openAddEtablissementModal()">
+                ➕ Ajouter un établissement
             </button>
-            <button class="btn btn-sm btn-primary ms-2" onclick="showManageUsersModal()">
-                <i class="bi bi-people"></i> Gérer les utilisateurs
+            <button class="btn btn-primary btn-small" onclick="openManageUsersModal()">
+                👥 Gérer les utilisateurs
             </button>
         </div>
     </div>
@@ -60,117 +60,112 @@
 </div>
 
 <!-- Add Etablissement Modal -->
-<div class="modal fade" id="addEtablissementModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Ajouter un établissement</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addEtablissementForm">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Nom de l'établissement *</label>
-                            <input type="text" class="form-control" name="nom_etablissement" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Ville</label>
-                            <input type="text" class="form-control" name="ville">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Pays</label>
-                            <input type="text" class="form-control" name="pays">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Adresse</label>
-                        <textarea class="form-control" name="adresse" rows="2"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Téléphone</label>
-                            <input type="text" class="form-control" name="telephone">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Devise</label>
-                            <input type="text" class="form-control" name="devise" value="MAD">
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-primary" onclick="addEtablissement()">Ajouter</button>
-            </div>
+<div class="modal" id="addEtablissementModal">
+    <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-header">
+            <h3 style="margin: 0;">Ajouter un établissement</h3>
+            <button class="modal-close" onclick="closeAddEtablissementModal()">✕</button>
         </div>
+        <form id="addEtablissementForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom de l'établissement *</label>
+                    <input type="text" name="nom_etablissement" required>
+                </div>
+                <div class="form-group">
+                    <label>Ville</label>
+                    <input type="text" name="ville">
+                </div>
+                <div class="form-group">
+                    <label>Pays</label>
+                    <input type="text" name="pays">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email">
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Adresse</label>
+                    <textarea name="adresse" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" name="telephone">
+                </div>
+                <div class="form-group">
+                    <label>Devise</label>
+                    <input type="text" name="devise" value="MAD">
+                </div>
+            </div>
+            <div class="button-group" style="justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="closeAddEtablissementModal()">Annuler</button>
+                <button type="button" class="btn btn-success" onclick="addEtablissement()">➕ Ajouter</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- Manage Users Modal -->
-<div class="modal fade" id="manageUsersModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Gérer les utilisateurs</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <button class="btn btn-sm btn-success mb-3" onclick="showAddUserForm()">
-                    <i class="bi bi-plus"></i> Ajouter un utilisateur
-                </button>
-                <div id="addUserFormContainer" style="display: none;" class="mb-3 p-3 border rounded">
-                    <h6>Nouvel utilisateur</h6>
-                    <form id="addUserForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <input type="text" class="form-control" name="username" placeholder="Nom d'utilisateur" required>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <input type="text" class="form-control" name="nom" placeholder="Nom">
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <input type="text" class="form-control" name="prenom" placeholder="Prénom">
-                            </div>
-                        </div>
-                        <div class="mb-2">
-                            <input type="email" class="form-control" name="email" placeholder="Email">
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Établissements (maintenir Ctrl pour sélection multiple)</label>
-                            <select class="form-select" name="etablissement_ids" multiple required id="userEtablissementSelect">
-                            </select>
-                        </div>
-                        <button type="button" class="btn btn-primary btn-sm" onclick="addUser()">Ajouter</button>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="hideAddUserForm()">Annuler</button>
-                    </form>
+<div class="modal" id="manageUsersModal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h3 style="margin: 0;">Gérer les utilisateurs</h3>
+            <button class="modal-close" onclick="closeManageUsersModal()">✕</button>
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <button class="btn btn-success btn-small" onclick="showAddUserForm()">
+                ➕ Ajouter un utilisateur
+            </button>
+        </div>
+        <div id="addUserFormContainer" style="display: none; margin-bottom: 1.5rem;" class="dotted-section section-green">
+            <h4 style="margin-bottom: 1rem;">Nouvel utilisateur</h4>
+            <form id="addUserForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nom d'utilisateur *</label>
+                        <input type="text" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mot de passe *</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" name="nom">
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" name="prenom">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Email</label>
+                        <input type="email" name="email">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Établissements (maintenir Ctrl pour sélection multiple) *</label>
+                        <select name="etablissement_ids" multiple required id="userEtablissementSelect" style="min-height: 100px;">
+                        </select>
+                    </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Nom complet</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Établissements</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersListBody"></tbody>
-                    </table>
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary btn-small" onclick="hideAddUserForm()">Annuler</button>
+                    <button type="button" class="btn btn-success btn-small" onclick="addUser()">➕ Ajouter</button>
                 </div>
-            </div>
+            </form>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom complet</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Établissements</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersListBody"></tbody>
+            </table>
         </div>
     </div>
 </div>
