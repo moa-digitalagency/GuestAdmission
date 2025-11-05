@@ -45,6 +45,21 @@ def update_platform_settings():
                 'error': 'Aucune donnée fournie'
             }), 400
         
+        if not data.get('platform_name') or not data.get('platform_name').strip():
+            return jsonify({
+                'success': False,
+                'error': 'Le nom de la plateforme est requis'
+            }), 400
+        
+        if data.get('platform_name') and len(data['platform_name']) > 255:
+            return jsonify({
+                'success': False,
+                'error': 'Le nom de la plateforme ne peut pas dépasser 255 caractères'
+            }), 400
+        
+        if data.get('custom_css') or data.get('custom_js'):
+            pass
+        
         PlatformSettings.update_settings(data)
         
         return jsonify({

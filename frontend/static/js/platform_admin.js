@@ -34,6 +34,8 @@ function showSection(sectionName) {
         loadEtablissements();
     } else if (sectionName === 'users') {
         loadUsers();
+    } else if (sectionName === 'settings') {
+        loadPlatformSettings();
     }
 }
 
