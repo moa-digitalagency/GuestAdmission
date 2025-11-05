@@ -126,13 +126,13 @@ class TenantAccount:
         ''', (tenant_id,))
         nb_chambres = cur.fetchone()['count']
         
-        # Nombre de réservations total
+        # Nombre de séjours total
         cur.execute('''
             SELECT COUNT(*) as count FROM reservations r
             INNER JOIN etablissements e ON r.etablissement_id = e.id
             WHERE e.tenant_account_id = %s
         ''', (tenant_id,))
-        nb_reservations = cur.fetchone()['count']
+        nb_sejours = cur.fetchone()['count']
         
         cur.close()
         conn.close()
@@ -140,5 +140,5 @@ class TenantAccount:
         return {
             'nb_etablissements': nb_etablissements,
             'nb_chambres': nb_chambres,
-            'nb_reservations': nb_reservations
+            'nb_sejours': nb_sejours
         }

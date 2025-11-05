@@ -110,7 +110,7 @@ def verify_etablissement_access(etablissement_id):
 
 def verify_reservation_access(reservation_id):
     """
-    Vérifier si l'utilisateur connecté a accès à une réservation
+    Vérifier si l'utilisateur connecté a accès à une séjour
     
     Args:
         reservation_id: L'ID de la réservation à vérifier
@@ -125,7 +125,7 @@ def verify_reservation_access(reservation_id):
     if current_user.is_platform_admin():
         return True
     
-    # Récupérer l'etablissement_id de la réservation
+    # Récupérer l'etablissement_id de la séjour
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -153,7 +153,7 @@ def get_tenant_account_stats(tenant_id):
         tenant_id: L'ID du compte tenant
     
     Returns:
-        Dict avec les statistiques (établissements, chambres, réservations, etc.)
+        Dict avec les statistiques (établissements, chambres, séjours, etc.)
     """
     conn = get_db_connection()
     cur = conn.cursor()
@@ -175,14 +175,14 @@ def get_tenant_account_stats(tenant_id):
     ''', (tenant_id,))
     nb_chambres = cur.fetchone()['count']
     
-    # Nombre de réservations
+    # Nombre de séjours
     cur.execute('''
         SELECT COUNT(*) as count 
         FROM reservations r
         INNER JOIN etablissements e ON r.etablissement_id = e.id
         WHERE e.tenant_account_id = %s
     ''', (tenant_id,))
-    nb_reservations = cur.fetchone()['count']
+    nb_sejours = cur.fetchone()['count']
     
     # Nombre d'utilisateurs
     cur.execute('''
@@ -199,6 +199,6 @@ def get_tenant_account_stats(tenant_id):
     return {
         'nb_etablissements': nb_etablissements,
         'nb_chambres': nb_chambres,
-        'nb_reservations': nb_reservations,
+        'nb_sejours': nb_sejours,
         'nb_users': nb_users
     }

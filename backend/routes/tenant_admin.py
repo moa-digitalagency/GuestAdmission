@@ -348,13 +348,13 @@ def get_tenant_stats():
     ''', (tenant_account_id,))
     nb_chambres = cur.fetchone()['count']
     
-    # Nombre de réservations
+    # Nombre de séjours
     cur.execute('''
         SELECT COUNT(*) as count FROM reservations r
         INNER JOIN etablissements e ON r.etablissement_id = e.id
         WHERE e.tenant_account_id = %s
     ''', (tenant_account_id,))
-    nb_reservations = cur.fetchone()['count']
+    nb_sejours = cur.fetchone()['count']
     
     # Nombre d'utilisateurs
     cur.execute('''
@@ -371,6 +371,6 @@ def get_tenant_stats():
     return jsonify({
         'nb_etablissements': nb_etablissements,
         'nb_chambres': nb_chambres,
-        'nb_reservations': nb_reservations,
+        'nb_sejours': nb_sejours,
         'nb_users': nb_users
     })

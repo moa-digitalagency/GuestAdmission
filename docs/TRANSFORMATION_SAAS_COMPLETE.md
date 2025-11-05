@@ -46,7 +46,7 @@ Votre système a été **complètement transformé** en une plateforme SaaS mult
   - Fès: 4 chambres (Andalouse, Suite Bleue, Zellige, Panorama)
 - **Utilisateurs:** 2 (admin + 1 staff)
 - **Extras:** Petit-déjeuner, transferts, massage, cours de cuisine
-- **Réservations:** 1 réservation de démonstration
+- **Séjours:** 1 séjour de démonstration
 
 #### 🏖️ Tenant 2: Villa Ocean
 - **Admin:** villa_admin / villa123
@@ -88,7 +88,7 @@ Votre système a été **complètement transformé** en une plateforme SaaS mult
 - ✅ Gestion des chambres de ses établissements
 - ✅ Invitation d'utilisateurs avec accès multi-établissements
 - ✅ Statistiques de son compte
-- ✅ Gestion des réservations
+- ✅ Gestion des séjours
 - ✅ Gestion des extras
 
 ## 🔄 Initialisation automatique

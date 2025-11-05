@@ -22,7 +22,7 @@ def log_activity(action, details=None):
     Enregistrer une activité utilisateur
     
     Args:
-        action: Type d'action (ex: 'login', 'create_reservation', 'update_client')
+        action: Type d'action (ex: 'login', 'create_sejour', 'update_client')
         details: Informations supplémentaires (dict, sera converti en JSON)
     """
     try:
@@ -53,8 +53,8 @@ def track_activity(action_name):
     Décorateur pour enregistrer automatiquement une activité lors de l'appel d'une fonction
     
     Usage:
-        @track_activity('create_reservation')
-        def create_reservation():
+        @track_activity('create_sejour')
+        def create_sejour():
             ...
     """
     def decorator(f):
@@ -132,13 +132,13 @@ class ActivityLoggerMiddleware:
         elif '/dashboard' in path_lower:
             return 'view_dashboard'
         elif '/nouveau-sejour' in path_lower:
-            return 'view_new_reservation_form'
+            return 'view_new_sejour_form'
         elif '/sejours' in path_lower and method == 'GET':
-            return 'view_reservations_list'
+            return 'view_sejours_list'
         elif '/sejours' in path_lower and method == 'POST':
-            return 'create_reservation'
+            return 'create_sejour'
         elif '/sejour/' in path_lower and method == 'GET':
-            return 'view_reservation_detail'
+            return 'view_sejour_detail'
         elif '/clients' in path_lower and method == 'GET':
             return 'view_clients_list'
         elif '/clients' in path_lower and method == 'POST':

@@ -81,23 +81,23 @@ def synchronize_calendar(calendar_id):
     return jsonify(result), 400
 
 
-@calendars_bp.route('/api/calendriers/<int:calendar_id>/reservations', methods=['GET'])
+@calendars_bp.route('/api/calendriers/<int:calendar_id>/sejours', methods=['GET'])
 @login_required
-def get_calendar_reservations(calendar_id):
-    """Récupérer les réservations d'un calendrier"""
-    reservations = CalendarService.get_calendar_reservations(calendar_id)
-    return jsonify(reservations)
+def get_calendar_sejours(calendar_id):
+    """Récupérer les séjours d'un calendrier"""
+    sejours = CalendarService.get_calendar_sejours(calendar_id)
+    return jsonify(sejours)
 
 
-@calendars_bp.route('/api/reservations-ical', methods=['GET'])
+@calendars_bp.route('/api/sejours-ical', methods=['GET'])
 @login_required
-def get_all_ical_reservations():
-    """Récupérer toutes les réservations iCal avec filtres"""
+def get_all_ical_sejours():
+    """Récupérer toutes les séjours iCal avec filtres"""
     etablissement_id = request.args.get('etablissement_id', type=int)
     date_debut = request.args.get('date_debut')
     date_fin = request.args.get('date_fin')
     
-    reservations = CalendarService.get_all_ical_reservations(
+    sejours = CalendarService.get_all_ical_sejours(
         etablissement_id, date_debut, date_fin
     )
-    return jsonify(reservations)
+    return jsonify(sejours)

@@ -129,7 +129,7 @@ python3 migrations/004_add_platform_admin_role.py
 ### Tenant Dashboard (`/tenant`)
 
 **Fonctionnalités:**
-- Statistiques du compte (établissements, chambres, réservations, utilisateurs)
+- Statistiques du compte (établissements, chambres, séjours, utilisateurs)
 - Liste des établissements du compte
 - Ajouter des établissements supplémentaires
 - Gérer les utilisateurs du compte
@@ -214,7 +214,7 @@ python3 migrations/004_add_platform_admin_role.py
 **Prérequis:**
 1. Base de données PostgreSQL créée et accessible via DATABASE_URL
 2. Toutes les migrations précédentes exécutées (001, 002, 003)
-3. Tables de base existantes: users, etablissements, chambres, reservations, etc.
+3. Tables de base existantes: users, etablissements, chambres, sejours, etc.
 
 **Étapes de déploiement:**
 

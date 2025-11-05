@@ -54,7 +54,7 @@ def reset_data():
         from backend.config.database import get_db_connection
         
         data = request.json
-        reset_reservations = data.get('reset_reservations', False)
+        reset_sejours = data.get('reset_sejours', False)
         reset_chambres = data.get('reset_chambres', False)
         reset_etablissements = data.get('reset_etablissements', False)
         
@@ -62,13 +62,13 @@ def reset_data():
         cur = conn.cursor()
         
         try:
-            if reset_reservations:
+            if reset_sejours:
                 cur.execute("DELETE FROM reservations_chambres")
                 cur.execute("DELETE FROM personnes")
                 cur.execute("DELETE FROM reservations")
             
             if reset_chambres:
-                if not reset_reservations:
+                if not reset_sejours:
                     cur.execute("DELETE FROM reservations_chambres")
                 cur.execute("DELETE FROM chambres")
             

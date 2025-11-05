@@ -163,7 +163,7 @@ def get_super_admin_stats():
     total_admins = cur.fetchone()['count']
     
     cur.execute('SELECT COUNT(*) as count FROM reservations')
-    total_reservations = cur.fetchone()['count']
+    total_sejours = cur.fetchone()['count']
     
     cur.execute('SELECT COUNT(*) as count FROM chambres')
     total_chambres = cur.fetchone()['count']
@@ -175,6 +175,6 @@ def get_super_admin_stats():
         'etablissements_actifs': etablissements_actifs,
         'total_etablissements': total_etablissements,
         'total_admins': total_admins,
-        'total_reservations': total_reservations,
+        'total_sejours': total_sejours,
         'total_chambres': total_chambres
     })

@@ -16,7 +16,7 @@ class ActivityLog:
         Args:
             user_id: ID de l'utilisateur (peut être None pour les actions non authentifiées)
             username: Nom d'utilisateur
-            action: Description de l'action (ex: 'login', 'create_reservation', 'view_dashboard')
+            action: Description de l'action (ex: 'login', 'create_sejour', 'view_dashboard')
             route: Route/URL de la page
             method: Méthode HTTP (GET, POST, etc.)
             ip_address: Adresse IP de l'utilisateur

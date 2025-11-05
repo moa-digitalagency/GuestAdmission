@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from ..models.reservation import Reservation
+from ..models.reservation import Sejour
 from ..models.personne import Personne
 from ..utils import serialize_rows, serialize_row
 from ..utils.tenant_context import (
@@ -50,7 +50,7 @@ def get_sejour(sejour_id):
     if not verify_reservation_access(sejour_id):
         return jsonify({'error': 'Accès refusé à ce séjour'}), 403
     
-    sejour = Reservation.get_by_id(sejour_id)
+    sejour = Sejour.get_by_id(sejour_id)
     if sejour:
         personnes = Personne.get_by_reservation(sejour_id)
         
@@ -141,7 +141,7 @@ def create_sejour():
         if result['count'] != len(chambres_ids):
             return jsonify({'error': 'Certaines chambres n\'appartiennent pas à cet établissement'}), 400
     
-    sejour_id = Reservation.create(sejour_data)
+    sejour_id = Sejour.create(sejour_data)
     
     if sejour_id:
         if chambres_ids:
@@ -177,7 +177,7 @@ def update_sejour(sejour_id):
         return jsonify({'error': 'Accès refusé à ce séjour'}), 403
     
     data = request.get_json()
-    Reservation.update(sejour_id, data)
+    Sejour.update(sejour_id, data)
     return jsonify({'message': 'Séjour mis à jour avec succès'})
 
 @sejours_bp.route('/api/sejours/<int:sejour_id>', methods=['DELETE'])
@@ -188,7 +188,7 @@ def delete_sejour(sejour_id):
     if not verify_reservation_access(sejour_id):
         return jsonify({'error': 'Accès refusé à ce séjour'}), 403
     
-    Reservation.delete(sejour_id)
+    Sejour.delete(sejour_id)
     return jsonify({'message': 'Séjour supprimé avec succès'})
 
 @sejours_bp.route('/api/personnes', methods=['POST'])
@@ -196,10 +196,10 @@ def delete_sejour(sejour_id):
 def add_personne():
     data = request.get_json()
     
-    # Vérifier l'accès à la réservation
+    # Vérifier l'accès à la séjour
     reservation_id = data.get('reservation_id')
     if reservation_id and not verify_reservation_access(reservation_id):
-        return jsonify({'error': 'Accès refusé à cette réservation'}), 403
+        return jsonify({'error': 'Accès refusé à cette séjour'}), 403
     
     personne_id = Personne.create(data)
     return jsonify({
@@ -212,7 +212,7 @@ def add_personne():
 @login_required
 def update_personne(personne_id):
     """Mettre à jour une personne"""
-    # Récupérer la réservation associée pour vérifier l'accès
+    # Récupérer la séjour associée pour vérifier l'accès
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT reservation_id FROM personnes WHERE id = %s', (personne_id,))
@@ -234,7 +234,7 @@ def update_personne(personne_id):
 @login_required
 def delete_personne(personne_id):
     """Supprimer une personne"""
-    # Récupérer la réservation associée pour vérifier l'accès
+    # Récupérer la séjour associée pour vérifier l'accès
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT reservation_id FROM personnes WHERE id = %s', (personne_id,))
@@ -258,7 +258,7 @@ def get_all_personnes():
     conn = get_db_connection()
     cur = conn.cursor()
     
-    # Filtrer par établissements accessibles via les réservations
+    # Filtrer par établissements accessibles via les séjours
     etablissement_ids = get_accessible_etablissement_ids()
     
     if etablissement_ids is None:  # PLATFORM_ADMIN

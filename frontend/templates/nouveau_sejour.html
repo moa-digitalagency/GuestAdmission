@@ -6,7 +6,7 @@
 {% block content %}
 <div id="alert-container"></div>
 
-<form id="reservationForm">
+<form id="sejourForm">
     <div class="content-block" style="background: rgba(34, 197, 94, 0.05); border-color: #22c55e;">
         <div class="content-block-header">
             <div class="content-block-title">
@@ -24,7 +24,7 @@
                 <label for="numero_reservation">Numéro de séjour</label>
                 <div style="display: flex; gap: 0.5rem;">
                     <input type="text" id="numero_reservation" name="numero_reservation" readonly style="flex: 1; background: #f3f4f6;">
-                    <button type="button" onclick="genererNumeroReservation()" class="btn btn-primary btn-small">🔄</button>
+                    <button type="button" onclick="genererNumeroSejour()" class="btn btn-primary btn-small">🔄</button>
                 </div>
             </div>
             <div class="form-group">
@@ -98,7 +98,7 @@
                 select.value = etablissements[0].id;
                 selectedEtablissement = etablissements[0].id;
                 loadChambres();
-                genererNumeroReservation();
+                genererNumeroSejour();
             }
         } catch (error) {
             console.error('Erreur chargement établissements:', error);
@@ -109,11 +109,11 @@
         selectedEtablissement = this.value;
         if (selectedEtablissement) {
             loadChambres();
-            genererNumeroReservation();
+            genererNumeroSejour();
         }
     });
     
-    async function genererNumeroReservation() {
+    async function genererNumeroSejour() {
         if (!selectedEtablissement) {
             alert('Veuillez d\'abord sélectionner un établissement');
             return;
@@ -277,7 +277,7 @@
         setTimeout(() => alert.remove(), 5000);
     }
     
-    document.getElementById('reservationForm').addEventListener('submit', async (e) => {
+    document.getElementById('sejourForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
         if (!selectedEtablissement) {

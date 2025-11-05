@@ -60,7 +60,7 @@ function loadStats() {
             document.getElementById('statTenantsActifs').textContent = data.tenants_actifs || 0;
             document.getElementById('statEtablissementsActifs').textContent = data.etablissements_actifs || 0;
             document.getElementById('statTotalAdmins').textContent = data.total_admins || 0;
-            document.getElementById('statTotalReservations').textContent = data.total_reservations || 0;
+            document.getElementById('statTotalSejours').textContent = data.total_sejours || 0;
         })
         .catch(error => console.error('Error loading stats:', error));
 }
@@ -99,8 +99,8 @@ function loadTenants() {
                             <small style="color: #6b7280;">Chambres</small>
                         </div>
                         <div>
-                            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">${tenant.nb_reservations || 0}</div>
-                            <small style="color: #6b7280;">Réservations</small>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">${tenant.nb_sejours || 0}</div>
+                            <small style="color: #6b7280;">Séjours</small>
                         </div>
                     </div>
                     ${tenant.notes ? `<p style="margin-top: 1rem; color: #6b7280; font-size: 0.875rem;">${tenant.notes}</p>` : ''}
@@ -152,9 +152,7 @@ function loadUsers() {
                     <td>${user.email || '-'}</td>
                     <td>${user.username}</td>
                     <td>
-                        ${user.etablissements && user.etablissements.length > 0 
-                            ? user.etablissements.map(e => e.nom_etablissement).join(', ') 
-                            : '-'}
+                        ${user.nb_etablissements || 0} établissement(s)
                     </td>
                     <td>
                         <div class="actions">
@@ -174,15 +172,75 @@ function openCreateTenantModal() {
 function closeCreateTenantModal() {
     document.getElementById('createTenantModal').classList.remove('active');
     document.getElementById('createTenantForm').reset();
+    document.getElementById('chambresContainer').innerHTML = `
+        <div class="form-grid chambre-row" data-chambre-index="0">
+            <div class="form-group">
+                <label>Nom de la chambre</label>
+                <input type="text" name="chambre_nom_0" placeholder="ex: Chambre 101">
+            </div>
+            <div class="form-group">
+                <label>Capacité</label>
+                <input type="number" name="chambre_capacite_0" min="1" value="2">
+            </div>
+            <div class="form-group">
+                <label>Prix par nuit</label>
+                <input type="number" name="chambre_prix_0" min="0" step="0.01" placeholder="0.00">
+            </div>
+        </div>
+    `;
+}
+
+let chambreCounter = 1;
+
+function addChambreRow() {
+    const container = document.getElementById('chambresContainer');
+    const newRow = document.createElement('div');
+    newRow.className = 'form-grid chambre-row';
+    newRow.setAttribute('data-chambre-index', chambreCounter);
+    newRow.innerHTML = `
+        <div class="form-group">
+            <label>Nom de la chambre</label>
+            <input type="text" name="chambre_nom_${chambreCounter}" placeholder="ex: Chambre ${100 + chambreCounter}">
+        </div>
+        <div class="form-group">
+            <label>Capacité</label>
+            <input type="number" name="chambre_capacite_${chambreCounter}" min="1" value="2">
+        </div>
+        <div class="form-group">
+            <label>Prix par nuit</label>
+            <input type="number" name="chambre_prix_${chambreCounter}" min="0" step="0.01" placeholder="0.00">
+        </div>
+    `;
+    container.appendChild(newRow);
+    chambreCounter++;
 }
 
 function createTenant() {
     const form = document.getElementById('createTenantForm');
     const formData = new FormData(form);
     
+    const chambres = [];
+    const chambreRows = document.querySelectorAll('.chambre-row');
+    chambreRows.forEach(row => {
+        const index = row.getAttribute('data-chambre-index');
+        const nom = formData.get(`chambre_nom_${index}`);
+        const capacite = formData.get(`chambre_capacite_${index}`);
+        const prix = formData.get(`chambre_prix_${index}`);
+        
+        if (nom && nom.trim()) {
+            chambres.push({
+                nom: nom,
+                capacite: parseInt(capacite) || 2,
+                prix_par_nuit: parseFloat(prix) || 0
+            });
+        }
+    });
+    
     const data = {
-        nom_compte: formData.get('nom_compte'),
-        notes: formData.get('notes'),
+        tenant: {
+            nom_compte: formData.get('nom_compte'),
+            notes: formData.get('notes')
+        },
         etablissement: {
             nom_etablissement: formData.get('nom_etablissement'),
             ville: formData.get('ville'),
@@ -195,10 +253,11 @@ function createTenant() {
             nom: formData.get('admin_nom'),
             prenom: formData.get('admin_prenom'),
             email: formData.get('admin_email')
-        }
+        },
+        chambres: chambres
     };
     
-    fetch('/api/platform-admin/create-tenant', {
+    fetch('/api/platform-admin/tenants', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

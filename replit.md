@@ -49,7 +49,7 @@ This project is a comprehensive Flask SaaS application designed for managing mul
   - Tenant isolation enforced at database and application levels
   - Multi-establishment user support with establishment switching
 - **Multi-Establishment Management**: Supports the creation, modification, and deletion of multiple guest house establishments, each with its own logo and activation status.
-- **Séjour Management**: Comprehensive handling of bookings (séjours), including creation, room assignment, client management, and automatic numbering. Renamed from "Réservations" to "Séjours" across the application for consistency.
+- **Séjour Management**: Comprehensive handling of bookings (séjours), including creation, room assignment, client management, and automatic numbering. Renamed from "Séjours" to "Séjours" across the application for consistency.
 - **Statistics Page**: A dedicated section for real-time statistics, including séjour overview, client metrics, establishment performance, and room occupancy.
 - **Room Management**: Full CRUD operations for rooms, including association with establishments, capacity, pricing, and status (available, occupied, maintenance, out of service).
 - **Personnel Management**: Complete system for managing staff, including personal and professional information, granular access permissions, account activation/deactivation, and establishment association.
@@ -67,7 +67,7 @@ This project is a comprehensive Flask SaaS application designed for managing mul
   - Access control decorators (`@super_admin_required`) for protecting sensitive routes
   - User methods: `is_super_admin()`, `is_admin()`, `has_access_to_etablissement()`, `get_etablissements()`
 - **Service-Oriented Architecture**: Refactored backend into `backend/services/` for business logic (e.g., `SejourService`, `ExtraService`) and `backend/utils/` for common utilities (e.g., `serializers.py`, `formatters.py`). This promotes clear separation of concerns: Routes → Services → Models.
-- **Database Initialization**: The `init_database.py` script, executed via `start.sh` before Gunicorn, ensures automatic creation of all necessary tables (`users`, `etablissements`, `chambres`, `reservations`, `personnes`, `reservations_chambres`, `extras`, `sejours_extras`, `personnels`, `parametres_systeme`, `activity_logs`, `mail_configs`, `emails`, `calendriers_ical`, `reservations_ical`, `user_etablissements`) and initial data (super admin user, default establishment) upon application startup.
+- **Database Initialization**: The `init_database.py` script, executed via `start.sh` before Gunicorn, ensures automatic creation of all necessary tables (`users`, `etablissements`, `chambres`, `sejours`, `personnes`, `sejours_chambres`, `extras`, `sejours_extras`, `personnels`, `parametres_systeme`, `activity_logs`, `mail_configs`, `emails`, `calendriers_ical`, `sejours_ical`, `user_etablissements`) and initial data (super admin user, default establishment) upon application startup.
 - **Database Migrations**: Sequential migrations for schema evolution:
   - `001_initial_setup.py`: Initial database schema
   - `002_add_multi_tenant_support.py`: Multi-tenant structure (user_etablissements, etablissement_id)

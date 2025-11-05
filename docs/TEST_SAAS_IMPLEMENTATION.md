@@ -3,7 +3,7 @@
 ## ✅ Tests effectués
 
 ### 1. Initialisation de la base de données
-- ✅ Tables de base créées (users, etablissements, chambres, reservations, etc.)
+- ✅ Tables de base créées (users, etablissements, chambres, sejours, etc.)
 - ✅ Migration 001: Ajout du suivi de clôture des séjours
 - ✅ Migration 002: Support multi-tenant (user_etablissements)
 - ✅ Migration 003: Correction des associations
@@ -15,7 +15,7 @@
   - 2 établissements: Marrakech (5 chambres), Fès (4 chambres)
   - 1 utilisateur supplémentaire: riad_staff
   - Extras configurés
-  - 1 réservation de démonstration
+  - 1 séjour de démonstration
 
 - ✅ Tenant 2: Villa Ocean
   - Admin: villa_admin / villa123
@@ -75,7 +75,7 @@
 
 ### Test 4: Isolation des tenants
 1. Depuis tenant 1, essayer d'accéder aux données du tenant 2 via l'API
-2. Vérifier que les réservations d'un tenant ne sont pas visibles par l'autre
+2. Vérifier que les séjours d'un tenant ne sont pas visibles par l'autre
 3. Vérifier que les chambres d'un tenant ne sont pas accessibles par l'autre
 
 ### Test 5: Multi-établissements pour un tenant
@@ -105,7 +105,7 @@
 - ✅ Gérer les chambres de ses établissements
 - ✅ Ajouter des utilisateurs à son compte
 - ✅ Statistiques de son compte uniquement
-- ✅ Gérer les réservations de ses établissements
+- ✅ Gérer les séjours de ses établissements
 
 ## 🎯 Résultat attendu
 

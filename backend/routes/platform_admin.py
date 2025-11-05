@@ -124,12 +124,28 @@ def create_tenant_with_etablissement():
         cur.close()
         conn.close()
         
+        # 7. Créer les chambres initiales si fournies
+        chambres_data = data.get('chambres', [])
+        chambres_created = []
+        for chambre_data in chambres_data:
+            chambre_id = Chambre.create({
+                'etablissement_id': etablissement_id,
+                'nom': chambre_data.get('nom'),
+                'capacite': chambre_data.get('capacite', 2),
+                'prix_par_nuit': chambre_data.get('prix_par_nuit', 0),
+                'description': chambre_data.get('description', ''),
+                'statut': 'disponible'
+            })
+            if chambre_id:
+                chambres_created.append(chambre_id)
+        
         return jsonify({
             'success': True,
             'message': 'Compte tenant, établissement et administrateur créés avec succès',
             'tenant_id': tenant_id,
             'etablissement_id': etablissement_id,
-            'user_id': user_id
+            'user_id': user_id,
+            'chambres_created': len(chambres_created)
         }), 201
         
     except Exception as e:
@@ -208,23 +224,23 @@ def get_platform_stats():
     cur.execute('SELECT COUNT(*) as count FROM users WHERE role = \'admin\'')
     total_admins = cur.fetchone()['count']
     
-    # Nombre total de réservations
+    # Nombre total de séjours
     cur.execute('SELECT COUNT(*) as count FROM reservations')
-    total_reservations = cur.fetchone()['count']
+    total_sejours = cur.fetchone()['count']
     
     # Nombre total de chambres
     cur.execute('SELECT COUNT(*) as count FROM chambres')
     total_chambres = cur.fetchone()['count']
     
-    # Réservations par tenant (top 5)
+    # Séjours par tenant (top 5)
     cur.execute('''
-        SELECT ta.nom_compte, COUNT(r.id) as nb_reservations
+        SELECT ta.nom_compte, COUNT(r.id) as nb_sejours
         FROM tenant_accounts ta
         LEFT JOIN etablissements e ON e.tenant_account_id = ta.id
         LEFT JOIN reservations r ON r.etablissement_id = e.id
         WHERE ta.actif = TRUE
         GROUP BY ta.id, ta.nom_compte
-        ORDER BY nb_reservations DESC
+        ORDER BY nb_sejours DESC
         LIMIT 5
     ''')
     top_tenants = cur.fetchall()
@@ -238,7 +254,7 @@ def get_platform_stats():
         'etablissements_actifs': etablissements_actifs,
         'total_etablissements': total_etablissements,
         'total_admins': total_admins,
-        'total_reservations': total_reservations,
+        'total_sejours': total_sejours,
         'total_chambres': total_chambres,
         'top_tenants': [dict(t) for t in top_tenants] if top_tenants else []
     })

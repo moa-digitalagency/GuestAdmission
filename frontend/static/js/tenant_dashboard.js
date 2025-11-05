@@ -12,7 +12,7 @@ function loadTenantStats() {
         .then(data => {
             document.getElementById('statsEtablissements').textContent = data.nb_etablissements || 0;
             document.getElementById('statsChambres').textContent = data.nb_chambres || 0;
-            document.getElementById('statsReservations').textContent = data.nb_reservations || 0;
+            document.getElementById('statsSejours').textContent = data.nb_sejours || 0;
             document.getElementById('statsUsers').textContent = data.nb_users || 0;
         })
         .catch(error => console.error('Error loading stats:', error));

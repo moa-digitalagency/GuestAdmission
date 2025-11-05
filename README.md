@@ -5,7 +5,7 @@ Application web professionnelle de gestion d'établissement d'hébergement (mais
 ## 📋 Description
 
 Système complet de gestion pour maisons d'hôtes permettant de :
-- Gérer les réservations et les clients
+- Gérer les séjours et les clients
 - Calculer automatiquement les tarifs, taxes et charges
 - Suivre les statistiques et le tableau de bord
 - Configurer les paramètres de l'établissement
@@ -78,7 +78,7 @@ workspace/
 │   │   ├── user.py              # Modèle utilisateur
 │   │   ├── client.py            # Modèle client
 │   │   ├── personne.py          # Modèle personne
-│   │   └── reservation.py       # Modèle réservation
+│   │   └── sejour.py       # Modèle séjour
 │   ├── routes/
 │   │   ├── __init__.py
 │   │   ├── auth.py              # Routes authentification
@@ -101,7 +101,7 @@ workspace/
 │       ├── base_dashboard.html
 │       ├── login.html
 │       ├── dashboard.html
-│       ├── nouvelle_reservation.html
+│       ├── nouvelle_sejour.html
 │       ├── reservations.html
 │       ├── clients_list.html
 │       └── parametres.html
@@ -133,9 +133,9 @@ workspace/
 - Configuration individuelle par établissement (devise, taxes, etc.)
 - Logo personnalisé par établissement
 - Activation/désactivation des établissements
-- Numérotation automatique des réservations par établissement
+- Numérotation automatique des séjours par établissement
 
-### 📅 Gestion des Séjours (Réservations)
+### 📅 Gestion des Séjours (Séjours)
 - Création et modification de séjours
 - Numérotation automatique et personnalisable (format: RES-{YYYY}{MM}{DD}-{NUM})
 - Attribution de chambres multiples
@@ -202,14 +202,14 @@ workspace/
 
 ### 📅 Calendriers iCal (Synchronisation)
 - Support Airbnb, Booking.com et autres plateformes
-- Synchronisation automatique des réservations externes
+- Synchronisation automatique des séjours externes
 - Gestion multi-calendriers par établissement
 - **Affichage double vue:**
-  - Vue Liste: Tableau détaillé des réservations
-  - Vue Calendrier: Calendrier visuel mensuel avec réservations
+  - Vue Liste: Tableau détaillé des séjours
+  - Vue Calendrier: Calendrier visuel mensuel avec séjours
 - Bouton de basculement entre les vues
 - Statut de synchronisation en temps réel
-- Import automatique des réservations externes
+- Import automatique des séjours externes
 
 ### 📧 Messagerie (Mail)
 - Configuration de comptes email (SMTP/POP)
@@ -285,7 +285,7 @@ Tous les boutons utilisent des bordures solides (2px) :
 
 Le système crée automatiquement les tables suivantes :
 - `users` : Utilisateurs du système
-- `reservations` : Réservations
+- `sejours` : Séjours
 - `personnes` : Clients et contacts
 - `parametres_systeme` : Configuration de l'établissement
 

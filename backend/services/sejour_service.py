@@ -3,7 +3,7 @@ Service pour la gestion des séjours
 """
 from typing import List, Dict, Optional, Any
 from ..config.database import get_db_connection
-from ..models.reservation import Reservation
+from ..models.reservation import Sejour
 from ..models.personne import Personne
 from ..utils import serialize_rows, serialize_row
 from datetime import datetime
@@ -53,7 +53,7 @@ class SejourService:
     @staticmethod
     def get_sejour_details(sejour_id: int) -> Optional[Dict]:
         """Récupérer les détails complets d'un séjour"""
-        sejour = Reservation.get_by_id(sejour_id)
+        sejour = Sejour.get_by_id(sejour_id)
         if not sejour:
             return None
         
@@ -107,7 +107,7 @@ class SejourService:
         personnes_data = data.get('personnes', [])
         chambres_ids = data.get('chambres', [])
         
-        sejour_id = Reservation.create(sejour_data)
+        sejour_id = Sejour.create(sejour_data)
         
         if sejour_id:
             conn = get_db_connection()

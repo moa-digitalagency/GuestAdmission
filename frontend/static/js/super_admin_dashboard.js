@@ -24,7 +24,7 @@ async function loadStats() {
         document.getElementById('statEtablissementsActifs').textContent = stats.etablissements_actifs;
         document.getElementById('statTotalEtablissements').textContent = stats.total_etablissements;
         document.getElementById('statTotalAdmins').textContent = stats.total_admins;
-        document.getElementById('statTotalReservations').textContent = stats.total_reservations;
+        document.getElementById('statTotalSejours').textContent = stats.total_sejours;
     } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error);
     }

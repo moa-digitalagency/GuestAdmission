@@ -10,7 +10,7 @@ os.environ.setdefault('DATABASE_URL', os.environ.get('DATABASE_URL'))
 from backend.models.user import User
 from backend.models.etablissement import Etablissement
 from backend.models.client import Client
-from backend.models.reservation import Reservation
+from backend.models.reservation import Sejour
 from backend.models.activity_log import ActivityLog
 
 def test_database_connection():
@@ -56,12 +56,12 @@ def test_etablissements():
         print(f"❌ Erreur: {e}")
         return False
 
-def test_reservations():
-    """Test du système réservations/séjours"""
-    print("\n🔍 Test: Système réservations/séjours...")
+def test_sejours():
+    """Test du système séjours/séjours"""
+    print("\n🔍 Test: Système séjours/séjours...")
     try:
-        reservations = Reservation.get_all(limit=10)
-        print(f"✅ {len(reservations)} réservation(s) trouvée(s)")
+        sejours = Sejour.get_all(limit=10)
+        print(f"✅ {len(sejours)} séjour(s) trouvée(s)")
         return True
     except Exception as e:
         print(f"❌ Erreur: {e}")
@@ -100,7 +100,7 @@ def main():
         test_database_connection,
         test_users,
         test_etablissements,
-        test_reservations,
+        test_sejours,
         test_clients,
         test_activity_logs
     ]

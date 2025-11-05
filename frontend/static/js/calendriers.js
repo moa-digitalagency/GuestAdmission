@@ -1,13 +1,13 @@
 let currentEtablissements = [];
 let currentCalendars = [];
 let editingCalendarId = null;
-let currentReservations = [];
+let currentSejours = [];
 let viewMode = 'list';
 
 document.addEventListener('DOMContentLoaded', function() {
     loadEtablissements();
     loadCalendars();
-    loadReservations();
+    loadSejours();
 });
 
 async function loadEtablissements() {
@@ -33,7 +33,7 @@ async function loadEtablissements() {
         
         filterSelect.addEventListener('change', function() {
             loadCalendars();
-            loadReservations();
+            loadSejours();
         });
     } catch (error) {
         console.error('Erreur lors du chargement des établissements:', error);
@@ -126,7 +126,7 @@ function getStatusBadge(statut) {
     const badges = {
         'succès': '<span class="badge badge-success">Succès</span>',
         'jamais': '<span class="badge badge-warning">Jamais synchronisé</span>',
-        'aucune_reservation': '<span class="badge badge-warning">Aucune réservation</span>',
+        'aucune_sejour': '<span class="badge badge-warning">Aucune séjour</span>',
         'erreur': '<span class="badge badge-error">Erreur</span>'
     };
     return badges[statut] || '<span class="badge badge-warning">Inconnu</span>';
@@ -168,7 +168,7 @@ async function editCalendar(calendarId) {
 }
 
 async function deleteCalendar(calendarId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce calendrier et toutes ses réservations importées ?')) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce calendrier et toutes ses séjours importées ?')) {
         return;
     }
     
@@ -180,7 +180,7 @@ async function deleteCalendar(calendarId) {
         if (response.ok) {
             alert('Calendrier supprimé avec succès');
             loadCalendars();
-            loadReservations();
+            loadSejours();
         } else {
             alert('Erreur lors de la suppression');
         }
@@ -205,7 +205,7 @@ async function synchronizeCalendar(calendarId) {
         if (result.success) {
             alert(result.message);
             loadCalendars();
-            loadReservations();
+            loadSejours();
         } else {
             alert('Erreur: ' + result.message);
         }
@@ -256,8 +256,8 @@ document.getElementById('calendarForm').addEventListener('submit', async functio
 
 function toggleView() {
     viewMode = viewMode === 'list' ? 'calendar' : 'list';
-    const tableView = document.getElementById('reservationsTable');
-    const calendarView = document.getElementById('reservationsCalendar');
+    const tableView = document.getElementById('sejoursTable');
+    const calendarView = document.getElementById('sejoursCalendar');
     const viewIcon = document.getElementById('viewIcon');
     const viewText = document.getElementById('viewText');
     
@@ -273,50 +273,50 @@ function toggleView() {
         viewText.textContent = 'Vue Calendrier';
     }
     
-    displayReservations(currentReservations);
+    displaySejours(currentSejours);
 }
 
-async function loadReservations() {
+async function loadSejours() {
     const etablissementId = document.getElementById('filterEtablissement').value;
     if (!etablissementId) {
-        currentReservations = [];
-        document.getElementById('reservationsTable').innerHTML = 
+        currentSejours = [];
+        document.getElementById('sejoursTable').innerHTML = 
             '<p style="text-align: center; color: #666;">Sélectionnez un établissement</p>';
-        document.getElementById('reservationsCalendar').innerHTML = 
+        document.getElementById('sejoursCalendar').innerHTML = 
             '<p style="text-align: center; color: #666;">Sélectionnez un établissement</p>';
         return;
     }
     
-    const url = `/api/reservations-ical?etablissement_id=${etablissementId}`;
+    const url = `/api/sejours-ical?etablissement_id=${etablissementId}`;
     
     try {
         const response = await fetch(url);
-        const reservations = await response.json();
-        currentReservations = reservations;
-        displayReservations(reservations);
+        const sejours = await response.json();
+        currentSejours = sejours;
+        displaySejours(sejours);
     } catch (error) {
-        console.error('Erreur lors du chargement des réservations:', error);
-        currentReservations = [];
-        document.getElementById('reservationsTable').innerHTML = 
-            '<p style="color: red; text-align: center;">Erreur lors du chargement des réservations</p>';
-        document.getElementById('reservationsCalendar').innerHTML = 
-            '<p style="color: red; text-align: center;">Erreur lors du chargement des réservations</p>';
+        console.error('Erreur lors du chargement des séjours:', error);
+        currentSejours = [];
+        document.getElementById('sejoursTable').innerHTML = 
+            '<p style="color: red; text-align: center;">Erreur lors du chargement des séjours</p>';
+        document.getElementById('sejoursCalendar').innerHTML = 
+            '<p style="color: red; text-align: center;">Erreur lors du chargement des séjours</p>';
     }
 }
 
-function displayReservations(reservations) {
+function displaySejours(sejours) {
     if (viewMode === 'list') {
-        displayReservationsTable(reservations);
+        displaySejoursTable(sejours);
     } else {
-        displayReservationsCalendar(reservations);
+        displaySejoursCalendar(sejours);
     }
 }
 
-function displayReservationsTable(reservations) {
-    const container = document.getElementById('reservationsTable');
+function displaySejoursTable(sejours) {
+    const container = document.getElementById('sejoursTable');
     
     if (reservations.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #666;">Aucune réservation importée</p>';
+        container.innerHTML = '<p style="text-align: center; color: #666;">Aucune séjour importée</p>';
         return;
     }
     
@@ -356,11 +356,11 @@ function displayReservationsTable(reservations) {
     container.innerHTML = table;
 }
 
-function displayReservationsCalendar(reservations) {
-    const container = document.getElementById('reservationsCalendar');
+function displaySejoursCalendar(sejours) {
+    const container = document.getElementById('sejoursCalendar');
     
     if (reservations.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: #666;">Aucune réservation importée</p>';
+        container.innerHTML = '<p style="text-align: center; color: #666;">Aucune séjour importée</p>';
         return;
     }
     

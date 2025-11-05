@@ -7,7 +7,7 @@ Ce script crée:
 - Chaque établissement a des chambres
 - Chaque tenant a un admin principal
 - Quelques utilisateurs additionnels
-- Quelques réservations de démonstration
+- Quelques séjours de démonstration
 """
 
 import os
@@ -280,17 +280,17 @@ def create_demo_tenants():
                 VALUES (%s, %s, %s, %s, %s, %s)
             ''', (etab3_id, nom, description, prix, unite, True))
         
-        # Créer quelques réservations de démonstration
-        print("\n📅 Création de réservations de démonstration...")
+        # Créer quelques séjours de démonstration
+        print("\n📅 Création de séjours de démonstration...")
         
-        # Réservations pour Riad Atlas Marrakech
+        # Séjours pour Riad Atlas Marrakech
         today = datetime.now().date()
         
         # Récupérer les IDs des chambres
         cur.execute('SELECT id FROM chambres WHERE etablissement_id = %s LIMIT 2', (etab1_id,))
         chambres_mrk = cur.fetchall()
         
-        # Réservation 1 pour Riad Marrakech
+        # Séjour 1 pour Riad Marrakech
         date_arrivee = today + timedelta(days=5)
         date_depart = today + timedelta(days=9)
         nombre_jours = (date_depart - date_arrivee).days
@@ -308,7 +308,7 @@ def create_demo_tenants():
         ))
         res1_id = cur.fetchone()['id']
         
-        # Ajouter une chambre à la réservation
+        # Ajouter une chambre à la séjour
         if chambres_mrk:
             cur.execute('''
                 INSERT INTO reservations_chambres (reservation_id, chambre_id)

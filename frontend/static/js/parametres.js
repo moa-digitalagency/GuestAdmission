@@ -830,7 +830,7 @@ function showResetOptions() {
             
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <label style="display: flex; align-items: center; padding: 1rem; background: #f9fafb; border-radius: 0.5rem; cursor: pointer;">
-                    <input type="checkbox" id="reset_reservations" style="margin-right: 0.75rem; width: 18px; height: 18px;">
+                    <input type="checkbox" id="reset_sejours" style="margin-right: 0.75rem; width: 18px; height: 18px;">
                     <span><strong>Séjours et clients</strong> - Supprime tous les séjours et leurs clients associés</span>
                 </label>
                 
@@ -863,17 +863,17 @@ function closeResetModal() {
 }
 
 async function executeResetSelection() {
-    const resetReservations = document.getElementById('reset_reservations').checked;
+    const resetSejours = document.getElementById('reset_sejours').checked;
     const resetChambres = document.getElementById('reset_chambres').checked;
     const resetEtablissements = document.getElementById('reset_etablissements').checked;
     
-    if (!resetReservations && !resetChambres && !resetEtablissements) {
+    if (!resetSejours && !resetChambres && !resetEtablissements) {
         showAlert('⚠️ Veuillez sélectionner au moins une catégorie', 'error');
         return;
     }
     
     const items = [];
-    if (resetReservations) items.push('séjours et clients');
+    if (resetSejours) items.push('séjours et clients');
     if (resetChambres) items.push('chambres');
     if (resetEtablissements) items.push('établissements');
     
@@ -886,7 +886,7 @@ async function executeResetSelection() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                reset_reservations: resetReservations,
+                reset_sejours: resetSejours,
                 reset_chambres: resetChambres,
                 reset_etablissements: resetEtablissements
             })

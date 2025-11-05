@@ -1,7 +1,7 @@
 from ..config.database import get_db_connection
 from datetime import datetime
 
-class Reservation:
+class Sejour:
     @staticmethod
     def create(data):
         conn = get_db_connection()
@@ -59,12 +59,12 @@ class Reservation:
             LEFT JOIN personnes p ON r.id = p.reservation_id AND p.est_contact_principal = TRUE
             ORDER BY r.created_at DESC
         ''')
-        reservations = cur.fetchall()
+        sejours = cur.fetchall()
         
         cur.close()
         conn.close()
         
-        return reservations
+        return sejours
     
     @staticmethod
     def get_by_id(reservation_id):
@@ -72,12 +72,12 @@ class Reservation:
         cur = conn.cursor()
         
         cur.execute('SELECT * FROM reservations WHERE id = %s', (reservation_id,))
-        reservation = cur.fetchone()
+        sejour = cur.fetchone()
         
         cur.close()
         conn.close()
         
-        return reservation
+        return sejour
     
     @staticmethod
     def update(reservation_id, data):

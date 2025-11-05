@@ -138,20 +138,20 @@ def load_demo_data():
         total_chambres = sum(len(chambres) for chambres in chambre_ids_by_etab.values())
         print(f"  ✅ {total_chambres} chambres créées")
         
-        # 3. Créer des réservations et clients
-        print("\n📅 Création des réservations et clients...")
+        # 3. Créer des séjours et clients
+        print("\n📅 Création des séjours et clients...")
         
         noms = ['Alami', 'Benali', 'Cohen', 'Dupont', 'Garcia', 'Hassan', 'Ibrahim', 'Johnson', 'Khan', 'Lopez']
         prenoms = ['Ahmed', 'Fatima', 'Mohamed', 'Sarah', 'Youssef', 'Leila', 'Omar', 'Amina', 'Karim', 'Nadia']
         pays = ['Morocco', 'France', 'Spain', 'United Kingdom', 'United States', 'Germany', 'Italy', 'Belgium']
         
-        reservations_count = 0
+        sejours_count = 0
         personnes_count = 0
         
         for etab_id in etablissement_ids:
             chambres = chambre_ids_by_etab[etab_id]
             
-            # Créer 5 réservations par établissement
+            # Créer 5 séjours par établissement
             for i in range(5):
                 # Date aléatoire dans les 60 derniers jours
                 jours_arriere = random.randint(1, 60)
@@ -161,7 +161,7 @@ def load_demo_data():
                 
                 numero_res = f"RES-{date_arrivee.strftime('%Y%m%d')}-{i+1:03d}"
                 
-                # Créer la réservation
+                # Créer la séjour
                 cur.execute('''
                     INSERT INTO reservations (
                         etablissement_id, numero_reservation, date_arrivee, date_depart,
@@ -176,7 +176,7 @@ def load_demo_data():
                 ))
                 result = cur.fetchone()
                 reservation_id = result['id']
-                reservations_count += 1
+                sejours_count += 1
                 
                 # Assigner une ou deux chambres aléatoires
                 chambres_selectionnees = random.sample(chambres, random.randint(1, 2))
@@ -187,7 +187,7 @@ def load_demo_data():
                         VALUES (%s, %s)
                     ''', (reservation_id, chambre_id))
                 
-                # Créer 1-3 personnes pour cette réservation
+                # Créer 1-3 personnes pour cette séjour
                 nb_personnes = random.randint(1, 3)
                 for j in range(nb_personnes):
                     nom = random.choice(noms)
@@ -214,7 +214,7 @@ def load_demo_data():
                     ))
                     personnes_count += 1
         
-        print(f"  ✅ {reservations_count} réservations créées")
+        print(f"  ✅ {sejours_count} séjours créées")
         print(f"  ✅ {personnes_count} clients créés")
         
         # Valider toutes les modifications
@@ -225,7 +225,7 @@ def load_demo_data():
         print(f"\n📊 Résumé:")
         print(f"   - Établissements: {len(etablissement_ids)}")
         print(f"   - Chambres: {total_chambres}")
-        print(f"   - Réservations: {reservations_count}")
+        print(f"   - Séjours: {sejours_count}")
         print(f"   - Clients: {personnes_count}")
         
     except Exception as e:

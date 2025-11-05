@@ -178,14 +178,14 @@ class CalendarService:
             
             ical_data = Calendar.from_ical(response.text)
             
-            reservations_count = 0
+            sejours_count = 0
             errors = []
             
             for component in ical_data.walk():
                 if component.name == "VEVENT":
                     try:
                         uid = str(component.get('uid', ''))
-                        summary = str(component.get('summary', 'Réservation'))
+                        summary = str(component.get('summary', 'Séjour'))
                         dtstart = component.get('dtstart')
                         dtend = component.get('dtend')
                         description = str(component.get('description', ''))
@@ -211,7 +211,7 @@ class CalendarService:
                                     updated_at = CURRENT_TIMESTAMP
                             ''', (calendar_id, uid, summary, date_debut, date_fin, description))
                             
-                            reservations_count += 1
+                            sejours_count += 1
                     except Exception as e:
                         errors.append(f"Erreur événement: {str(e)}")
             
@@ -222,7 +222,7 @@ class CalendarService:
                     message_erreur = %s,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
-            ''', ('succès' if reservations_count > 0 else 'aucune_reservation', 
+            ''', ('succès' if sejours_count > 0 else 'aucune_sejour', 
                   '\n'.join(errors) if errors else None, calendar_id))
             
             conn.commit()
@@ -231,8 +231,8 @@ class CalendarService:
             
             return {
                 'success': True,
-                'message': f'{reservations_count} réservation(s) synchronisée(s)',
-                'count': reservations_count,
+                'message': f'{sejours_count} séjour(s) synchronisée(s)',
+                'count': sejours_count,
                 'errors': errors
             }
             
@@ -269,8 +269,8 @@ class CalendarService:
             return {'success': False, 'message': f'Erreur de parsing: {str(e)}'}
     
     @staticmethod
-    def get_calendar_reservations(calendar_id: int) -> List[Dict]:
-        """Récupérer les réservations d'un calendrier"""
+    def get_calendar_sejours(calendar_id: int) -> List[Dict]:
+        """Récupérer les séjours d'un calendrier"""
         conn = get_db_connection()
         cur = conn.cursor()
         
@@ -280,18 +280,18 @@ class CalendarService:
             ORDER BY date_debut DESC
         ''', (calendar_id,))
         
-        reservations = cur.fetchall()
+        sejours = cur.fetchall()
         
         cur.close()
         conn.close()
         
-        return serialize_rows(reservations)
+        return serialize_rows(sejours)
     
     @staticmethod
-    def get_all_ical_reservations(etablissement_id: Optional[int] = None, 
+    def get_all_ical_sejours(etablissement_id: Optional[int] = None, 
                                    date_debut: Optional[str] = None,
                                    date_fin: Optional[str] = None) -> List[Dict]:
-        """Récupérer toutes les réservations iCal avec filtres"""
+        """Récupérer toutes les séjours iCal avec filtres"""
         conn = get_db_connection()
         cur = conn.cursor()
         
@@ -318,9 +318,9 @@ class CalendarService:
         query += ' ORDER BY r.date_debut'
         
         cur.execute(query, tuple(params))
-        reservations = cur.fetchall()
+        sejours = cur.fetchall()
         
         cur.close()
         conn.close()
         
-        return serialize_rows(reservations)
+        return serialize_rows(sejours)
