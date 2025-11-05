@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, redirect, url_for
 from flask_cors import CORS
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager, login_required, current_user
 from .routes.clients import clients_bp
 from .routes.auth import auth_bp
 from .routes.sejours import sejours_bp

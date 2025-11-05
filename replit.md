@@ -87,3 +87,11 @@ This project is a comprehensive Flask SaaS application designed for managing mul
 - **PostgreSQL**: Used as the primary relational database, hosted via Neon.
 - **Gunicorn**: Production-ready WSGI HTTP server used to run the Flask application.
 - **iCal**: Integrated for calendar synchronization with external booking platforms like Airbnb and Booking.com.
+
+## Documentation
+All technical documentation is organized in the `/docs` folder:
+- `docs/TRANSFORMATION_SAAS_COMPLETE.md` - Complete SaaS transformation guide
+- `docs/SAAS_MIGRATION_GUIDE.md` - Detailed migration guide
+- `docs/TEST_SAAS_IMPLEMENTATION.md` - Testing and validation
+- `docs/DEPLOYMENT_NOTES.md` - Production deployment notes
+- `docs/STYLE_GUIDE.md` - Development style guide
