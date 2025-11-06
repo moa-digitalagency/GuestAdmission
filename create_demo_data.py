@@ -154,6 +154,14 @@ def create_demo_data():
         # 3. Créer des utilisateurs admin pour chaque tenant
         print("\n👤 Création des utilisateurs admin...")
         user_ids = []
+        etablissements_by_tenant = {}
+        
+        for i, etab_data in enumerate(etablissements_data):
+            tenant_idx = etab_data['tenant']
+            if tenant_idx not in etablissements_by_tenant:
+                etablissements_by_tenant[tenant_idx] = []
+            etablissements_by_tenant[tenant_idx].append(etablissement_ids[i])
+        
         for i, tenant_id in enumerate(tenant_ids):
             username = f"admin{i+1}"
             password_hash = generate_password_hash('demo123')
@@ -170,6 +178,14 @@ def create_demo_data():
             cur.execute('''
                 UPDATE tenant_accounts SET primary_admin_user_id = %s WHERE id = %s
             ''', (user_id, tenant_id))
+            
+            # Lier l'utilisateur à tous les établissements de son tenant
+            if i in etablissements_by_tenant:
+                for etab_id in etablissements_by_tenant[i]:
+                    cur.execute('''
+                        INSERT INTO user_etablissements (user_id, etablissement_id)
+                        VALUES (%s, %s)
+                    ''', (user_id, etab_id))
             
             print(f"  ✅ {username} / demo123")
         
