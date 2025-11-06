@@ -233,12 +233,12 @@ function showAddExtraModal() {
     if (preview) preview.style.display = 'none';
     
     const modal = document.getElementById('addExtraModal');
-    if (modal) modal.style.display = 'flex';
+    if (modal) modal.classList.add('active');
 }
 
 function closeAddExtraModal() {
     const modal = document.getElementById('addExtraModal');
-    if (modal) modal.style.display = 'none';
+    if (modal) modal.classList.remove('active');
 }
 
 function updateExtraPreview() {

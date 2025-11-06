@@ -397,7 +397,8 @@ let currentWizardStep = 1;
 const totalWizardSteps = 4;
 
 function openCreateTenantModal() {
-    document.getElementById('createTenantModal').style.display = 'flex';
+    const modal = document.getElementById('createTenantModal');
+    modal.classList.add('active');
     currentWizardStep = 1;
     showWizardStep(1);
     loadPays();
@@ -405,7 +406,8 @@ function openCreateTenantModal() {
 }
 
 function closeCreateTenantModal() {
-    document.getElementById('createTenantModal').style.display = 'none';
+    const modal = document.getElementById('createTenantModal');
+    modal.classList.remove('active');
     document.getElementById('createTenantForm').reset();
     currentWizardStep = 1;
 }

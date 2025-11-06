@@ -173,7 +173,7 @@ async function openEmail(emailId) {
             bodyContainer.textContent = email.body_text || '';
         }
         
-        document.getElementById('email-detail-modal').style.display = 'flex';
+        document.getElementById('email-detail-modal').classList.add('active');
         
         await loadEmails();
     } catch (error) {
@@ -183,7 +183,7 @@ async function openEmail(emailId) {
 }
 
 function closeEmailDetailModal() {
-    document.getElementById('email-detail-modal').style.display = 'none';
+    document.getElementById('email-detail-modal').classList.remove('active');
     currentEmailId = null;
 }
 
@@ -195,11 +195,11 @@ function composeNewEmail() {
     
     document.getElementById('compose-form').reset();
     document.getElementById('client-email-index').style.display = 'none';
-    document.getElementById('compose-modal').style.display = 'flex';
+    document.getElementById('compose-modal').classList.add('active');
 }
 
 function closeComposeModal() {
-    document.getElementById('compose-modal').style.display = 'none';
+    document.getElementById('compose-modal').classList.remove('active');
 }
 
 async function sendEmail(event) {

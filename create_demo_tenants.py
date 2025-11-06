@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-Script pour créer deux tenants de démonstration avec des données complètes
+Script pour créer trois tenants de démonstration avec des données complètes
 Ce script crée:
-- 2 comptes tenants (clients)
-- Chaque tenant a 1-2 établissements
+- 3 comptes tenants (clients)
+- 5 établissements au total (2 pour tenant 1, 2 pour tenant 2, 1 pour tenant 3)
 - Chaque établissement a des chambres
 - Chaque tenant a un admin principal
-- Quelques utilisateurs additionnels
-- Quelques séjours de démonstration
+- Quelques extras et séjours de démonstration
 """
 
 import os
@@ -32,8 +31,8 @@ def get_db_connection():
         sys.exit(1)
 
 def create_demo_tenants():
-    """Créer deux tenants de démonstration"""
-    print("🎨 Création de deux tenants de démonstration...")
+    """Créer trois tenants de démonstration"""
+    print("🎨 Création de trois tenants de démonstration...")
     
     conn = get_db_connection()
     cur = conn.cursor()
@@ -43,7 +42,7 @@ def create_demo_tenants():
         print("  🧹 Nettoyage des données de démonstration existantes...")
         
         # Supprimer les utilisateurs de démonstration (cela supprimera aussi les associations en cascade)
-        demo_usernames = ['admin', 'riad_admin', 'villa_admin', 'riad_staff']
+        demo_usernames = ['admin', 'admin1', 'admin2', 'admin3', 'riad_admin', 'villa_admin', 'riad_staff']
         for username in demo_usernames:
             if username != 'admin':  # On garde admin car c'est le PLATFORM_ADMIN principal
                 cur.execute("DELETE FROM users WHERE username = %s", (username,))
@@ -54,30 +53,30 @@ def create_demo_tenants():
         conn.commit()
         print("  ✅ Nettoyage terminé")
         
-        # TENANT 1: Riad Atlas
-        print("\n📦 Création du Tenant 1: Riad Atlas...")
+        # TENANT 1: Groupe Hôtelier Atlas
+        print("\n📦 Création du Tenant 1: Groupe Hôtelier Atlas...")
         
         # Créer l'admin principal du tenant 1
-        print("  👤 Création de l'admin principal: riad_admin")
-        password_hash = generate_password_hash('riad123')
+        print("  👤 Création de l'admin principal: admin1")
+        password_hash = generate_password_hash('demo123')
         cur.execute('''
             INSERT INTO users (username, password_hash, nom, prenom, email, role)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
-        ''', ('riad_admin', password_hash, 'Alami', 'Hassan', 'hassan@riadaltas.ma', 'admin'))
-        riad_admin_id = cur.fetchone()['id']
+        ''', ('admin1', password_hash, 'Atlas', 'Admin', 'admin@groupeatlas.ma', 'admin'))
+        admin1_id = cur.fetchone()['id']
         
         # Créer le compte tenant 1
-        print("  🏢 Création du compte tenant: Riad Atlas")
+        print("  🏢 Création du compte tenant: Groupe Hôtelier Atlas")
         cur.execute('''
             INSERT INTO tenant_accounts (nom_compte, primary_admin_user_id, notes)
             VALUES (%s, %s, %s)
             RETURNING id
-        ''', ('Riad Atlas', riad_admin_id, 'Chaîne de riads traditionnels au Maroc'))
+        ''', ('Groupe Hôtelier Atlas', admin1_id, 'Groupe hôtelier professionnel au Maroc'))
         tenant1_id = cur.fetchone()['id']
         
         # Créer le premier établissement pour tenant 1
-        print("  🏨 Création de l'établissement: Riad Atlas Marrakech")
+        print("  🏨 Création de l'établissement: Riad Marrakech Excellence")
         cur.execute('''
             INSERT INTO etablissements (
                 tenant_account_id, nom_etablissement, numero_identification, 
@@ -87,9 +86,9 @@ def create_demo_tenants():
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
-            tenant1_id, 'Riad Atlas Marrakech', 'RIAD-MRK-001',
+            tenant1_id, 'Riad Marrakech Excellence', 'RIAD-MRK-001',
             'Maroc', 'Marrakech', '12 Derb Sidi Ahmed, Médina', '+212 524 123456',
-            'marrakech@riadaltas.ma', 'MAD', 2.5, 20.0, 15.0, True
+            'marrakech@groupeatlas.ma', 'MAD', 2.5, 20.0, 15.0, True
         ))
         etab1_id = cur.fetchone()['id']
         
@@ -98,16 +97,16 @@ def create_demo_tenants():
         cur.execute('''
             INSERT INTO user_etablissements (user_id, etablissement_id, role, is_primary_admin)
             VALUES (%s, %s, %s, %s)
-        ''', (riad_admin_id, etab1_id, 'admin', True))
+        ''', (admin1_id, etab1_id, 'admin', True))
         
         # Mettre à jour l'établissement actif de l'admin
         cur.execute('''
             UPDATE users SET etablissement_id = %s WHERE id = %s
-        ''', (etab1_id, riad_admin_id))
+        ''', (etab1_id, admin1_id))
         
         # Créer des chambres pour le premier établissement
-        print("  🛏️  Création de 5 chambres pour Riad Atlas Marrakech")
-        chambres_riad1 = [
+        print("  🛏️  Création de 5 chambres pour Riad Marrakech Excellence")
+        chambres_etab1 = [
             ('Chambre Sahara', 'Suite avec vue sur la médina', 2, 800.00, 'disponible'),
             ('Chambre Atlas', 'Chambre double confort', 2, 600.00, 'disponible'),
             ('Suite Royale', 'Suite de luxe avec terrasse privée', 4, 1500.00, 'disponible'),
@@ -115,14 +114,14 @@ def create_demo_tenants():
             ('Suite Jardin', 'Suite familiale avec jardin', 3, 1200.00, 'disponible'),
         ]
         
-        for nom, description, capacite, prix, statut in chambres_riad1:
+        for nom, description, capacite, prix, statut in chambres_etab1:
             cur.execute('''
                 INSERT INTO chambres (etablissement_id, nom, description, capacite, prix_par_nuit, statut)
                 VALUES (%s, %s, %s, %s, %s, %s)
             ''', (etab1_id, nom, description, capacite, prix, statut))
         
         # Créer le deuxième établissement pour tenant 1
-        print("  🏨 Création de l'établissement: Riad Atlas Fès")
+        print("  🏨 Création de l'établissement: Hotel Casablanca Premium")
         cur.execute('''
             INSERT INTO etablissements (
                 tenant_account_id, nom_etablissement, numero_identification, 
@@ -132,9 +131,9 @@ def create_demo_tenants():
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
-            tenant1_id, 'Riad Atlas Fès', 'RIAD-FES-001',
-            'Maroc', 'Fès', '45 Derb Guerniz, Médina', '+212 535 987654',
-            'fes@riadaltas.ma', 'MAD', 2.5, 20.0, 15.0, True
+            tenant1_id, 'Hotel Casablanca Premium', 'HOTEL-CASA-001',
+            'Maroc', 'Casablanca', 'Boulevard de la Corniche', '+212 522 456789',
+            'casablanca@groupeatlas.ma', 'MAD', 2.5, 20.0, 15.0, True
         ))
         etab2_id = cur.fetchone()['id']
         
@@ -142,63 +141,47 @@ def create_demo_tenants():
         cur.execute('''
             INSERT INTO user_etablissements (user_id, etablissement_id, role)
             VALUES (%s, %s, %s)
-        ''', (riad_admin_id, etab2_id, 'admin'))
+        ''', (admin1_id, etab2_id, 'admin'))
         
         # Créer des chambres pour le deuxième établissement
-        print("  🛏️  Création de 4 chambres pour Riad Atlas Fès")
-        chambres_riad2 = [
-            ('Chambre Andalouse', 'Chambre traditionnelle andalouse', 2, 700.00, 'disponible'),
-            ('Suite Bleue', 'Suite avec décoration bleue de Fès', 2, 900.00, 'disponible'),
-            ('Chambre Zellige', 'Chambre avec mosaïques traditionnelles', 2, 650.00, 'disponible'),
-            ('Suite Panorama', 'Suite avec vue panoramique', 3, 1100.00, 'disponible'),
+        print("  🛏️  Création de 4 chambres pour Hotel Casablanca Premium")
+        chambres_etab2 = [
+            ('Suite Executive', 'Suite business avec vue sur mer', 2, 1200.00, 'disponible'),
+            ('Chambre Deluxe', 'Chambre deluxe moderne', 2, 900.00, 'disponible'),
+            ('Suite Présidentielle', 'Suite de luxe présidentielle', 4, 2500.00, 'disponible'),
+            ('Chambre Superior', 'Chambre superior confort', 2, 750.00, 'disponible'),
         ]
         
-        for nom, description, capacite, prix, statut in chambres_riad2:
+        for nom, description, capacite, prix, statut in chambres_etab2:
             cur.execute('''
                 INSERT INTO chambres (etablissement_id, nom, description, capacite, prix_par_nuit, statut)
                 VALUES (%s, %s, %s, %s, %s, %s)
             ''', (etab2_id, nom, description, capacite, prix, statut))
         
-        # Créer un utilisateur supplémentaire pour tenant 1
-        print("  👤 Création d'un utilisateur supplémentaire: riad_staff")
-        password_hash = generate_password_hash('staff123')
-        cur.execute('''
-            INSERT INTO users (username, password_hash, nom, prenom, email, role)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            RETURNING id
-        ''', ('riad_staff', password_hash, 'Bennis', 'Fatima', 'fatima@riadaltas.ma', 'user'))
-        riad_staff_id = cur.fetchone()['id']
-        
-        # Associer le staff aux deux établissements
-        cur.execute('''
-            INSERT INTO user_etablissements (user_id, etablissement_id, role)
-            VALUES (%s, %s, %s), (%s, %s, %s)
-        ''', (riad_staff_id, etab1_id, 'user', riad_staff_id, etab2_id, 'user'))
-        
-        # TENANT 2: Villa Ocean
-        print("\n📦 Création du Tenant 2: Villa Ocean...")
+        # TENANT 2: Riads & Maisons d'Hôtes du Maroc
+        print("\n📦 Création du Tenant 2: Riads & Maisons d'Hôtes du Maroc...")
         
         # Créer l'admin principal du tenant 2
-        print("  👤 Création de l'admin principal: villa_admin")
-        password_hash = generate_password_hash('villa123')
+        print("  👤 Création de l'admin principal: admin2")
+        password_hash = generate_password_hash('demo123')
         cur.execute('''
             INSERT INTO users (username, password_hash, nom, prenom, email, role)
             VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
-        ''', ('villa_admin', password_hash, 'Idrissi', 'Karim', 'karim@villaocean.ma', 'admin'))
-        villa_admin_id = cur.fetchone()['id']
+        ''', ('admin2', password_hash, 'Riad', 'Manager', 'admin@riadmaroc.ma', 'admin'))
+        admin2_id = cur.fetchone()['id']
         
         # Créer le compte tenant 2
-        print("  🏢 Création du compte tenant: Villa Ocean")
+        print("  🏢 Création du compte tenant: Riads & Maisons d'Hôtes du Maroc")
         cur.execute('''
             INSERT INTO tenant_accounts (nom_compte, primary_admin_user_id, notes)
             VALUES (%s, %s, %s)
             RETURNING id
-        ''', ('Villa Ocean', villa_admin_id, 'Villas de luxe en bord de mer'))
+        ''', ('Riads & Maisons d\'Hôtes du Maroc', admin2_id, 'Réseau de riads authentiques'))
         tenant2_id = cur.fetchone()['id']
         
-        # Créer l'établissement pour tenant 2
-        print("  🏨 Création de l'établissement: Villa Ocean Essaouira")
+        # Créer le premier établissement pour tenant 2
+        print("  🏨 Création de l'établissement: Riad Essaouira Charm")
         cur.execute('''
             INSERT INTO etablissements (
                 tenant_account_id, nom_etablissement, numero_identification, 
@@ -208,9 +191,9 @@ def create_demo_tenants():
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         ''', (
-            tenant2_id, 'Villa Ocean Essaouira', 'VILLA-ESS-001',
-            'Maroc', 'Essaouira', 'Boulevard Mohammed V, Plage', '+212 524 789012',
-            'essaouira@villaocean.ma', 'MAD', 2.5, 20.0, 15.0, True
+            tenant2_id, 'Riad Essaouira Charm', 'RIAD-ESS-001',
+            'Maroc', 'Essaouira', 'Rue de la Skala, Médina', '+212 524 445566',
+            'essaouira@riadmaroc.ma', 'MAD', 2.5, 20.0, 15.0, True
         ))
         etab3_id = cur.fetchone()['id']
         
@@ -219,66 +202,149 @@ def create_demo_tenants():
         cur.execute('''
             INSERT INTO user_etablissements (user_id, etablissement_id, role, is_primary_admin)
             VALUES (%s, %s, %s, %s)
-        ''', (villa_admin_id, etab3_id, 'admin', True))
+        ''', (admin2_id, etab3_id, 'admin', True))
         
         # Mettre à jour l'établissement actif de l'admin
         cur.execute('''
             UPDATE users SET etablissement_id = %s WHERE id = %s
-        ''', (etab3_id, villa_admin_id))
+        ''', (etab3_id, admin2_id))
         
         # Créer des chambres pour le troisième établissement
-        print("  🛏️  Création de 6 chambres pour Villa Ocean Essaouira")
-        chambres_villa = [
-            ('Villa Vue Mer 1', 'Villa de luxe avec vue sur l\'océan', 4, 2500.00, 'disponible'),
-            ('Villa Vue Mer 2', 'Villa de luxe avec piscine privée', 6, 3500.00, 'disponible'),
-            ('Suite Ocean', 'Suite avec terrasse vue mer', 2, 1800.00, 'disponible'),
-            ('Chambre Premium', 'Chambre premium avec balcon', 2, 1200.00, 'disponible'),
-            ('Bungalow Plage', 'Bungalow direct sur la plage', 3, 2000.00, 'disponible'),
-            ('Suite Familiale', 'Suite familiale avec kitchenette', 4, 1600.00, 'disponible'),
+        print("  🛏️  Création de 4 chambres pour Riad Essaouira Charm")
+        chambres_etab3 = [
+            ('Chambre Ocean', 'Chambre avec vue océan', 2, 650.00, 'disponible'),
+            ('Suite Médina', 'Suite dans la médina', 2, 800.00, 'disponible'),
+            ('Chambre Tradition', 'Chambre traditionnelle', 2, 550.00, 'disponible'),
+            ('Suite Romantique', 'Suite romantique avec terrasse', 2, 900.00, 'disponible'),
         ]
         
-        for nom, description, capacite, prix, statut in chambres_villa:
+        for nom, description, capacite, prix, statut in chambres_etab3:
             cur.execute('''
                 INSERT INTO chambres (etablissement_id, nom, description, capacite, prix_par_nuit, statut)
                 VALUES (%s, %s, %s, %s, %s, %s)
             ''', (etab3_id, nom, description, capacite, prix, statut))
         
-        # Créer quelques extras pour chaque établissement
+        # Créer le deuxième établissement pour tenant 2
+        print("  🏨 Création de l'établissement: Dar Fes Authentique")
+        cur.execute('''
+            INSERT INTO etablissements (
+                tenant_account_id, nom_etablissement, numero_identification, 
+                pays, ville, adresse, telephone, email, devise,
+                taux_taxe_sejour, taux_tva, taux_charge_plateforme, actif
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        ''', (
+            tenant2_id, 'Dar Fes Authentique', 'DAR-FES-001',
+            'Maroc', 'Fès', 'Derb Zeitoun, Médina', '+212 535 778899',
+            'fes@riadmaroc.ma', 'MAD', 2.5, 20.0, 15.0, True
+        ))
+        etab4_id = cur.fetchone()['id']
+        
+        # Associer l'admin au quatrième établissement
+        cur.execute('''
+            INSERT INTO user_etablissements (user_id, etablissement_id, role)
+            VALUES (%s, %s, %s)
+        ''', (admin2_id, etab4_id, 'admin'))
+        
+        # Créer des chambres pour le quatrième établissement
+        print("  🛏️  Création de 3 chambres pour Dar Fes Authentique")
+        chambres_etab4 = [
+            ('Chambre Bleue de Fès', 'Décor bleu traditionnel de Fès', 2, 700.00, 'disponible'),
+            ('Suite Artisanale', 'Suite avec artisanat local', 2, 850.00, 'disponible'),
+            ('Chambre Patio', 'Chambre donnant sur le patio', 2, 600.00, 'disponible'),
+        ]
+        
+        for nom, description, capacite, prix, statut in chambres_etab4:
+            cur.execute('''
+                INSERT INTO chambres (etablissement_id, nom, description, capacite, prix_par_nuit, statut)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            ''', (etab4_id, nom, description, capacite, prix, statut))
+        
+        # TENANT 3: Hospitality Partners
+        print("\n📦 Création du Tenant 3: Hospitality Partners...")
+        
+        # Créer l'admin principal du tenant 3
+        print("  👤 Création de l'admin principal: admin3")
+        password_hash = generate_password_hash('demo123')
+        cur.execute('''
+            INSERT INTO users (username, password_hash, nom, prenom, email, role)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id
+        ''', ('admin3', password_hash, 'Hospitality', 'Admin', 'admin@hospitalitypartners.ma', 'admin'))
+        admin3_id = cur.fetchone()['id']
+        
+        # Créer le compte tenant 3
+        print("  🏢 Création du compte tenant: Hospitality Partners")
+        cur.execute('''
+            INSERT INTO tenant_accounts (nom_compte, primary_admin_user_id, notes)
+            VALUES (%s, %s, %s)
+            RETURNING id
+        ''', ('Hospitality Partners', admin3_id, 'Villas de luxe en bord de mer'))
+        tenant3_id = cur.fetchone()['id']
+        
+        # Créer l'établissement pour tenant 3
+        print("  🏨 Création de l'établissement: Villa Agadir Ocean View")
+        cur.execute('''
+            INSERT INTO etablissements (
+                tenant_account_id, nom_etablissement, numero_identification, 
+                pays, ville, adresse, telephone, email, devise,
+                taux_taxe_sejour, taux_tva, taux_charge_plateforme, actif
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        ''', (
+            tenant3_id, 'Villa Agadir Ocean View', 'VILLA-AGA-001',
+            'Maroc', 'Agadir', 'Boulevard du 20 Août, Front de Mer', '+212 528 334455',
+            'agadir@hospitalitypartners.ma', 'MAD', 2.5, 20.0, 15.0, True
+        ))
+        etab5_id = cur.fetchone()['id']
+        
+        # Associer l'admin au cinquième établissement
+        print("  🔗 Association de l'admin avec l'établissement")
+        cur.execute('''
+            INSERT INTO user_etablissements (user_id, etablissement_id, role, is_primary_admin)
+            VALUES (%s, %s, %s, %s)
+        ''', (admin3_id, etab5_id, 'admin', True))
+        
+        # Mettre à jour l'établissement actif de l'admin
+        cur.execute('''
+            UPDATE users SET etablissement_id = %s WHERE id = %s
+        ''', (etab5_id, admin3_id))
+        
+        # Créer des chambres pour le cinquième établissement
+        print("  🛏️  Création de 5 chambres pour Villa Agadir Ocean View")
+        chambres_etab5 = [
+            ('Villa Premium 1', 'Villa de luxe avec piscine', 6, 3000.00, 'disponible'),
+            ('Villa Premium 2', 'Villa avec vue panoramique', 4, 2500.00, 'disponible'),
+            ('Suite Ocean', 'Suite avec terrasse vue mer', 2, 1500.00, 'disponible'),
+            ('Appartement Family', 'Appartement familial', 4, 1800.00, 'disponible'),
+            ('Bungalow Plage', 'Bungalow direct sur la plage', 3, 2200.00, 'disponible'),
+        ]
+        
+        for nom, description, capacite, prix, statut in chambres_etab5:
+            cur.execute('''
+                INSERT INTO chambres (etablissement_id, nom, description, capacite, prix_par_nuit, statut)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            ''', (etab5_id, nom, description, capacite, prix, statut))
+        
+        # Créer quelques extras pour les établissements
         print("\n🎁 Création des extras pour les établissements...")
         
-        # Extras pour Riad Atlas Marrakech
-        extras_riad = [
-            ('Petit-déjeuner berbère', 'Petit-déjeuner traditionnel', 80.00, 'personne'),
+        # Extras communs
+        extras_communs = [
+            ('Petit-déjeuner', 'Petit-déjeuner complet', 80.00, 'personne'),
             ('Transfert aéroport', 'Transfert depuis/vers l\'aéroport', 250.00, 'trajet'),
-            ('Massage traditionnel', 'Massage au hammam', 400.00, 'séance'),
-            ('Cours de cuisine', 'Atelier cuisine marocaine', 500.00, 'séance'),
+            ('Spa et massage', 'Séance de relaxation', 400.00, 'séance'),
         ]
         
-        for nom, description, prix, unite in extras_riad:
-            cur.execute('''
-                INSERT INTO extras (etablissement_id, nom, description, prix_unitaire, unite, actif)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            ''', (etab1_id, nom, description, prix, unite, True))
-            # Aussi pour Fès
-            cur.execute('''
-                INSERT INTO extras (etablissement_id, nom, description, prix_unitaire, unite, actif)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            ''', (etab2_id, nom, description, prix, unite, True))
-        
-        # Extras pour Villa Ocean
-        extras_villa = [
-            ('Petit-déjeuner continental', 'Petit-déjeuner buffet', 120.00, 'personne'),
-            ('Transfert aéroport premium', 'Transfert en Mercedes', 400.00, 'trajet'),
-            ('Spa et massage', 'Séance spa complète', 600.00, 'séance'),
-            ('Excursion îles Purpuraires', 'Excursion en bateau', 800.00, 'personne'),
-            ('Location vélo', 'Location de vélo à la journée', 100.00, 'jour'),
-        ]
-        
-        for nom, description, prix, unite in extras_villa:
-            cur.execute('''
-                INSERT INTO extras (etablissement_id, nom, description, prix_unitaire, unite, actif)
-                VALUES (%s, %s, %s, %s, %s, %s)
-            ''', (etab3_id, nom, description, prix, unite, True))
+        # Ajouter extras à tous les établissements
+        for etab_id in [etab1_id, etab2_id, etab3_id, etab4_id, etab5_id]:
+            for nom, description, prix, unite in extras_communs:
+                cur.execute('''
+                    INSERT INTO extras (etablissement_id, nom, description, prix_unitaire, unite, actif)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                ''', (etab_id, nom, description, prix, unite, True))
         
         # Créer quelques séjours de démonstration
         print("\n📅 Création de séjours de démonstration...")
@@ -334,35 +400,40 @@ def create_demo_tenants():
         print("\n✅ Création des tenants de démonstration terminée avec succès!")
         
         # Afficher un résumé
-        print("\n" + "="*60)
+        print("\n" + "="*70)
         print("📊 RÉSUMÉ DES TENANTS DE DÉMONSTRATION")
-        print("="*60)
+        print("="*70)
         
-        print("\n🏢 TENANT 1: Riad Atlas")
-        print("  👤 Admin: riad_admin / riad123")
-        print("  📧 Email: hassan@riadaltas.ma")
-        print(f"  🏨 Établissements: 2 (Marrakech, Fès)")
+        print("\n🏢 TENANT 1: Groupe Hôtelier Atlas")
+        print("  👤 Admin: admin1 / demo123")
+        print("  📧 Email: admin@groupeatlas.ma")
+        print(f"  🏨 Établissements: 2 (Riad Marrakech Excellence, Hotel Casablanca Premium)")
         print(f"  🛏️  Chambres totales: 9")
-        print(f"  👥 Utilisateurs: 2 (admin + 1 staff)")
         
-        print("\n🏢 TENANT 2: Villa Ocean")
-        print("  👤 Admin: villa_admin / villa123")
-        print("  📧 Email: karim@villaocean.ma")
-        print(f"  🏨 Établissements: 1 (Essaouira)")
-        print(f"  🛏️  Chambres totales: 6")
-        print(f"  👥 Utilisateurs: 1 (admin)")
+        print("\n🏢 TENANT 2: Riads & Maisons d'Hôtes du Maroc")
+        print("  👤 Admin: admin2 / demo123")
+        print("  📧 Email: admin@riadmaroc.ma")
+        print(f"  🏨 Établissements: 2 (Riad Essaouira Charm, Dar Fes Authentique)")
+        print(f"  🛏️  Chambres totales: 7")
+        
+        print("\n🏢 TENANT 3: Hospitality Partners")
+        print("  👤 Admin: admin3 / demo123")
+        print("  📧 Email: admin@hospitalitypartners.ma")
+        print(f"  🏨 Établissements: 1 (Villa Agadir Ocean View)")
+        print(f"  🛏️  Chambres totales: 5")
         
         print("\n🔑 PLATFORM ADMIN")
         print("  👤 Admin: admin / admin123")
         print("  🎯 Rôle: PLATFORM_ADMIN")
         print("  📍 Dashboard: /platform-admin")
         
-        print("\n" + "="*60)
+        print("\n" + "="*70)
         print("✅ Vous pouvez maintenant vous connecter avec:")
         print("  - admin/admin123 (Platform Admin)")
-        print("  - riad_admin/riad123 (Tenant 1 Admin)")
-        print("  - villa_admin/villa123 (Tenant 2 Admin)")
-        print("="*60 + "\n")
+        print("  - admin1/demo123 (Groupe Hôtelier Atlas)")
+        print("  - admin2/demo123 (Riads & Maisons d'Hôtes du Maroc)")
+        print("  - admin3/demo123 (Hospitality Partners)")
+        print("="*70 + "\n")
         
     except Exception as e:
         conn.rollback()
