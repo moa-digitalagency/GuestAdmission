@@ -7,74 +7,74 @@
 <input type="hidden" id="sejourId" value="{{ sejour_id }}">
 
 <div class="dashboard-container">
-    <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-        <a href="/sejours" class="btn-secondary">← Retour à la liste</a>
-        <button class="btn-primary" onclick="printSejourDetail()">
+    <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+        <a href="/sejours" style="background: #f3f4f6; color: #374151; border: 2px solid #9ca3af; padding: 0.5rem 1rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: all 0.2s;">← Retour à la liste</a>
+        <button onclick="printSejourDetail()" style="background: #eff6ff; color: #1d4ed8; border: 2px solid #3b82f6; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.2s;">
             🖨️ Imprimer
         </button>
     </div>
 
     <div id="sejourDetailContent" class="print-content">
         <!-- Section: Informations générales -->
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2>📋 Informations du Séjour</h2>
+        <section class="dotted-section section-blue" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2 style="margin: 0;">📋 Informations du Séjour</h2>
                 <span id="sejourStatutBadge"></span>
             </div>
-            <div class="section-content" id="sejourInfo">
+            <div id="sejourInfo">
                 <p style="text-align: center; color: #666;">Chargement...</p>
             </div>
         </section>
 
         <!-- Section: Établissement -->
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2>🏢 Établissement</h2>
+        <section class="dotted-section section-green" style="margin-bottom: 1.5rem;">
+            <div style="margin-bottom: 1rem;">
+                <h2 style="margin: 0;">🏢 Établissement</h2>
             </div>
-            <div class="section-content" id="etablissementInfo">
+            <div id="etablissementInfo">
                 <p style="text-align: center; color: #666;">Chargement...</p>
             </div>
         </section>
 
         <!-- Section: Chambres -->
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2>🛏️ Chambres</h2>
+        <section class="dotted-section section-purple" style="margin-bottom: 1.5rem;">
+            <div style="margin-bottom: 1rem;">
+                <h2 style="margin: 0;">🛏️ Chambres</h2>
             </div>
-            <div class="section-content" id="chambresInfo">
+            <div id="chambresInfo">
                 <p style="text-align: center; color: #666;">Chargement...</p>
             </div>
         </section>
 
         <!-- Section: Personnes -->
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2>👥 Personnes</h2>
+        <section class="dotted-section section-cyan" style="margin-bottom: 1.5rem;">
+            <div style="margin-bottom: 1rem;">
+                <h2 style="margin: 0;">👥 Personnes</h2>
             </div>
-            <div class="section-content" id="personnesInfo">
+            <div id="personnesInfo">
                 <p style="text-align: center; color: #666;">Chargement...</p>
             </div>
         </section>
 
         <!-- Section: Extras facturés -->
-        <section class="dashboard-section no-print-header">
-            <div class="section-header">
-                <h2>💰 Extras facturés</h2>
-                <button class="btn-primary no-print" onclick="showAddExtraModal()">
+        <section class="dotted-section section-orange no-print-header" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <h2 style="margin: 0;">💰 Extras facturés</h2>
+                <button class="btn-primary no-print" onclick="showAddExtraModal()" style="background: #eff6ff; color: #1d4ed8; border: 2px solid #3b82f6; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600; transition: all 0.2s;">
                     ➕ Ajouter un extra
                 </button>
             </div>
-            <div class="section-content" id="extrasInfo">
+            <div id="extrasInfo">
                 <p style="text-align: center; color: #666;">Aucun extra facturé</p>
             </div>
         </section>
 
         <!-- Section: Récapitulatif financier -->
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2>💵 Récapitulatif Financier</h2>
+        <section class="dotted-section section-indigo" style="margin-bottom: 1.5rem;">
+            <div style="margin-bottom: 1rem;">
+                <h2 style="margin: 0;">💵 Récapitulatif Financier</h2>
             </div>
-            <div class="section-content" id="financialSummary">
+            <div id="financialSummary">
                 <p style="text-align: center; color: #666;">Chargement...</p>
             </div>
         </section>
@@ -211,8 +211,8 @@
 
 @media print {
     @page {
-        size: landscape;
-        margin: 1cm;
+        size: A4;
+        margin: 1.5cm;
     }
     
     .no-print {
@@ -221,22 +221,66 @@
     
     .sidebar,
     .top-bar,
+    nav,
+    .no-print-header button,
     .no-print-header .btn-primary {
         display: none !important;
     }
     
-    .main-content {
+    .main-content,
+    .dashboard-container {
         margin-left: 0 !important;
+        margin-right: 0 !important;
         width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
     }
     
-    .dashboard-section {
+    .dotted-section {
         page-break-inside: avoid;
+        margin-bottom: 1rem !important;
+        border-width: 3px !important;
+        border-style: dotted !important;
+    }
+    
+    .section-blue {
+        border-color: #3b82f6 !important;
+    }
+    
+    .section-green {
+        border-color: #22c55e !important;
+    }
+    
+    .section-purple {
+        border-color: #a855f7 !important;
+    }
+    
+    .section-cyan {
+        border-color: #06b6d4 !important;
+    }
+    
+    .section-orange {
+        border-color: #f97316 !important;
+    }
+    
+    .section-indigo {
+        border-color: #6366f1 !important;
     }
     
     body {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+    
+    h2 {
+        page-break-after: avoid;
+    }
+    
+    .info-grid,
+    .chambres-list,
+    .personnes-list {
+        page-break-inside: avoid;
     }
 }
 

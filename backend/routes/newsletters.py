@@ -5,6 +5,7 @@ from backend.models.newsletter import Newsletter, NewsletterConfig
 from backend.models.client import Client
 from backend.services.newsletter_service import NewsletterService
 from backend.utils.tenant_context import get_current_etablissement_id
+from backend.utils.serializers import serialize_rows
 
 newsletters_bp = Blueprint('newsletters', __name__)
 
@@ -184,7 +185,8 @@ def get_newsletter_clients():
         etablissement_id = get_current_etablissement_id()
         if not etablissement_id:
             return jsonify({'success': False, 'error': 'Établissement non trouvé'}), 400
-        clients = Client.get_all_by_etablissement(etablissement_id)
+        clients_raw = Client.get_all_by_etablissement(etablissement_id)
+        clients = serialize_rows(clients_raw)
         
         client_list = []
         for client in clients:
