@@ -1,4 +1,4 @@
-modules = ["python-3.11", "nodejs-20", "web", "bash", "postgresql-16"]
+modules = ["python-3.11", "nodejs-20", "web", "bash"]
 [agent]
 expertMode = true
 
@@ -27,12 +27,16 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bash start.sh"
+args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
 waitForPort = 5000
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 34289
+externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
