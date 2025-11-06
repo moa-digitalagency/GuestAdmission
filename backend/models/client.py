@@ -95,3 +95,24 @@ class Client:
         conn.commit()
         cur.close()
         conn.close()
+    
+    @staticmethod
+    def get_all_by_etablissement(etablissement_id):
+        """Récupérer tous les clients (personnes) d'un établissement"""
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        cur.execute('''
+            SELECT DISTINCT p.* 
+            FROM personnes p
+            INNER JOIN reservations r ON p.reservation_id = r.id
+            WHERE r.etablissement_id = %s
+            ORDER BY p.created_at DESC
+        ''', (etablissement_id,))
+        
+        clients = cur.fetchall()
+        
+        cur.close()
+        conn.close()
+        
+        return clients
