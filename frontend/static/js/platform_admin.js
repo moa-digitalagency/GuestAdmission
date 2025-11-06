@@ -195,35 +195,6 @@ function closeCreateTenantModal() {
     `;
 }
 
-let chambreCounter = 1;
-
-function addChambreRow() {
-    const container = document.getElementById('chambresContainer');
-    const newRow = document.createElement('div');
-    newRow.className = 'form-grid chambre-row';
-    newRow.setAttribute('data-chambre-index', chambreCounter);
-    newRow.innerHTML = `
-        <div class="form-group">
-            <label>Nom de la chambre</label>
-            <input type="text" name="chambre_nom_${chambreCounter}" placeholder="ex: Chambre ${100 + chambreCounter}">
-        </div>
-        <div class="form-group">
-            <label>Type de chambre</label>
-            <input type="text" name="chambre_type_${chambreCounter}" placeholder="ex: Standard, Suite, Deluxe">
-        </div>
-        <div class="form-group">
-            <label>Capacité</label>
-            <input type="number" name="chambre_capacite_${chambreCounter}" min="1" value="2">
-        </div>
-        <div class="form-group">
-            <label>Prix par nuit</label>
-            <input type="number" name="chambre_prix_${chambreCounter}" min="0" step="0.01" placeholder="0.00">
-        </div>
-    `;
-    container.appendChild(newRow);
-    chambreCounter++;
-}
-
 function createTenant() {
     const form = document.getElementById('createTenantForm');
     const formData = new FormData(form);
