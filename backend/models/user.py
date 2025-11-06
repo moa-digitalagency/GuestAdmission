@@ -47,22 +47,37 @@ class User(UserMixin):
         
         return result and result['count'] > 0
     
-    def get_etablissements(self):
-        """Obtenir tous les établissements auxquels l'utilisateur a accès"""
+    def get_etablissements(self, actif_only=True):
+        """Obtenir tous les établissements auxquels l'utilisateur a accès
+        
+        Args:
+            actif_only (bool): Si True, ne retourne que les établissements actifs
+        """
         conn = get_db_connection()
         cur = conn.cursor()
         
         if self.is_platform_admin():
             # Platform admin voit tous les établissements
-            cur.execute('SELECT * FROM etablissements ORDER BY nom_etablissement')
+            if actif_only:
+                cur.execute('SELECT * FROM etablissements WHERE actif = TRUE ORDER BY nom_etablissement')
+            else:
+                cur.execute('SELECT * FROM etablissements ORDER BY nom_etablissement')
         else:
             # Tenant admin voit seulement ses établissements
-            cur.execute('''
-                SELECT e.* FROM etablissements e
-                INNER JOIN user_etablissements ue ON e.id = ue.etablissement_id
-                WHERE ue.user_id = %s
-                ORDER BY e.nom_etablissement
-            ''', (self.id,))
+            if actif_only:
+                cur.execute('''
+                    SELECT e.* FROM etablissements e
+                    INNER JOIN user_etablissements ue ON e.id = ue.etablissement_id
+                    WHERE ue.user_id = %s AND e.actif = TRUE
+                    ORDER BY e.nom_etablissement
+                ''', (self.id,))
+            else:
+                cur.execute('''
+                    SELECT e.* FROM etablissements e
+                    INNER JOIN user_etablissements ue ON e.id = ue.etablissement_id
+                    WHERE ue.user_id = %s
+                    ORDER BY e.nom_etablissement
+                ''', (self.id,))
         
         etablissements = cur.fetchall()
         cur.close()

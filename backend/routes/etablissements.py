@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from flask_login import login_required
+from flask_login import login_required, current_user
 from ..models.etablissement import Etablissement
 from ..utils import serialize_rows, serialize_row
 from werkzeug.utils import secure_filename
@@ -17,7 +17,7 @@ def allowed_file(filename):
 @login_required
 def get_etablissements():
     actif_only = request.args.get('actif_only', 'true').lower() == 'true'
-    etablissements = Etablissement.get_all(actif_only=actif_only)
+    etablissements = current_user.get_etablissements(actif_only=actif_only)
     return jsonify(serialize_rows(etablissements))
 
 @etablissements_bp.route('/api/etablissements/<int:etablissement_id>', methods=['GET'])
