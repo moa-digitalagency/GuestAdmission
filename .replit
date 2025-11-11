@@ -27,7 +27,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
+args = "FLASK_ENV=development bash start.sh"
 waitForPort = 5000
 
 [[ports]]
@@ -35,14 +35,14 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 34545
-externalPort = 3000
-
-[[ports]]
 localPort = 39365
 externalPort = 3001
 
+[[ports]]
+localPort = 43627
+externalPort = 3000
+
 [deployment]
-deploymentTarget = "autoscale"
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+deploymentTarget = "vm"
+run = ["bash", "start.sh"]
 build = ["python", "init_database.py"]
