@@ -3,7 +3,20 @@
 ## Overview
 This project is a comprehensive Flask SaaS application designed for managing multiple guest houses in a multi-tenant architecture. It provides full management capabilities for establishments, bookings (referred to as "séjours"), and clients. The application has been transformed into a SaaS platform with complete tenant isolation, allowing a SUPER_ADMIN to create and manage multiple establishments, assign administrators, and control access per establishment.
 
-## Recent Changes (November 5, 2025)
+## Recent Changes
+
+### November 11, 2025 - Database & Deployment Configuration
+- **PostgreSQL Database Created**: Permanent Replit PostgreSQL database provisioned to eliminate "Server connection error" issues
+- **Production-Ready start.sh**: Enhanced startup script with:
+  - Automatic database initialization before server startup
+  - Support for both development and production modes
+  - Configurable worker count via `GUNICORN_WORKERS` (default: 4 workers)
+  - Development mode with auto-reload when `FLASK_ENV=development`
+  - Production safety with `set -euo pipefail` for error handling
+- **Deployment Configuration**: VM deployment configured for stable, single-instance production deployment
+- **Workflow Configuration**: Development workflow now uses start.sh for consistent database initialization
+
+### November 5, 2025 - SaaS Transformation
 - **Complete SaaS Transformation**: Full implementation of multi-tenant SaaS architecture with three-level role hierarchy
 - **PLATFORM_ADMIN Role**: Highest level admin (formerly SUPER_ADMIN) manages the entire SaaS platform, creates tenant accounts, and has global oversight
 - **Tenant Accounts System**: New `tenant_accounts` table to manage client accounts, each with multiple establishments
