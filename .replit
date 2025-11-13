@@ -35,10 +35,10 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 39365
-externalPort = 3001
+localPort = 44505
+externalPort = 3000
 
 [deployment]
-deploymentTarget = "vm"
-run = ["bash", "start.sh"]
+deploymentTarget = "autoscale"
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
 build = ["python", "init_database.py"]
